@@ -1,0 +1,250 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ONEartHeaven Design System — Deep Cosmos / Civilizational Gold */
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+
+    /* === LIGHT MODE === */
+    --background: 0.97 0.008 95;
+    --foreground: 0.13 0.02 260;
+
+    --card: 1 0 0;
+    --card-foreground: 0.13 0.02 260;
+
+    --popover: 1 0 0;
+    --popover-foreground: 0.13 0.02 260;
+
+    /* Gold primary */
+    --primary: 0.62 0.14 75;
+    --primary-foreground: 0.98 0.005 80;
+
+    --secondary: 0.94 0.015 260;
+    --secondary-foreground: 0.2 0.03 260;
+
+    --muted: 0.93 0.01 95;
+    --muted-foreground: 0.48 0.04 260;
+
+    /* Teal accent */
+    --accent: 0.55 0.12 195;
+    --accent-foreground: 0.97 0.005 195;
+
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.985 0 0;
+
+    --border: 0.88 0.015 260;
+    --input: 0.88 0.015 260;
+    --ring: 0.62 0.14 75;
+
+    --chart-1: 0.62 0.14 75;
+    --chart-2: 0.55 0.12 195;
+    --chart-3: 0.45 0.15 260;
+    --chart-4: 0.75 0.18 140;
+    --chart-5: 0.65 0.2 30;
+
+    --sidebar: 0.13 0.04 260;
+    --sidebar-foreground: 0.95 0.01 95;
+    --sidebar-primary: 0.62 0.14 75;
+    --sidebar-primary-foreground: 0.98 0.005 80;
+    --sidebar-accent: 0.2 0.05 260;
+    --sidebar-accent-foreground: 0.95 0.01 95;
+    --sidebar-border: 0.22 0.04 260;
+    --sidebar-ring: 0.62 0.14 75;
+
+    /* Custom ONEartHeaven tokens */
+    --cosmos-deep: 0.08 0.03 260;
+    --cosmos-mid: 0.14 0.05 260;
+    --cosmos-surface: 0.18 0.04 260;
+    --gold: 0.72 0.16 75;
+    --gold-bright: 0.82 0.18 85;
+    --gold-dim: 0.52 0.1 75;
+    --teal: 0.6 0.14 195;
+    --teal-bright: 0.72 0.16 190;
+    --pearl: 0.97 0.01 95;
+  }
+
+  .dark {
+    --background: 0.08 0.025 260;
+    --foreground: 0.95 0.01 95;
+
+    --card: 0.12 0.035 260;
+    --card-foreground: 0.95 0.01 95;
+
+    --popover: 0.14 0.04 260;
+    --popover-foreground: 0.95 0.01 95;
+
+    --primary: 0.72 0.16 75;
+    --primary-foreground: 0.1 0.02 260;
+
+    --secondary: 0.2 0.04 260;
+    --secondary-foreground: 0.9 0.01 95;
+
+    --muted: 0.18 0.04 260;
+    --muted-foreground: 0.6 0.04 260;
+
+    --accent: 0.55 0.14 195;
+    --accent-foreground: 0.97 0.005 195;
+
+    --destructive: 0.704 0.191 22.216;
+    --destructive-foreground: 0.985 0 0;
+
+    --border: 0.22 0.04 260;
+    --input: 0.22 0.04 260;
+    --ring: 0.72 0.16 75;
+
+    --chart-1: 0.72 0.16 75;
+    --chart-2: 0.65 0.16 195;
+    --chart-3: 0.55 0.18 260;
+    --chart-4: 0.78 0.2 140;
+    --chart-5: 0.7 0.22 30;
+
+    --sidebar: 0.1 0.03 260;
+    --sidebar-foreground: 0.95 0.01 95;
+    --sidebar-primary: 0.72 0.16 75;
+    --sidebar-primary-foreground: 0.1 0.02 260;
+    --sidebar-accent: 0.18 0.04 260;
+    --sidebar-accent-foreground: 0.95 0.01 95;
+    --sidebar-border: 0.22 0.04 260;
+    --sidebar-ring: 0.72 0.16 75;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Sora', 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ===== COSMOS THEME LAYER ===== */
+@layer components {
+  .cosmos-bg {
+    background: oklch(var(--cosmos-deep));
+  }
+
+  .gold-text {
+    color: oklch(var(--gold));
+  }
+
+  .gold-gradient-text {
+    background: linear-gradient(
+      135deg,
+      oklch(var(--gold-bright)) 0%,
+      oklch(var(--gold)) 40%,
+      oklch(var(--teal-bright)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .teal-text {
+    color: oklch(var(--teal));
+  }
+
+  .cosmos-card {
+    background: oklch(var(--cosmos-surface) / 0.9);
+    border: 1px solid oklch(var(--gold-dim) / 0.25);
+    backdrop-filter: blur(12px);
+  }
+
+  .cosmos-card:hover {
+    border-color: oklch(var(--gold) / 0.5);
+    box-shadow: 0 0 32px oklch(var(--gold) / 0.12), 0 8px 32px oklch(0.05 0.02 260 / 0.5);
+  }
+
+  .hero-overlay {
+    background: linear-gradient(
+      160deg,
+      oklch(var(--cosmos-deep) / 0.92) 0%,
+      oklch(0.1 0.04 260 / 0.85) 40%,
+      oklch(0.12 0.05 220 / 0.75) 70%,
+      oklch(var(--cosmos-deep) / 0.95) 100%
+    );
+  }
+
+  .section-alt {
+    background: oklch(0.96 0.01 90);
+  }
+
+  .section-cosmos {
+    background: oklch(var(--cosmos-mid));
+  }
+
+  .btn-gold {
+    background: linear-gradient(135deg, oklch(var(--gold)) 0%, oklch(var(--gold-bright)) 100%);
+    color: oklch(0.1 0.02 260);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+  }
+
+  .btn-gold:hover {
+    box-shadow: 0 0 24px oklch(var(--gold) / 0.4);
+    transform: translateY(-1px);
+  }
+
+  .nav-glass {
+    background: oklch(var(--cosmos-deep) / 0.85);
+    backdrop-filter: blur(20px) saturate(1.5);
+    border-bottom: 1px solid oklch(var(--gold) / 0.15);
+  }
+
+  .impact-card {
+    background: linear-gradient(135deg, oklch(var(--cosmos-surface)) 0%, oklch(0.16 0.06 260) 100%);
+    border: 1px solid oklch(var(--gold-dim) / 0.3);
+  }
+
+  .portal-card {
+    background: oklch(var(--cosmos-surface) / 0.95);
+    border: 1px solid oklch(var(--gold-dim) / 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .portal-card:hover {
+    background: oklch(0.2 0.05 260);
+    border-color: oklch(var(--gold) / 0.5);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px oklch(0.05 0.03 260 / 0.6), 0 0 40px oklch(var(--gold) / 0.08);
+  }
+
+  .comparison-good {
+    background: oklch(0.45 0.12 195 / 0.12);
+    border-left: 3px solid oklch(var(--teal));
+  }
+
+  .comparison-bad {
+    background: oklch(0.55 0.1 27 / 0.1);
+    border-left: 3px solid oklch(0.65 0.12 27);
+  }
+
+  .scroll-indicator {
+    animation: bounce-subtle 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50% { transform: translateY(8px); opacity: 1; }
+  }
+
+  .announcement-bar {
+    background: linear-gradient(90deg, oklch(0.55 0.16 260) 0%, oklch(0.45 0.18 230) 100%);
+  }
+
+  .grain-overlay::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.3;
+  }
+}
