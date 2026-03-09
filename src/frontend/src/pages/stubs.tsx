@@ -96,11 +96,25 @@ function StubPage({
 
 // ─── Governance Hub Portal ────────────────────────────────────────────────────
 
+type AvailableRoute =
+  | "/"
+  | "/about"
+  | "/members"
+  | "/governance"
+  | "/charter"
+  | "/assembly"
+  | "/councils"
+  | "/policy-advisor"
+  | "/solutions"
+  | "/community"
+  | "/academy"
+  | "/finance";
+
 interface GovernancePortalCard {
   icon: React.ElementType;
   title: string;
   description: string;
-  link?: string;
+  link?: AvailableRoute;
   phase: string;
   isAvailable: boolean;
   isHighlighted?: boolean;
@@ -134,7 +148,7 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     title: "Councils of Action",
     description:
       "9 thematic councils governing each domain through weighted consensus. No single veto.",
-    phase: "Phase 2",
+    phase: "Phase 2.2 — Live",
     link: "/councils",
     isAvailable: true,
     accentColor: "var(--gold-bright)",
@@ -144,7 +158,7 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     title: "Resolution Tracker",
     description:
       "Live status of all proposals: drafted → debated → voted → implemented → measured.",
-    phase: "Phase 2",
+    phase: "Phase 2.3 — In Development",
     isAvailable: false,
     accentColor: "var(--teal-bright)",
   },
@@ -153,8 +167,9 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     title: "AI Policy Advisor",
     description:
       "AI analysis of proposals for unintended consequences, historical precedent, and Charter alignment.",
-    phase: "Phase 2",
-    isAvailable: false,
+    phase: "Phase 2.4 — Live",
+    link: "/policy-advisor",
+    isAvailable: true,
     accentColor: "var(--gold)",
   },
   {
@@ -255,7 +270,7 @@ export function GovernancePage() {
             style={{ color: "oklch(0.52 0.04 260)" }}
           >
             The Founding Charter is live. The Global Assembly, Councils of
-            Action, Resolution Tracker, and AI Policy Advisor launch in Phase 2.
+            Action, and AI Policy Advisor are now live in Phase 2.
           </motion.p>
         </div>
       </section>
@@ -405,7 +420,7 @@ export function GovernancePage() {
                         border: "1px solid oklch(0.22 0.04 260)",
                       }}
                     >
-                      Coming in Phase 2
+                      Coming Soon
                     </div>
                   )}
                 </motion.div>
@@ -414,7 +429,7 @@ export function GovernancePage() {
               return portal.isAvailable && portal.link ? (
                 <Link
                   key={portal.title}
-                  to={portal.link as "/charter" | "/assembly"}
+                  to={portal.link}
                   data-ocid={`governance.portal.link.${idx + 1}`}
                   className="block h-full"
                 >

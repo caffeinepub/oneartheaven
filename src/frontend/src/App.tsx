@@ -10,6 +10,7 @@ import { CouncilDetailPage } from "@/pages/CouncilDetail";
 import { CouncilsPage } from "@/pages/Councils";
 import { Home } from "@/pages/Home";
 import { MembersPage } from "@/pages/Members";
+import { PolicyAdvisorPage } from "@/pages/PolicyAdvisor";
 import {
   AcademyPage,
   CommunityPage,
@@ -123,6 +124,12 @@ const councilDetailRoute = createRoute({
   component: CouncilDetailPage,
 });
 
+const policyAdvisorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/policy-advisor",
+  component: PolicyAdvisorPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   aboutRoute,
@@ -136,6 +143,7 @@ const routeTree = rootRoute.addChildren([
   assemblyRoute,
   councilsRoute,
   councilDetailRoute,
+  policyAdvisorRoute,
 ]);
 
 const router = createRouter({ routeTree });
