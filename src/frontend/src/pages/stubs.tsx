@@ -39,7 +39,6 @@ function StubPage({
         transition={{ duration: 0.6 }}
         className="max-w-lg text-center"
       >
-        {/* Phase badge */}
         <div
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border mb-8"
           style={{
@@ -66,7 +65,6 @@ function StubPage({
           {description}
         </p>
 
-        {/* Progress indicator */}
         <div
           className="w-48 mx-auto h-1 rounded-full mb-8"
           style={{ background: "oklch(0.2 0.03 260)" }}
@@ -94,7 +92,7 @@ function StubPage({
   );
 }
 
-// ─── Governance Hub Portal ─────────────────────────────────────────────────────────────────────────────────
+// ─── Governance Hub Portal ───────────────────────────────────────────────────────────────────
 
 type AvailableRoute =
   | "/"
@@ -104,6 +102,7 @@ type AvailableRoute =
   | "/charter"
   | "/assembly"
   | "/councils"
+  | "/resolutions"
   | "/policy-advisor"
   | "/delegates"
   | "/solutions"
@@ -159,8 +158,9 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     title: "Resolution Tracker",
     description:
       "Live status of all proposals: drafted → debated → voted → implemented → measured.",
-    phase: "Phase 2.3 — In Development",
-    isAvailable: false,
+    phase: "Phase 2.3 — Live",
+    link: "/resolutions",
+    isAvailable: true,
     accentColor: "var(--teal-bright)",
   },
   {
@@ -206,7 +206,6 @@ export function GovernancePage() {
         data-ocid="governance.hero.section"
         className="relative overflow-hidden py-20 sm:py-28"
       >
-        {/* Background glow */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -223,7 +222,6 @@ export function GovernancePage() {
         />
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
-          {/* Phase badge */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -246,7 +244,6 @@ export function GovernancePage() {
             </span>
           </motion.div>
 
-          {/* Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
@@ -257,7 +254,6 @@ export function GovernancePage() {
             <span className="gold-gradient-text">Governance & Assembly</span>
           </motion.h1>
 
-          {/* Subheadline */}
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -280,9 +276,9 @@ export function GovernancePage() {
             className="text-sm max-w-xl mx-auto"
             style={{ color: "oklch(0.52 0.04 260)" }}
           >
-            The Founding Charter is live. The Global Assembly, Councils of
-            Action, AI Policy Advisor, and Delegate Registry are now live in
-            Phase 2.
+            The Founding Charter, Global Assembly, Councils of Action,
+            Resolution Tracker, AI Policy Advisor, and Delegate Registry are all
+            live in Phase 2.
           </motion.p>
         </div>
       </section>
@@ -330,7 +326,6 @@ export function GovernancePage() {
                     cursor: portal.isAvailable ? "pointer" : "default",
                   }}
                 >
-                  {/* Glow hover (available cards) */}
                   {portal.isAvailable && (
                     <div
                       className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
@@ -340,7 +335,6 @@ export function GovernancePage() {
                     />
                   )}
 
-                  {/* "Now Available" ribbon on highlighted card */}
                   {portal.isHighlighted && (
                     <div className="absolute top-3 right-3">
                       <Badge
@@ -356,7 +350,6 @@ export function GovernancePage() {
                     </div>
                   )}
 
-                  {/* Icon */}
                   <div
                     className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-5"
                     style={{
@@ -370,7 +363,6 @@ export function GovernancePage() {
                     />
                   </div>
 
-                  {/* Phase label */}
                   <div className="flex items-center gap-2 mb-3">
                     <span
                       className="text-xs font-semibold tracking-widest uppercase"
@@ -390,7 +382,6 @@ export function GovernancePage() {
                     )}
                   </div>
 
-                  {/* Title */}
                   <h3
                     className="font-display text-lg font-bold mb-2.5 leading-snug"
                     style={{
@@ -402,7 +393,6 @@ export function GovernancePage() {
                     {portal.title}
                   </h3>
 
-                  {/* Description */}
                   <p
                     className="text-sm leading-relaxed mb-5"
                     style={{
@@ -414,7 +404,6 @@ export function GovernancePage() {
                     {portal.description}
                   </p>
 
-                  {/* CTA */}
                   {portal.isAvailable ? (
                     <div
                       className="inline-flex items-center gap-1.5 text-sm font-semibold group-hover:gap-2.5 transition-all duration-200"
@@ -476,17 +465,6 @@ export function GovernancePage() {
         </div>
       </section>
     </main>
-  );
-}
-
-export function CommunityPage() {
-  return (
-    <StubPage
-      title="Communities"
-      phase="Phase 5 — In Development"
-      description="ONEarth Citizens Portal, Local Chapters, Compassion Communities, Volunteer & Expertise Exchange, and the Youth Council."
-      color="oklch(0.6 0.14 195)"
-    />
   );
 }
 
