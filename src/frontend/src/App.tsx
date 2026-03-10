@@ -8,15 +8,19 @@ import { AssemblyPage } from "@/pages/Assembly";
 import { CharterPage } from "@/pages/Charter";
 import { CouncilDetailPage } from "@/pages/CouncilDetail";
 import { CouncilsPage } from "@/pages/Councils";
+import { DelegateDetailPage } from "@/pages/DelegateDetail";
+import { DelegatesPage } from "@/pages/Delegates";
 import { Home } from "@/pages/Home";
 import { MembersPage } from "@/pages/Members";
 import { PolicyAdvisorPage } from "@/pages/PolicyAdvisor";
+import { PortalDetailPage } from "@/pages/PortalDetail";
+import { PortalsPage } from "@/pages/Portals";
+import { SolutionsPage } from "@/pages/Solutions";
 import {
   AcademyPage,
   CommunityPage,
   FinancePage,
   GovernancePage,
-  SolutionsPage,
 } from "@/pages/stubs";
 import {
   Outlet,
@@ -26,7 +30,7 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 
-// ─── Layout Component ────────────────────────────────────────────────────────
+// ─── Layout Component ─────────────────────────────────────────────────────────
 function Layout() {
   return (
     <LanguageProvider>
@@ -47,7 +51,7 @@ function Layout() {
   );
 }
 
-// ─── Routes ──────────────────────────────────────────────────────────────────
+// ─── Routes ────────────────────────────────────────────────────────────────────
 const rootRoute = createRootRoute({
   component: Layout,
 });
@@ -130,6 +134,30 @@ const policyAdvisorRoute = createRoute({
   component: PolicyAdvisorPage,
 });
 
+const delegatesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/delegates",
+  component: DelegatesPage,
+});
+
+const delegateDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/delegates/$delegateId",
+  component: DelegateDetailPage,
+});
+
+const portalsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/portals",
+  component: PortalsPage,
+});
+
+const portalDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/portals/$councilId",
+  component: PortalDetailPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   aboutRoute,
@@ -144,6 +172,10 @@ const routeTree = rootRoute.addChildren([
   councilsRoute,
   councilDetailRoute,
   policyAdvisorRoute,
+  delegatesRoute,
+  delegateDetailRoute,
+  portalsRoute,
+  portalDetailRoute,
 ]);
 
 const router = createRouter({ routeTree });

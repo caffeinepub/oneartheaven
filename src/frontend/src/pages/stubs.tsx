@@ -94,7 +94,7 @@ function StubPage({
   );
 }
 
-// ─── Governance Hub Portal ────────────────────────────────────────────────────
+// ─── Governance Hub Portal ─────────────────────────────────────────────────────────────────────────────────
 
 type AvailableRoute =
   | "/"
@@ -105,6 +105,7 @@ type AvailableRoute =
   | "/assembly"
   | "/councils"
   | "/policy-advisor"
+  | "/delegates"
   | "/solutions"
   | "/community"
   | "/academy"
@@ -171,6 +172,16 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     link: "/policy-advisor",
     isAvailable: true,
     accentColor: "var(--gold)",
+  },
+  {
+    icon: Users,
+    title: "Delegate Registry",
+    description:
+      "Profiles of all 14 founding delegates across 9 councils. Expertise, voting records, AI alignment scores, and FinFracFran™ roles.",
+    phase: "Phase 2.5 — Live",
+    link: "/delegates",
+    isAvailable: true,
+    accentColor: "var(--gold-bright)",
   },
   {
     icon: BookOpen,
@@ -270,7 +281,8 @@ export function GovernancePage() {
             style={{ color: "oklch(0.52 0.04 260)" }}
           >
             The Founding Charter is live. The Global Assembly, Councils of
-            Action, and AI Policy Advisor are now live in Phase 2.
+            Action, AI Policy Advisor, and Delegate Registry are now live in
+            Phase 2.
           </motion.p>
         </div>
       </section>
@@ -464,17 +476,6 @@ export function GovernancePage() {
         </div>
       </section>
     </main>
-  );
-}
-
-export function SolutionsPage() {
-  return (
-    <StubPage
-      title="Solutions Exchange"
-      phase="Phase 3 — In Development"
-      description="The NewWaysNow Solutions Library, Problem-to-Solution Matcher, Pilot Programs Board, and Replication Toolkit."
-      color="oklch(0.72 0.18 85)"
-    />
   );
 }
 
