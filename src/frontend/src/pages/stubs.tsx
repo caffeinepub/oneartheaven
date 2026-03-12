@@ -7,9 +7,11 @@ import {
   BarChart3,
   BookOpen,
   Bot,
+  Coins,
   Construction,
   Globe2,
   Layers,
+  Network,
   ScrollText,
   Users,
 } from "lucide-react";
@@ -108,7 +110,9 @@ type AvailableRoute =
   | "/solutions"
   | "/community"
   | "/academy"
-  | "/finance";
+  | "/finance"
+  | "/transparency"
+  | "/integrations";
 
 interface GovernancePortalCard {
   icon: React.ElementType;
@@ -157,7 +161,7 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     icon: BarChart3,
     title: "Resolution Tracker",
     description:
-      "Live status of all proposals: drafted → debated → voted → implemented → measured.",
+      "Live status of all proposals: drafted \u2192 debated \u2192 voted \u2192 implemented \u2192 measured.",
     phase: "Phase 2.3 — Live",
     link: "/resolutions",
     isAvailable: true,
@@ -177,7 +181,7 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     icon: Users,
     title: "Delegate Registry",
     description:
-      "Profiles of all 14 founding delegates across 9 councils. Expertise, voting records, AI alignment scores, and FinFracFran™ roles.",
+      "Profiles of all 14 founding delegates across 9 councils. Expertise, voting records, AI alignment scores, and FinFracFran\u2122 roles.",
     phase: "Phase 2.5 — Live",
     link: "/delegates",
     isAvailable: true,
@@ -193,6 +197,26 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     isAvailable: true,
     accentColor: "var(--teal)",
   },
+  {
+    icon: Network,
+    title: "API & Integrations",
+    description:
+      "Open API layer for all governance, solutions, transparency, and FinFracFran\u2122 modules. 12 endpoints, 8 integration partners, real-time webhooks.",
+    link: "/integrations",
+    phase: "Phase 7 \u2014 Live",
+    isAvailable: true,
+    accentColor: "var(--teal)",
+  },
+  {
+    icon: Coins,
+    title: "Economic & Finance",
+    description:
+      "FinFracFran™ franchise network, fundraising campaigns, enterprise profiles, investment rounds, and treasury across 194 nations.",
+    link: "/finance",
+    phase: "Phase 10 — Live",
+    isAvailable: true,
+    accentColor: "var(--gold)",
+  },
 ];
 
 export function GovernancePage() {
@@ -201,7 +225,7 @@ export function GovernancePage() {
       className="min-h-screen"
       style={{ background: "oklch(var(--cosmos-deep))" }}
     >
-      {/* ── Hero ── */}
+      {/* \u2500\u2500 Hero \u2500\u2500 */}
       <section
         data-ocid="governance.hero.section"
         className="relative overflow-hidden py-20 sm:py-28"
@@ -240,7 +264,7 @@ export function GovernancePage() {
               className="text-xs font-semibold tracking-widest uppercase"
               style={{ color: "oklch(var(--gold))" }}
             >
-              Phase 2 — Governance
+              Phase 2 \u2014 Governance
             </span>
           </motion.div>
 
@@ -293,7 +317,7 @@ export function GovernancePage() {
         }}
       />
 
-      {/* ── Portal Cards ── */}
+      {/* \u2500\u2500 Portal Cards \u2500\u2500 */}
       <section
         data-ocid="governance.portals.section"
         className="py-16 sm:py-20"
@@ -446,7 +470,7 @@ export function GovernancePage() {
         </div>
       </section>
 
-      {/* ── Back to Home ── */}
+      {/* \u2500\u2500 Back to Home \u2500\u2500 */}
       <section className="pb-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <Link to="/" data-ocid="governance.back.link">
@@ -472,7 +496,7 @@ export function AcademyPage() {
   return (
     <StubPage
       title="Academy"
-      phase="Phase 9 — In Development"
+      phase="Phase 9 \u2014 In Development"
       description="Whole Academy for Education, Engagement Engineering, Ideas Incubation, Training for all levels, and disciplined distillation and distribution."
       color="oklch(0.65 0.18 270)"
     />
@@ -483,8 +507,8 @@ export function FinancePage() {
   return (
     <StubPage
       title="FinFracFran Economy"
-      phase="Phase 10 — In Development"
-      description="Financial ecosystem, FinFracFran™ fractionalization and franchising methodologies, ethical fundraising, multi-wallet support, and economic resilience tools."
+      phase="Phase 10 \u2014 In Development"
+      description="Financial ecosystem, FinFracFran\u2122 fractionalization and franchising methodologies, ethical fundraising, multi-wallet support, and economic resilience tools."
       color="oklch(0.7 0.2 140)"
     />
   );

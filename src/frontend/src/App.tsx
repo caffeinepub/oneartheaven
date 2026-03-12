@@ -11,14 +11,17 @@ import { CouncilDetailPage } from "@/pages/CouncilDetail";
 import { CouncilsPage } from "@/pages/Councils";
 import { DelegateDetailPage } from "@/pages/DelegateDetail";
 import { DelegatesPage } from "@/pages/Delegates";
+import { FinancePage } from "@/pages/Finance";
 import { Home } from "@/pages/Home";
+import { IntegrationsPage } from "@/pages/Integrations";
 import { MembersPage } from "@/pages/Members";
 import { PolicyAdvisorPage } from "@/pages/PolicyAdvisor";
 import { PortalDetailPage } from "@/pages/PortalDetail";
 import { PortalsPage } from "@/pages/Portals";
 import { ResolutionsPage } from "@/pages/ResolutionsPage";
 import { SolutionsPage } from "@/pages/Solutions";
-import { AcademyPage, FinancePage, GovernancePage } from "@/pages/stubs";
+import { TransparencyPage } from "@/pages/TransparencyPage";
+import { AcademyPage, GovernancePage } from "@/pages/stubs";
 import {
   Outlet,
   RouterProvider,
@@ -27,7 +30,7 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 
-// ─── Layout Component ─────────────────────────────────────────────────────────
+// ─── Layout Component ──────────────────────────────────────────────────────────────
 function Layout() {
   return (
     <LanguageProvider>
@@ -139,6 +142,16 @@ const portalDetailRoute = createRoute({
   path: "/portals/$councilId",
   component: PortalDetailPage,
 });
+const transparencyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/transparency",
+  component: TransparencyPage,
+});
+const integrationsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/integrations",
+  component: IntegrationsPage,
+});
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -159,6 +172,8 @@ const routeTree = rootRoute.addChildren([
   delegateDetailRoute,
   portalsRoute,
   portalDetailRoute,
+  transparencyRoute,
+  integrationsRoute,
 ]);
 
 const router = createRouter({ routeTree });

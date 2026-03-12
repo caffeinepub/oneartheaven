@@ -22,16 +22,16 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const LANGUAGE_FLAGS: Record<string, string> = {
-  en: "🇬🇧",
-  es: "🇪🇸",
-  fr: "🇫🇷",
-  ar: "🇸🇦",
-  zh: "🇨🇳",
-  pt: "🇧🇷",
-  hi: "🇮🇳",
-  sw: "🇰🇪",
-  ru: "🇷🇺",
-  de: "🇩🇪",
+  en: "\uD83C\uDDEC\uD83C\uDDE7",
+  es: "\uD83C\uDDEA\uD83C\uDDF8",
+  fr: "\uD83C\uDDEB\uD83C\uDDF7",
+  ar: "\uD83C\uDDF8\uD83C\uDDE6",
+  zh: "\uD83C\uDDE8\uD83C\uDDF3",
+  pt: "\uD83C\uDDE7\uD83C\uDDF7",
+  hi: "\uD83C\uDDEE\uD83C\uDDF3",
+  sw: "\uD83C\uDDF0\uD83C\uDDEA",
+  ru: "\uD83C\uDDF7\uD83C\uDDFA",
+  de: "\uD83C\uDDE9\uD83C\uDDEA",
 };
 
 const NAV_LINKS = [
@@ -43,6 +43,8 @@ const NAV_LINKS = [
   { label: "Community", path: "/community" as const },
   { label: "Academy", path: "/academy" as const },
   { label: "Finance", path: "/finance" as const },
+  { label: "Transparency", path: "/transparency" as const },
+  { label: "Integrations", path: "/integrations" as const },
 ];
 
 function truncatePrincipal(principal: string): string {
