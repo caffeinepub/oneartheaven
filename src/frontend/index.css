@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,6 +7,11 @@
 /* ONEartHeaven Design System — Deep Cosmos / Civilizational Gold */
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
   :root {
     --radius: 0.5rem;
 
@@ -64,6 +71,21 @@
     --teal: 0.6 0.14 195;
     --teal-bright: 0.72 0.16 190;
     --pearl: 0.97 0.01 95;
+
+    /* === GRADIENT TOKENS (reusable across all phases) === */
+    /* Hero gradients */
+    --gradient-hero-navy: linear-gradient(160deg, oklch(0.08 0.03 260) 0%, oklch(0.12 0.05 240) 50%, oklch(0.10 0.04 260) 100%);
+    --gradient-hero-teal: linear-gradient(160deg, oklch(0.08 0.03 260) 0%, oklch(0.12 0.06 200) 50%, oklch(0.10 0.04 225) 100%);
+    --gradient-hero-gold: linear-gradient(160deg, oklch(0.08 0.03 260) 0%, oklch(0.12 0.05 240) 40%, oklch(0.14 0.06 200) 100%);
+    --gradient-hero-green: linear-gradient(160deg, oklch(0.07 0.04 250) 0%, oklch(0.10 0.05 190) 50%, oklch(0.08 0.04 200) 100%);
+    --gradient-hero-indigo: linear-gradient(160deg, oklch(0.08 0.04 270) 0%, oklch(0.12 0.07 265) 50%, oklch(0.10 0.05 260) 100%);
+    /* Section gradients */
+    --gradient-section-alt: oklch(0.96 0.01 90);
+    --gradient-card: linear-gradient(135deg, oklch(0.18 0.04 260) 0%, oklch(0.16 0.06 260) 100%);
+    /* Accent gradients */
+    --gradient-gold: linear-gradient(135deg, oklch(0.72 0.16 75) 0%, oklch(0.82 0.18 85) 100%);
+    --gradient-teal: linear-gradient(135deg, oklch(0.55 0.12 195) 0%, oklch(0.65 0.16 190) 100%);
+    --gradient-gold-teal: linear-gradient(135deg, oklch(0.82 0.18 85) 0%, oklch(0.72 0.16 75) 40%, oklch(0.65 0.16 190) 100%);
   }
 
   .dark {
@@ -117,29 +139,113 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Sora', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+  }
+
+  /* ===== GLOBAL HEADING HIERARCHY ===== */
+  h1 {
+    font-family: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  h2 {
+    font-family: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-family: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  h4 {
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.4;
+  }
+
+  p {
+    line-height: 1.7;
   }
 }
 
 /* ===== COSMOS THEME LAYER ===== */
 @layer components {
+  /* ===== TYPOGRAPHY UTILITIES ===== */
+  .heading-hero {
+    font-family: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+  }
+
+  .heading-section {
+    font-family: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .heading-card {
+    font-family: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .heading-label {
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+
+  .body-lead {
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+
+  /* ===== COSMOS BACKGROUNDS ===== */
   .cosmos-bg {
     background: oklch(var(--cosmos-deep));
   }
 
+  .hero-navy {
+    background: var(--gradient-hero-navy);
+  }
+
+  .hero-teal {
+    background: var(--gradient-hero-teal);
+  }
+
+  .hero-green {
+    background: var(--gradient-hero-green);
+  }
+
+  .hero-indigo {
+    background: var(--gradient-hero-indigo);
+  }
+
+  /* ===== TEXT UTILITIES ===== */
   .gold-text {
     color: oklch(var(--gold));
   }
 
   .gold-gradient-text {
-    background: linear-gradient(
-      135deg,
-      oklch(var(--gold-bright)) 0%,
-      oklch(var(--gold)) 40%,
-      oklch(var(--teal-bright)) 100%
-    );
+    background: var(--gradient-gold-teal);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -149,6 +255,7 @@
     color: oklch(var(--teal));
   }
 
+  /* ===== CARD UTILITIES ===== */
   .cosmos-card {
     background: oklch(var(--cosmos-surface) / 0.9);
     border: 1px solid oklch(var(--gold-dim) / 0.25);
@@ -160,45 +267,8 @@
     box-shadow: 0 0 32px oklch(var(--gold) / 0.12), 0 8px 32px oklch(0.05 0.02 260 / 0.5);
   }
 
-  .hero-overlay {
-    background: linear-gradient(
-      160deg,
-      oklch(var(--cosmos-deep) / 0.92) 0%,
-      oklch(0.1 0.04 260 / 0.85) 40%,
-      oklch(0.12 0.05 220 / 0.75) 70%,
-      oklch(var(--cosmos-deep) / 0.95) 100%
-    );
-  }
-
-  .section-alt {
-    background: oklch(0.96 0.01 90);
-  }
-
-  .section-cosmos {
-    background: oklch(var(--cosmos-mid));
-  }
-
-  .btn-gold {
-    background: linear-gradient(135deg, oklch(var(--gold)) 0%, oklch(var(--gold-bright)) 100%);
-    color: oklch(0.1 0.02 260);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    transition: all 0.2s ease;
-  }
-
-  .btn-gold:hover {
-    box-shadow: 0 0 24px oklch(var(--gold) / 0.4);
-    transform: translateY(-1px);
-  }
-
-  .nav-glass {
-    background: oklch(var(--cosmos-deep) / 0.85);
-    backdrop-filter: blur(20px) saturate(1.5);
-    border-bottom: 1px solid oklch(var(--gold) / 0.15);
-  }
-
   .impact-card {
-    background: linear-gradient(135deg, oklch(var(--cosmos-surface)) 0%, oklch(0.16 0.06 260) 100%);
+    background: var(--gradient-card);
     border: 1px solid oklch(var(--gold-dim) / 0.3);
   }
 
@@ -215,6 +285,66 @@
     box-shadow: 0 20px 60px oklch(0.05 0.03 260 / 0.6), 0 0 40px oklch(var(--gold) / 0.08);
   }
 
+  /* ===== HERO OVERLAY ===== */
+  .hero-overlay {
+    background: linear-gradient(
+      160deg,
+      oklch(var(--cosmos-deep) / 0.92) 0%,
+      oklch(0.1 0.04 260 / 0.85) 40%,
+      oklch(0.12 0.05 220 / 0.75) 70%,
+      oklch(var(--cosmos-deep) / 0.95) 100%
+    );
+  }
+
+  /* ===== SECTION UTILITIES ===== */
+  .section-alt {
+    background: oklch(0.96 0.01 90);
+  }
+
+  .section-cosmos {
+    background: oklch(var(--cosmos-mid));
+  }
+
+  /* ===== BUTTON UTILITIES ===== */
+  .btn-gold {
+    background: var(--gradient-gold);
+    color: oklch(0.1 0.02 260);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+  }
+
+  .btn-gold:hover {
+    box-shadow: 0 0 24px oklch(var(--gold) / 0.4);
+    transform: translateY(-1px);
+  }
+
+  /* ===== NAV UTILITIES ===== */
+  .nav-glass {
+    background: oklch(var(--cosmos-deep) / 0.88);
+    backdrop-filter: blur(20px) saturate(1.5);
+    border-bottom: 1px solid oklch(var(--gold) / 0.15);
+  }
+
+  /* Active nav link indicator */
+  .nav-link-active {
+    position: relative;
+    color: oklch(var(--gold));
+  }
+
+  .nav-link-active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background: var(--gradient-gold);
+    border-radius: 9999px;
+  }
+
+  /* ===== COMPARISON UTILITIES ===== */
   .comparison-good {
     background: oklch(0.45 0.12 195 / 0.12);
     border-left: 3px solid oklch(var(--teal));
@@ -225,6 +355,7 @@
     border-left: 3px solid oklch(0.65 0.12 27);
   }
 
+  /* ===== SCROLL / MISC UTILITIES ===== */
   .scroll-indicator {
     animation: bounce-subtle 2s ease-in-out infinite;
   }
@@ -248,3 +379,47 @@
     opacity: 0.3;
   }
 }
+
+  /* ===== HERO GRID TEXTURE (standardized across all phase heroes) ===== */
+  .hero-grid-texture {
+    background-image:
+      linear-gradient(oklch(0.9 0.01 260 / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(0.9 0.01 260 / 0.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  /* ===== CARD POLISH UTILITIES ===== */
+  /* Universal card hover lift — add class "card-item" to any data card */
+  .card-item {
+    border-radius: 0.75rem; /* rounded-xl */
+    border: 1px solid oklch(1 0 0 / 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px oklch(0 0 0 / 0.35), 0 2px 8px oklch(0 0 0 / 0.2);
+    border-color: oklch(1 0 0 / 0.14);
+  }
+
+  /* Shimmer keyframe for skeletons */
+  @keyframes shimmer {
+    0%   { opacity: 0.5; }
+    50%  { opacity: 0.9; }
+    100% { opacity: 0.5; }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  /* Badge pill — uniform sizing across all phases */
+  .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;     /* text-xs */
+    font-weight: 600;
+    padding: 0.125rem 0.625rem; /* py-0.5 px-2.5 */
+    border-radius: 9999px;
+    line-height: 1.4;
+  }

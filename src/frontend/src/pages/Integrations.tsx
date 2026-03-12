@@ -309,8 +309,7 @@ export function IntegrationsPage() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="font-display font-bold leading-tight mb-5"
-            style={{ fontSize: "clamp(2.2rem, 5vw, 4.5rem)" }}
+            className="text-hero-xl font-display mb-5"
           >
             <span
               style={{
@@ -349,7 +348,8 @@ export function IntegrationsPage() {
                   .getElementById("endpoints")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="gap-2 font-semibold"
+              size="lg"
+              className="gap-2 font-semibold hover:scale-105 transition-transform"
               style={{
                 background: "oklch(0.55 0.14 195)",
                 color: "white",
@@ -626,7 +626,7 @@ export function IntegrationsPage() {
                       initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: idx * 0.05 }}
-                      className="rounded-xl p-5 flex flex-col gap-3 group transition-all duration-300 hover:translate-y-[-2px]"
+                      className="rounded-xl p-5 flex flex-col gap-3 group transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                       style={{
                         background: "oklch(var(--cosmos-surface) / 0.7)",
                         border: "1px solid oklch(0.2 0.04 260)",
@@ -1068,7 +1068,7 @@ export function IntegrationsPage() {
                       initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: idx * 0.06 }}
-                      className="rounded-xl p-5 flex flex-col gap-3 group transition-all duration-300 hover:translate-y-[-2px]"
+                      className="rounded-xl p-5 flex flex-col gap-3 group transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                       style={{
                         background: "oklch(var(--cosmos-surface) / 0.7)",
                         border: "1px solid oklch(0.2 0.04 260)",

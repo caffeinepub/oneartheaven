@@ -587,6 +587,11 @@ export function CommunityPage() {
               "radial-gradient(ellipse 50% 40% at 80% 80%, oklch(var(--gold) / 0.06) 0%, transparent 60%)",
           }}
         />
+        {/* Standardized grid texture */}
+        <div
+          className="absolute inset-0 pointer-events-none hero-grid-texture"
+          aria-hidden="true"
+        />
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
           <motion.div
@@ -615,8 +620,7 @@ export function CommunityPage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="font-display font-bold leading-tight mb-5"
-            style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
+            className="text-hero-xl font-display mb-5"
           >
             <span className="gold-gradient-text">ONEartHeaven™</span>
             <br />

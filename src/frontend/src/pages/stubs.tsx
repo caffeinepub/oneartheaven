@@ -10,7 +10,9 @@ import {
   Coins,
   Construction,
   Globe2,
+  GraduationCap,
   Layers,
+  Leaf,
   Network,
   ScrollText,
   Users,
@@ -111,6 +113,7 @@ type AvailableRoute =
   | "/community"
   | "/academy"
   | "/finance"
+  | "/sustainability"
   | "/transparency"
   | "/integrations";
 
@@ -211,11 +214,31 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     icon: Coins,
     title: "Economic & Finance",
     description:
-      "FinFracFran™ franchise network, fundraising campaigns, enterprise profiles, investment rounds, and treasury across 194 nations.",
+      "FinFracFran\u2122 franchise network, fundraising campaigns, enterprise profiles, investment rounds, and treasury across 194 nations.",
     link: "/finance",
-    phase: "Phase 10 — Live",
+    phase: "Phase 10 \u2014 Live",
     isAvailable: true,
     accentColor: "var(--gold)",
+  },
+  {
+    icon: Leaf,
+    title: "Sustainability & Impact",
+    description:
+      "17 SDG trackers, 142 global impact metrics, environmental intelligence from IPCC and UN-Habitat, and a nation progress leaderboard across 194 nations.",
+    link: "/sustainability",
+    phase: "Phase 8 \u2014 Live",
+    isAvailable: true,
+    accentColor: "var(--teal)",
+  },
+  {
+    icon: GraduationCap,
+    title: "Academy",
+    description:
+      "12 courses across governance, climate, health, and FinFracFran\u2122 tracks. Idea Incubator, training tracks, certifications, and FinFracFran\u2122 Academy programs for all levels.",
+    link: "/academy",
+    phase: "Phase 9 \u2014 Live",
+    isAvailable: true,
+    accentColor: "var(--gold-bright)",
   },
 ];
 
@@ -243,6 +266,11 @@ export function GovernancePage() {
             background:
               "radial-gradient(ellipse 45% 40% at 30% 70%, oklch(0.55 0.14 195 / 0.06) 0%, transparent 60%)",
           }}
+        />
+        {/* Standardized grid texture */}
+        <div
+          className="absolute inset-0 pointer-events-none hero-grid-texture"
+          aria-hidden="true"
         />
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
@@ -272,8 +300,7 @@ export function GovernancePage() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="font-display font-bold leading-tight mb-5"
-            style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
+            className="text-hero-xl font-display mb-5"
           >
             <span className="gold-gradient-text">Governance & Assembly</span>
           </motion.h1>
@@ -304,6 +331,24 @@ export function GovernancePage() {
             Resolution Tracker, AI Policy Advisor, and Delegate Registry are all
             live in Phase 2.
           </motion.p>
+
+          {/* Hero CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.6 }}
+            className="flex flex-wrap gap-3 justify-center mt-8"
+          >
+            <a href="#portals">
+              <Button
+                size="lg"
+                className="btn-gold gap-2 hover:scale-105 transition-transform"
+                data-ocid="governance.explore.primary_button"
+              >
+                Explore Governance Portals
+              </Button>
+            </a>
+          </motion.div>
         </div>
       </section>
 
@@ -430,6 +475,7 @@ export function GovernancePage() {
 
                   {portal.isAvailable ? (
                     <div
+                      data-ocid={`governance.portal.link.${idx + 1}`}
                       className="inline-flex items-center gap-1.5 text-sm font-semibold group-hover:gap-2.5 transition-all duration-200"
                       style={{ color: `oklch(${portal.accentColor})` }}
                     >
@@ -455,7 +501,7 @@ export function GovernancePage() {
                 <Link
                   key={portal.title}
                   to={portal.link}
-                  data-ocid={`governance.portal.link.${idx + 1}`}
+                  data-ocid={`governance.portal.card.${idx + 1}`}
                   className="block h-full"
                 >
                   {cardContent}

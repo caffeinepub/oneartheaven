@@ -66,7 +66,7 @@ export default {
           border: "oklch(var(--sidebar-border))",
           ring: "oklch(var(--sidebar-ring))",
         },
-        // ONEartHeaven custom
+        // ONEartHeaven custom palette
         cosmos: {
           deep: "oklch(var(--cosmos-deep))",
           mid: "oklch(var(--cosmos-mid))",
@@ -84,9 +84,25 @@ export default {
         pearl: "oklch(var(--pearl))",
       },
       fontFamily: {
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
-        body: ['"Sora"', '"Segoe UI"', 'system-ui', 'sans-serif'],
+        // Display font — Bricolage Grotesque: expressive grotesque for heroes + headings
+        display: ['"Bricolage Grotesque"', '"Segoe UI"', 'system-ui', 'sans-serif'],
+        // Body font — Plus Jakarta Sans: polished geometric sans for UI text
+        body: ['"Plus Jakarta Sans"', '"Segoe UI"', 'system-ui', 'sans-serif'],
+        // Mono — for code/data displays
         mono: ['"JetBrains Mono"', 'monospace'],
+        // Convenience aliases used in utility classes
+        sans: ['"Plus Jakarta Sans"', '"Segoe UI"', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        // Hero scale
+        'hero-xl': ['clamp(2.75rem, 6vw, 5rem)', { lineHeight: '1.05', letterSpacing: '-0.03em', fontWeight: '800' }],
+        'hero-lg': ['clamp(2.25rem, 5vw, 4rem)', { lineHeight: '1.08', letterSpacing: '-0.03em', fontWeight: '800' }],
+        'hero-md': ['clamp(1.875rem, 4vw, 3rem)', { lineHeight: '1.1', letterSpacing: '-0.025em', fontWeight: '700' }],
+        // Section scale
+        'section-lg': ['clamp(1.5rem, 3vw, 2.25rem)', { lineHeight: '1.2', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'section-md': ['clamp(1.25rem, 2.5vw, 1.875rem)', { lineHeight: '1.25', letterSpacing: '-0.015em', fontWeight: '600' }],
+        // Card scale
+        'card-title': ['clamp(1rem, 1.5vw, 1.25rem)', { lineHeight: '1.35', letterSpacing: '-0.01em', fontWeight: '600' }],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -98,6 +114,18 @@ export default {
         gold: "0 0 24px oklch(0.72 0.16 75 / 0.35)",
         cosmos: "0 20px 60px oklch(0.05 0.03 260 / 0.5)",
         "inner-gold": "inset 0 0 20px oklch(0.72 0.16 75 / 0.08)",
+      },
+      backgroundImage: {
+        // Registered as Tailwind utilities for use via bg-gold-gradient, etc.
+        "gold-gradient": "linear-gradient(135deg, oklch(0.72 0.16 75), oklch(0.82 0.18 85))",
+        "cosmos-gradient": "linear-gradient(160deg, oklch(0.08 0.03 260) 0%, oklch(0.12 0.05 240) 50%, oklch(0.1 0.04 260) 100%)",
+        "teal-gradient": "linear-gradient(135deg, oklch(0.55 0.12 195), oklch(0.65 0.16 190))",
+        "gold-teal-gradient": "linear-gradient(135deg, oklch(0.82 0.18 85) 0%, oklch(0.72 0.16 75) 40%, oklch(0.65 0.16 190) 100%)",
+        // Hero variants registered for component use
+        "hero-navy": "linear-gradient(160deg, oklch(0.08 0.03 260) 0%, oklch(0.12 0.05 240) 50%, oklch(0.10 0.04 260) 100%)",
+        "hero-teal": "linear-gradient(160deg, oklch(0.08 0.03 260) 0%, oklch(0.12 0.06 200) 50%, oklch(0.10 0.04 225) 100%)",
+        "hero-green": "linear-gradient(160deg, oklch(0.07 0.04 250) 0%, oklch(0.10 0.05 190) 50%, oklch(0.08 0.04 200) 100%)",
+        "hero-indigo": "linear-gradient(160deg, oklch(0.08 0.04 270) 0%, oklch(0.12 0.07 265) 50%, oklch(0.10 0.05 260) 100%)",
       },
       keyframes: {
         "accordion-down": {
@@ -127,11 +155,6 @@ export default {
         "count-up": "count-up 0.6s ease-out",
         shimmer: "shimmer 2.5s linear infinite",
         "pulse-gold": "pulse-gold 3s ease-in-out infinite",
-      },
-      backgroundImage: {
-        "gold-gradient": "linear-gradient(135deg, oklch(0.72 0.16 75), oklch(0.82 0.18 85))",
-        "cosmos-gradient": "linear-gradient(160deg, oklch(0.08 0.03 260) 0%, oklch(0.12 0.05 240) 50%, oklch(0.1 0.04 260) 100%)",
-        "teal-gradient": "linear-gradient(135deg, oklch(0.55 0.12 195), oklch(0.65 0.16 190))",
       },
     },
   },

@@ -2652,6 +2652,11 @@ export function TransparencyPage() {
               "radial-gradient(ellipse 70% 60% at 50% 40%, oklch(0.55 0.22 195 / 0.09) 0%, transparent 65%), radial-gradient(ellipse 40% 40% at 80% 70%, oklch(0.72 0.16 75 / 0.06) 0%, transparent 60%)",
           }}
         />
+        {/* Standardized grid texture */}
+        <div
+          className="absolute inset-0 pointer-events-none hero-grid-texture"
+          aria-hidden="true"
+        />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -2676,8 +2681,7 @@ export function TransparencyPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="font-display font-bold leading-tight mb-5"
-            style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
+            className="text-hero-xl font-display mb-5"
           >
             <span style={{ color: "oklch(var(--pearl))" }}>
               Radical Transparency.

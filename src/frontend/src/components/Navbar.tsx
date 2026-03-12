@@ -16,8 +16,16 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import { useGetSupportedLanguages } from "@/hooks/useQueries";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronDown, Copy, Globe, LogOut, Menu, Wallet } from "lucide-react";
-import { motion } from "motion/react";
+import {
+  ChevronDown,
+  Copy,
+  Globe,
+  LogOut,
+  Menu,
+  Wallet,
+  X,
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -43,13 +51,13 @@ const NAV_LINKS = [
   { label: "Community", path: "/community" as const },
   { label: "Academy", path: "/academy" as const },
   { label: "Finance", path: "/finance" as const },
+  { label: "Sustainability", path: "/sustainability" as const },
   { label: "Transparency", path: "/transparency" as const },
   { label: "Integrations", path: "/integrations" as const },
 ];
 
-function truncatePrincipal(principal: string): string {
-  if (principal.length <= 12) return principal;
-  return `${principal.slice(0, 6)}\u2026${principal.slice(-4)}`;
+function truncatePrincipal(p: string) {
+  return p.length <= 12 ? p : `${p.slice(0, 6)}\u2026${p.slice(-4)}`;
 }
 
 export function Navbar() {
@@ -97,8 +105,8 @@ export function Navbar() {
           </span>
         </Link>
 
-        {/* Center Nav Links — Desktop */}
-        <div className="hidden lg:flex items-center gap-1">
+        {/* Desktop nav */}
+        <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center overflow-x-auto">
           {NAV_LINKS.map((link) => {
             const active = currentPath === link.path;
             return (
@@ -106,27 +114,34 @@ export function Navbar() {
                 key={link.path}
                 to={link.path}
                 data-ocid={`nav.${link.label.toLowerCase()}.link`}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                className={`relative px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap ${
                   active
-                    ? "text-[oklch(var(--gold))] bg-[oklch(var(--gold)/0.1)]"
-                    : "text-[oklch(0.75_0.02_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+                    ? "text-[oklch(var(--gold))]"
+                    : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
                 }`}
               >
                 {link.label}
+                {active && (
+                  <motion.span
+                    layoutId="nav-active-indicator"
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/5 h-0.5 rounded-full"
+                    style={{ background: "var(--gradient-gold)" }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
               </Link>
             );
           })}
         </div>
 
-        {/* Right Controls */}
+        {/* Right controls */}
         <div className="flex items-center gap-2 shrink-0">
-          {/* Language Selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
-                className="hidden sm:flex items-center gap-1.5 text-[oklch(0.75_0.02_260)] hover:text-[oklch(var(--gold))]"
+                className="hidden sm:flex items-center gap-1.5 text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))]"
                 data-ocid="nav.language.select"
               >
                 <Globe className="h-4 w-4" />
@@ -153,7 +168,7 @@ export function Navbar() {
                   }`}
                 >
                   {LANGUAGE_FLAGS[lang.code] ?? "\uD83C\uDF10"}{" "}
-                  {lang.nativeName}{" "}
+                  {lang.nativeName}
                   <span className="ml-auto text-xs opacity-50">
                     {lang.code.toUpperCase()}
                   </span>
@@ -162,7 +177,6 @@ export function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Wallet Connect Button */}
           {isConnected ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -186,16 +200,14 @@ export function Navbar() {
                   className="cursor-pointer text-[oklch(0.8_0.02_260)]"
                   data-ocid="nav.wallet.copy.button"
                 >
-                  <Copy className="h-4 w-4 mr-2" />
-                  Copy Principal ID
+                  <Copy className="h-4 w-4 mr-2" /> Copy Principal ID
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={clear}
                   className="cursor-pointer text-[oklch(0.7_0.15_27)]"
                   data-ocid="nav.wallet.disconnect.button"
                 >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Disconnect
+                  <LogOut className="h-4 w-4 mr-2" /> Disconnect
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -212,63 +224,119 @@ export function Navbar() {
             </Button>
           )}
 
-          {/* Mobile Hamburger */}
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden text-[oklch(0.75_0.02_260)]"
-                data-ocid="nav.mobile_menu.button"
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent
-              side="right"
-              className="bg-[oklch(var(--cosmos-deep))] border-l border-[oklch(var(--gold)/0.15)] w-72"
+          {/* Mobile menu trigger — plain button for custom animated drawer */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg transition-colors text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.5)]"
+            aria-label="Open navigation menu"
+            data-ocid="nav.mobile_menu.button"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile drawer overlay */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+              onClick={() => setMobileOpen(false)}
+              aria-hidden="true"
+            />
+
+            {/* Drawer panel */}
+            <motion.div
+              key="drawer"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed top-0 right-0 bottom-0 z-50 w-72 flex flex-col lg:hidden"
+              style={{
+                background: "oklch(var(--cosmos-deep))",
+                borderLeft: "1px solid oklch(var(--gold) / 0.15)",
+              }}
               data-ocid="nav.mobile_menu.sheet"
             >
-              <SheetHeader className="mb-6">
-                <SheetTitle className="flex items-center gap-2">
-                  <span
-                    className="font-display font-bold text-base"
-                    style={{ color: "oklch(var(--gold))" }}
-                  >
-                    ONEartHeaven
-                  </span>
-                </SheetTitle>
-              </SheetHeader>
-
-              <div className="flex flex-col gap-1">
-                {NAV_LINKS.map((link) => {
-                  const active = currentPath === link.path;
-                  return (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      onClick={() => setMobileOpen(false)}
-                      data-ocid={`nav.mobile.${link.label.toLowerCase()}.link`}
-                      className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        active
-                          ? "text-[oklch(var(--gold))] bg-[oklch(var(--gold)/0.1)]"
-                          : "text-[oklch(0.75_0.02_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  );
-                })}
+              {/* Drawer header */}
+              <div
+                className="flex items-center justify-between px-5 h-16 shrink-0"
+                style={{ borderBottom: "1px solid oklch(var(--gold) / 0.10)" }}
+              >
+                <span
+                  className="font-display font-bold text-base"
+                  style={{ color: "oklch(var(--gold))" }}
+                >
+                  ONEartHeaven™
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors text-[oklch(0.55_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.5)]"
+                  aria-label="Close navigation menu"
+                  data-ocid="nav.mobile_menu.close_button"
+                >
+                  <X className="h-4 w-4" />
+                </button>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-[oklch(var(--gold)/0.12)] flex flex-col gap-3">
-                {/* Mobile Language Selector */}
+              {/* Nav links */}
+              <div className="flex-1 overflow-y-auto py-4 px-3">
+                <div className="flex flex-col gap-0.5">
+                  {NAV_LINKS.map((link, i) => {
+                    const active = currentPath === link.path;
+                    return (
+                      <motion.div
+                        key={link.path}
+                        initial={{ opacity: 0, x: 16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.04, duration: 0.2 }}
+                      >
+                        <Link
+                          to={link.path}
+                          onClick={() => setMobileOpen(false)}
+                          data-ocid={`nav.mobile.${link.label.toLowerCase()}.link`}
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 min-h-[48px] ${
+                            active
+                              ? "text-[oklch(var(--gold))] bg-[oklch(var(--gold)/0.1)]"
+                              : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)] active:bg-[oklch(var(--gold)/0.12)]"
+                          }`}
+                        >
+                          {active && (
+                            <span
+                              className="w-1 h-4 rounded-full shrink-0"
+                              style={{ background: "var(--gradient-gold)" }}
+                            />
+                          )}
+                          {!active && <span className="w-1 shrink-0" />}
+                          {link.label}
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Bottom controls */}
+              <div
+                className="px-4 py-5 flex flex-col gap-3 shrink-0"
+                style={{ borderTop: "1px solid oklch(var(--gold) / 0.10)" }}
+              >
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="justify-start gap-2 text-[oklch(0.75_0.02_260)]"
+                      className="justify-start gap-2 text-[oklch(0.65_0.03_260)] w-full"
                       data-ocid="nav.mobile.language.select"
                     >
                       <Globe className="h-4 w-4" />
@@ -285,7 +353,7 @@ export function Navbar() {
                       <DropdownMenuItem
                         key={lang.code}
                         onClick={() => setSelectedLanguage(lang.code)}
-                        className="cursor-pointer text-sm text-[oklch(0.8_0.02_260)]"
+                        className="cursor-pointer text-sm text-[oklch(0.8_0.02_260)] min-h-[40px]"
                       >
                         {LANGUAGE_FLAGS[lang.code] ?? "\uD83C\uDF10"}{" "}
                         {lang.nativeName}
@@ -294,7 +362,6 @@ export function Navbar() {
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* Mobile Wallet Button */}
                 {isConnected ? (
                   <Button
                     size="sm"
@@ -303,8 +370,7 @@ export function Navbar() {
                     className="border-[oklch(0.7_0.15_27/0.4)] text-[oklch(0.7_0.15_27)] justify-start gap-2"
                     data-ocid="nav.mobile.wallet.disconnect.button"
                   >
-                    <LogOut className="h-4 w-4" />
-                    Disconnect Wallet
+                    <LogOut className="h-4 w-4" /> Disconnect Wallet
                   </Button>
                 ) : (
                   <Button
@@ -314,7 +380,7 @@ export function Navbar() {
                       setMobileOpen(false);
                     }}
                     disabled={isLoggingIn}
-                    className="btn-gold gap-2"
+                    className="btn-gold gap-2 w-full"
                     data-ocid="nav.mobile.connect_wallet.button"
                   >
                     <Wallet className="h-4 w-4" />
@@ -322,10 +388,10 @@ export function Navbar() {
                   </Button>
                 )}
               </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

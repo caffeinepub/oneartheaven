@@ -4,6 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { AboutPage } from "@/pages/About";
+import { AcademyPage } from "@/pages/Academy";
 import { AssemblyPage } from "@/pages/Assembly";
 import { CharterPage } from "@/pages/Charter";
 import { CommunityPage } from "@/pages/Community";
@@ -20,8 +21,9 @@ import { PortalDetailPage } from "@/pages/PortalDetail";
 import { PortalsPage } from "@/pages/Portals";
 import { ResolutionsPage } from "@/pages/ResolutionsPage";
 import { SolutionsPage } from "@/pages/Solutions";
+import { SustainabilityPage } from "@/pages/Sustainability";
 import { TransparencyPage } from "@/pages/TransparencyPage";
-import { AcademyPage, GovernancePage } from "@/pages/stubs";
+import { GovernancePage } from "@/pages/stubs";
 import {
   Outlet,
   RouterProvider,
@@ -30,7 +32,6 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 
-// ─── Layout Component ──────────────────────────────────────────────────────────────
 function Layout() {
   return (
     <LanguageProvider>
@@ -49,9 +50,7 @@ function Layout() {
   );
 }
 
-// ─── Routes ────────────────────────────────────────────────────────────────────
 const rootRoute = createRootRoute({ component: Layout });
-
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
@@ -91,6 +90,11 @@ const financeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/finance",
   component: FinancePage,
+});
+const sustainabilityRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/sustainability",
+  component: SustainabilityPage,
 });
 const charterRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -162,6 +166,7 @@ const routeTree = rootRoute.addChildren([
   communityRoute,
   academyRoute,
   financeRoute,
+  sustainabilityRoute,
   charterRoute,
   assemblyRoute,
   councilsRoute,

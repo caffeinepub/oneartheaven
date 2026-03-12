@@ -299,6 +299,11 @@ export function DelegatesPage() {
               "radial-gradient(ellipse 40% 35% at 80% 60%, oklch(0.55 0.14 195 / 0.05) 0%, transparent 60%)",
           }}
         />
+        {/* Standardized grid texture */}
+        <div
+          className="absolute inset-0 pointer-events-none hero-grid-texture"
+          aria-hidden="true"
+        />
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
           {/* Phase badge */}
@@ -328,11 +333,8 @@ export function DelegatesPage() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="font-display font-bold leading-tight mb-5"
-            style={{
-              fontSize: "clamp(2rem, 5vw, 4.5rem)",
-              color: "oklch(var(--pearl))",
-            }}
+            className="text-hero-xl font-display mb-5"
+            style={{ color: "oklch(var(--pearl))" }}
           >
             Meet the{" "}
             <span

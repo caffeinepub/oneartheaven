@@ -719,6 +719,11 @@ export function ResolutionsPage() {
               "radial-gradient(ellipse 45% 40% at 75% 70%, oklch(0.72 0.16 75 / 0.05) 0%, transparent 60%)",
           }}
         />
+        {/* Standardized grid texture */}
+        <div
+          className="absolute inset-0 pointer-events-none hero-grid-texture"
+          aria-hidden="true"
+        />
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
           <motion.div
@@ -747,8 +752,7 @@ export function ResolutionsPage() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="font-display font-bold leading-tight mb-5"
-            style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
+            className="text-hero-xl font-display mb-5"
           >
             <span className="gold-gradient-text">Resolution Tracker</span>
           </motion.h1>

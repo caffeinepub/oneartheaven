@@ -318,8 +318,7 @@ function CharterHero() {
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="font-display font-bold leading-tight mb-5"
-          style={{ fontSize: "clamp(2rem, 5vw, 4.2rem)" }}
+          className="text-hero-xl font-display mb-5"
         >
           <span className="gold-gradient-text">
             The ONEartHeaven Founding Charter

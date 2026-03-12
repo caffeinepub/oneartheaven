@@ -33,60 +33,101 @@ export function PortalsPage() {
       {/* Hero */}
       <section
         data-ocid="portals.hero.section"
-        className="relative py-24 px-4 overflow-hidden"
+        className="relative overflow-hidden py-20 sm:py-28"
       >
-        <div className="absolute inset-0 pointer-events-none">
-          <div
-            className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-20"
-            style={{ background: "oklch(0.72 0.18 75)" }}
-          />
-          <div
-            className="absolute bottom-0 right-1/4 w-72 h-72 rounded-full blur-3xl opacity-15"
-            style={{ background: "oklch(0.65 0.18 145)" }}
-          />
-        </div>
-        <div className="max-w-5xl mx-auto text-center relative z-10">
+        {/* Background glows */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 70% 60% at 50% 35%, oklch(0.72 0.16 75 / 0.08) 0%, transparent 65%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 40% 35% at 80% 70%, oklch(0.65 0.18 145 / 0.06) 0%, transparent 60%)",
+          }}
+        />
+        {/* Standardized grid texture */}
+        <div
+          className="absolute inset-0 pointer-events-none hero-grid-texture"
+          aria-hidden="true"
+        />
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
+          {/* Phase badge */}
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border mb-8"
+            style={{
+              borderColor: "oklch(0.72 0.16 75 / 0.35)",
+              background: "oklch(0.72 0.16 75 / 0.08)",
+            }}
           >
-            <Badge
-              className="mb-4 text-xs font-semibold tracking-widest uppercase border"
-              style={{
-                borderColor: "oklch(0.72 0.18 75 / 0.5)",
-                color: "oklch(0.72 0.18 75)",
-                background: "oklch(0.72 0.18 75 / 0.1)",
-              }}
+            <Zap
+              className="h-3.5 w-3.5"
+              style={{ color: "oklch(0.72 0.16 75)" }}
+            />
+            <span
+              className="text-xs font-semibold tracking-widest uppercase"
+              style={{ color: "oklch(0.72 0.16 75)" }}
             >
               Phase 4 — Thematic Action Portals
-            </Badge>
+            </span>
           </motion.div>
+
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-5xl md:text-6xl font-bold mb-4 gold-gradient-text"
-            style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="text-hero-xl font-display mb-5 gold-gradient-text"
           >
             Take Action Now
           </motion.h1>
+
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-lg text-white/70 max-w-2xl mx-auto mb-8"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.35 }}
+            className="text-lg sm:text-xl max-w-2xl mx-auto mb-8 leading-relaxed"
+            style={{ color: "oklch(0.72 0.03 260)" }}
           >
             Nine thematic action portals — where global policy becomes local
             reality. Join initiatives, access open resources, and replicate
             proven solutions through FinFracFran™.
           </motion.p>
 
-          {/* Stats */}
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.45 }}
+            className="flex flex-wrap gap-3 justify-center mb-10"
+          >
+            <Button
+              size="lg"
+              className="btn-gold gap-2 hover:scale-105 transition-transform"
+              data-ocid="portals.explore.primary_button"
+              onClick={() =>
+                document
+                  .getElementById("portals-grid")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              <Globe className="h-4 w-4" />
+              Explore Portals
+            </Button>
+          </motion.div>
+
+          {/* Stats Bar */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.5 }}
             className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
           >
             {[
@@ -94,32 +135,55 @@ export function PortalsPage() {
                 icon: Users,
                 label: "Volunteers",
                 value: formatNum(stats.totalVolunteers),
+                delay: 0.5,
               },
-              { icon: Globe, label: "Nations", value: stats.totalNations },
+              {
+                icon: Globe,
+                label: "Nations",
+                value: stats.totalNations,
+                delay: 0.6,
+              },
               {
                 icon: Zap,
                 label: "Initiatives",
                 value: stats.totalInitiatives,
+                delay: 0.7,
               },
               {
                 icon: Building2,
                 label: "Partners",
                 value: stats.totalPartners,
+                delay: 0.8,
               },
-            ].map(({ icon: Icon, label, value }) => (
-              <div
+            ].map(({ icon: Icon, label, value }, idx) => (
+              <motion.div
                 key={label}
-                className="rounded-xl border border-white/10 bg-white/5 py-4 px-3 backdrop-blur-sm"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: idx * 0.1 + 0.5 }}
+                className="rounded-2xl px-4 py-4 flex flex-col gap-1"
+                style={{
+                  background: "oklch(0.12 0.04 260 / 0.8)",
+                  border: "1px solid oklch(0.72 0.16 75 / 0.15)",
+                }}
               >
                 <Icon
-                  className="w-5 h-5 mx-auto mb-1"
-                  style={{ color: "oklch(0.72 0.18 75)" }}
+                  className="h-4 w-4 mx-auto mb-1"
+                  style={{ color: "oklch(0.72 0.16 75)" }}
                 />
-                <div className="text-2xl font-bold text-white">{value}</div>
-                <div className="text-xs text-white/50 uppercase tracking-wide">
+                <div
+                  className="font-display text-2xl font-bold text-center"
+                  style={{ color: "oklch(var(--pearl))" }}
+                >
+                  {value}
+                </div>
+                <div
+                  className="text-xs text-center uppercase tracking-wide"
+                  style={{ color: "oklch(0.55 0.04 260)" }}
+                >
                   {label}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </div>

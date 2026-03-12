@@ -945,7 +945,7 @@ function InvestmentRoundsSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.05 }}
-                  className="rounded-2xl p-6 flex flex-col gap-4 transition-all hover:translate-y-[-2px]"
+                  className="rounded-2xl p-6 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                   style={{
                     background: "oklch(0.13 0.02 260)",
                     border: `1px solid ${typeColor.border}`,
@@ -1533,8 +1533,7 @@ export function FinancePage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.08 }}
-            className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-none mb-6"
-            style={{ fontFamily: "'Cabinet Grotesk', sans-serif" }}
+            className="text-hero-xl font-display mb-6"
           >
             <span style={{ color: "oklch(var(--pearl))" }}>Invest. </span>
             <span
@@ -1572,7 +1571,7 @@ export function FinancePage() {
             <Button
               data-ocid="finance.explore_franchises.button"
               size="lg"
-              className="font-semibold gap-2"
+              className="font-semibold gap-2 hover:scale-105 transition-transform"
               style={{
                 background: "oklch(0.65 0.18 142)",
                 color: "oklch(0.08 0.03 260)",
@@ -3131,7 +3130,7 @@ function WalletsSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.08 }}
-                  className="rounded-2xl border p-6 flex flex-col gap-4"
+                  className="rounded-2xl border p-6 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer"
                   style={{
                     background: "oklch(0.13 0.04 260)",
                     borderColor: "oklch(0.22 0.03 260)",
@@ -3480,7 +3479,7 @@ function FinFracFranFinanceSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="rounded-2xl border p-6 flex flex-col gap-4"
+              className="rounded-2xl border p-6 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               style={{
                 background: "oklch(0.13 0.04 260)",
                 borderColor: "oklch(0.22 0.03 260)",

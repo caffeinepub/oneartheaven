@@ -408,10 +408,7 @@ export function PortalDetailPage() {
                 >
                   Phase 4 — Action Portal
                 </Badge>
-                <h1
-                  className="text-4xl md:text-5xl font-bold text-white"
-                  style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-                >
+                <h1 className="text-hero-lg font-display text-white">
                   {portal.name}
                 </h1>
               </div>

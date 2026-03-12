@@ -515,6 +515,11 @@ export function AssemblyPage() {
               "radial-gradient(ellipse 40% 35% at 80% 65%, oklch(0.72 0.16 75 / 0.06) 0%, transparent 60%)",
           }}
         />
+        {/* Standardized grid texture */}
+        <div
+          className="absolute inset-0 pointer-events-none hero-grid-texture"
+          aria-hidden="true"
+        />
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
           {/* Phase badge */}
@@ -545,8 +550,7 @@ export function AssemblyPage() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="font-display font-bold leading-tight mb-5"
-            style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
+            className="text-hero-xl font-display mb-5"
           >
             <span
               style={{
@@ -624,7 +628,8 @@ export function AssemblyPage() {
             <Button
               data-ocid="assembly.submit.open_modal_button"
               onClick={() => assembly.setSubmitDialogOpen(true)}
-              className="gap-2 font-semibold"
+              size="lg"
+              className="gap-2 font-semibold hover:scale-105 transition-transform"
               style={{
                 background:
                   "linear-gradient(135deg, oklch(0.55 0.18 200) 0%, oklch(0.48 0.16 220) 100%)",
