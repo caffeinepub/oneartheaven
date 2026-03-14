@@ -89,6 +89,10 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface UserApprovalInfo {
+    status: ApprovalStatus;
+    principal: Principal;
+}
 export interface MemberEntity {
     id: bigint;
     region: MemberRegion;
@@ -124,6 +128,11 @@ export interface PlatformStats {
 }
 export interface UserProfile {
     name: string;
+}
+export enum ApprovalStatus {
+    pending = "pending",
+    approved = "approved",
+    rejected = "rejected"
 }
 export enum MemberRegion {
     europe = "europe",
@@ -177,13 +186,17 @@ export interface backendInterface {
     getSupportedLanguages(): Promise<Array<Language>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    isCallerApproved(): Promise<boolean>;
+    listApprovals(): Promise<Array<UserApprovalInfo>>;
     removeAnnouncement(id: bigint): Promise<void>;
     removeMember(id: bigint): Promise<void>;
+    requestApproval(): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    setApproval(user: Principal, status: ApprovalStatus): Promise<void>;
     updateMemberStatus(id: bigint, status: MemberStatus): Promise<void>;
     updateStat(statType: StatType, value: bigint): Promise<void>;
 }
-import type { MemberEntity as _MemberEntity, MemberRegion as _MemberRegion, MemberStatus as _MemberStatus, MemberType as _MemberType, StatType as _StatType, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { ApprovalStatus as _ApprovalStatus, MemberEntity as _MemberEntity, MemberRegion as _MemberRegion, MemberStatus as _MemberStatus, MemberType as _MemberType, StatType as _StatType, UserApprovalInfo as _UserApprovalInfo, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -382,6 +395,34 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async isCallerApproved(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.isCallerApproved();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.isCallerApproved();
+            return result;
+        }
+    }
+    async listApprovals(): Promise<Array<UserApprovalInfo>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listApprovals();
+                return from_candid_vec_n22(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listApprovals();
+            return from_candid_vec_n22(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async removeAnnouncement(arg0: bigint): Promise<void> {
         if (this.processError) {
             try {
@@ -410,6 +451,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async requestApproval(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.requestApproval();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.requestApproval();
+            return result;
+        }
+    }
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
@@ -421,6 +476,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.saveCallerUserProfile(arg0);
+            return result;
+        }
+    }
+    async setApproval(arg0: Principal, arg1: ApprovalStatus): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setApproval(arg0, to_candid_ApprovalStatus_n27(this._uploadFile, this._downloadFile, arg1));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setApproval(arg0, to_candid_ApprovalStatus_n27(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
@@ -441,17 +510,20 @@ export class Backend implements backendInterface {
     async updateStat(arg0: StatType, arg1: bigint): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateStat(to_candid_StatType_n22(this._uploadFile, this._downloadFile, arg0), arg1);
+                const result = await this.actor.updateStat(to_candid_StatType_n29(this._uploadFile, this._downloadFile, arg0), arg1);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateStat(to_candid_StatType_n22(this._uploadFile, this._downloadFile, arg0), arg1);
+            const result = await this.actor.updateStat(to_candid_StatType_n29(this._uploadFile, this._downloadFile, arg0), arg1);
             return result;
         }
     }
+}
+function from_candid_ApprovalStatus_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ApprovalStatus): ApprovalStatus {
+    return from_candid_variant_n26(_uploadFile, _downloadFile, value);
 }
 function from_candid_MemberEntity_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _MemberEntity): MemberEntity {
     return from_candid_record_n14(_uploadFile, _downloadFile, value);
@@ -464,6 +536,9 @@ function from_candid_MemberStatus_n17(_uploadFile: (file: ExternalBlob) => Promi
 }
 function from_candid_MemberType_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _MemberType): MemberType {
     return from_candid_variant_n20(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserApprovalInfo_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserApprovalInfo): UserApprovalInfo {
+    return from_candid_record_n24(_uploadFile, _downloadFile, value);
 }
 function from_candid_UserRole_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
     return from_candid_variant_n11(_uploadFile, _downloadFile, value);
@@ -511,6 +586,18 @@ function from_candid_record_n14(_uploadFile: (file: ExternalBlob) => Promise<Uin
         joinedDate: value.joinedDate,
         memberType: from_candid_MemberType_n19(_uploadFile, _downloadFile, value.memberType),
         contactEmail: value.contactEmail
+    };
+}
+function from_candid_record_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    status: _ApprovalStatus;
+    principal: Principal;
+}): {
+    status: ApprovalStatus;
+    principal: Principal;
+} {
+    return {
+        status: from_candid_ApprovalStatus_n25(_uploadFile, _downloadFile, value.status),
+        principal: value.principal
     };
 }
 function from_candid_variant_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
@@ -567,8 +654,23 @@ function from_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): MemberType {
     return "ngo" in value ? MemberType.ngo : "nation" in value ? MemberType.nation : "city" in value ? MemberType.city : "community" in value ? MemberType.community : "individual" in value ? MemberType.individual : "cooperative" in value ? MemberType.cooperative : "corporate" in value ? MemberType.corporate : value;
 }
+function from_candid_variant_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    pending: null;
+} | {
+    approved: null;
+} | {
+    rejected: null;
+}): ApprovalStatus {
+    return "pending" in value ? ApprovalStatus.pending : "approved" in value ? ApprovalStatus.approved : "rejected" in value ? ApprovalStatus.rejected : value;
+}
 function from_candid_vec_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_MemberEntity>): Array<MemberEntity> {
     return value.map((x)=>from_candid_MemberEntity_n13(_uploadFile, _downloadFile, x));
+}
+function from_candid_vec_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_UserApprovalInfo>): Array<UserApprovalInfo> {
+    return value.map((x)=>from_candid_UserApprovalInfo_n23(_uploadFile, _downloadFile, x));
+}
+function to_candid_ApprovalStatus_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ApprovalStatus): _ApprovalStatus {
+    return to_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
 function to_candid_MemberRegion_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: MemberRegion): _MemberRegion {
     return to_candid_variant_n4(_uploadFile, _downloadFile, value);
@@ -579,8 +681,8 @@ function to_candid_MemberStatus_n5(_uploadFile: (file: ExternalBlob) => Promise<
 function to_candid_MemberType_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: MemberType): _MemberType {
     return to_candid_variant_n2(_uploadFile, _downloadFile, value);
 }
-function to_candid_StatType_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: StatType): _StatType {
-    return to_candid_variant_n23(_uploadFile, _downloadFile, value);
+function to_candid_StatType_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: StatType): _StatType {
+    return to_candid_variant_n30(_uploadFile, _downloadFile, value);
 }
 function to_candid_UserRole_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n8(_uploadFile, _downloadFile, value);
@@ -616,7 +718,22 @@ function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         corporate: null
     } : value;
 }
-function to_candid_variant_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: StatType): {
+function to_candid_variant_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ApprovalStatus): {
+    pending: null;
+} | {
+    approved: null;
+} | {
+    rejected: null;
+} {
+    return value == ApprovalStatus.pending ? {
+        pending: null
+    } : value == ApprovalStatus.approved ? {
+        approved: null
+    } : value == ApprovalStatus.rejected ? {
+        rejected: null
+    } : value;
+}
+function to_candid_variant_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: StatType): {
     members: null;
 } | {
     communities: null;

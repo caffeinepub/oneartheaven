@@ -17,6 +17,9 @@ export interface Announcement {
   'date' : string,
   'priority' : string,
 }
+export type ApprovalStatus = { 'pending' : null } |
+  { 'approved' : null } |
+  { 'rejected' : null };
 export interface Language {
   'nativeName' : string,
   'code' : string,
@@ -67,6 +70,10 @@ export type StatType = { 'members' : null } |
   { 'volunteers' : null } |
   { 'nations' : null } |
   { 'solutions' : null };
+export interface UserApprovalInfo {
+  'status' : ApprovalStatus,
+  'principal' : Principal,
+}
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
@@ -112,9 +119,13 @@ export interface _SERVICE {
   'getSupportedLanguages' : ActorMethod<[], Array<Language>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'isCallerApproved' : ActorMethod<[], boolean>,
+  'listApprovals' : ActorMethod<[], Array<UserApprovalInfo>>,
   'removeAnnouncement' : ActorMethod<[bigint], undefined>,
   'removeMember' : ActorMethod<[bigint], undefined>,
+  'requestApproval' : ActorMethod<[], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'setApproval' : ActorMethod<[Principal, ApprovalStatus], undefined>,
   'updateMemberStatus' : ActorMethod<[bigint, MemberStatus], undefined>,
   'updateStat' : ActorMethod<[StatType, bigint], undefined>,
 }

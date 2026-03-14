@@ -7,6 +7,10 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export interface UserApprovalInfo {
+    status: ApprovalStatus;
+    principal: Principal;
+}
 export interface MemberEntity {
     id: bigint;
     region: MemberRegion;
@@ -42,6 +46,11 @@ export interface PlatformStats {
 }
 export interface UserProfile {
     name: string;
+}
+export enum ApprovalStatus {
+    pending = "pending",
+    approved = "approved",
+    rejected = "rejected"
 }
 export enum MemberRegion {
     europe = "europe",
@@ -94,9 +103,13 @@ export interface backendInterface {
     getSupportedLanguages(): Promise<Array<Language>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    isCallerApproved(): Promise<boolean>;
+    listApprovals(): Promise<Array<UserApprovalInfo>>;
     removeAnnouncement(id: bigint): Promise<void>;
     removeMember(id: bigint): Promise<void>;
+    requestApproval(): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    setApproval(user: Principal, status: ApprovalStatus): Promise<void>;
     updateMemberStatus(id: bigint, status: MemberStatus): Promise<void>;
     updateStat(statType: StatType, value: bigint): Promise<void>;
 }

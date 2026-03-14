@@ -1,3 +1,8 @@
+import {
+  FFInlineBadge,
+  FFSpotlightHeader,
+  FFTierBadge,
+} from "@/components/FFBrand";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -623,18 +628,12 @@ export function PortalDetailPage() {
                 background: "oklch(0.72 0.18 75 / 0.06)",
               }}
             >
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl">⚡</span>
-                <h2
-                  className="text-2xl font-bold"
-                  style={{
-                    color: "oklch(0.72 0.18 75)",
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                  }}
-                >
-                  FinFracFran™ Spotlight
-                </h2>
-              </div>
+              <FFSpotlightHeader
+                badge="FinFracFran™ Spotlight"
+                headline="FinFracFran™ Spotlight"
+                align="left"
+                className="mb-4"
+              />
               <p className="text-white/70 leading-relaxed mb-6">
                 {portal.finFracFranSpotlight.summary}
               </p>

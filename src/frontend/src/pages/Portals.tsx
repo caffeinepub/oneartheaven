@@ -1,12 +1,12 @@
+import { SearchInput } from "@/components/SearchInput";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { usePortals } from "@/hooks/usePortals";
 import { Link } from "@tanstack/react-router";
-import { Building2, Globe, Search, Users, Zap } from "lucide-react";
+import { Building2, Globe, Users, Zap } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
 function formatNum(n: number): string {
@@ -206,16 +206,13 @@ export function PortalsPage() {
       {/* Search & Filter */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-            <Input
-              data-ocid="portals.search.input"
-              className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-white/40"
-              placeholder="Search portals…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
+          <SearchInput
+            data-ocid="portals.search.input"
+            value={search}
+            onChange={setSearch}
+            placeholder="Search portals..."
+            className="flex-1"
+          />
           <div className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 bg-white/5">
             <Switch
               checked={filterFinFracFran}

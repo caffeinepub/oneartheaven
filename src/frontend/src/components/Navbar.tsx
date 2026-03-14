@@ -13,6 +13,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/context/LanguageContext";
+import { ROLE_CONFIG } from "@/data/authTypes";
+import { useAuth } from "@/hooks/useAuth";
 import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import { useGetSupportedLanguages } from "@/hooks/useQueries";
 import { Link, useRouterState } from "@tanstack/react-router";
@@ -22,6 +24,8 @@ import {
   Globe,
   LogOut,
   Menu,
+  ShieldCheck,
+  UserPlus,
   Wallet,
   X,
 } from "lucide-react";
@@ -56,14 +60,21 @@ const NAV_LINKS = [
   { label: "Integrations", path: "/integrations" as const },
 ];
 
+const ADMIN_ROLES = ["SuperAdmin", "OrgAdmin"] as const;
+
 function truncatePrincipal(p: string) {
   return p.length <= 12 ? p : `${p.slice(0, 6)}\u2026${p.slice(-4)}`;
 }
 
 export function Navbar() {
   const { location } = useRouterState();
-  const { login, clear, identity, isLoggingIn, isLoginSuccess } =
-    useInternetIdentity();
+  const {
+    login: iiLogin,
+    identity,
+    isLoggingIn,
+    isLoginSuccess,
+  } = useInternetIdentity();
+  const { userProfile, role, logout: authLogout } = useAuth();
   const { data: languages } = useGetSupportedLanguages();
   const { selectedLanguage, setSelectedLanguage } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -73,11 +84,18 @@ export function Navbar() {
   const selectedLang = languages?.find((l) => l.code === selectedLanguage);
   const currentPath = location.pathname;
 
+  const roleConfig = ROLE_CONFIG[role];
+  const isAdmin = ADMIN_ROLES.includes(role as (typeof ADMIN_ROLES)[number]);
+
   function handleCopyPrincipal() {
     if (principal) {
       navigator.clipboard.writeText(principal);
       toast.success("Principal ID copied to clipboard");
     }
+  }
+
+  function handleDisconnect() {
+    authLogout();
   }
 
   return (
@@ -132,6 +150,20 @@ export function Navbar() {
               </Link>
             );
           })}
+          {/* Admin-only Approvals link */}
+          {isAdmin && (
+            <Link
+              to="/admin/approvals"
+              data-ocid="nav.approvals.link"
+              className={`relative px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-1 ${
+                currentPath === "/admin/approvals"
+                  ? "text-[oklch(var(--gold))]"
+                  : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+              }`}
+            >
+              <ShieldCheck className="w-3 h-3" /> Approvals
+            </Link>
+          )}
         </div>
 
         {/* Right controls */}
@@ -182,19 +214,37 @@ export function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button
                   size="sm"
-                  className="hidden sm:flex items-center gap-1.5 btn-gold text-xs font-mono"
+                  className="hidden sm:flex items-center gap-1.5 btn-gold text-xs"
                   data-ocid="nav.wallet.button"
                 >
                   <span className="h-2 w-2 rounded-full bg-[oklch(0.7_0.2_140)] animate-pulse" />
-                  {truncatePrincipal(principal)}
+                  {userProfile?.displayName
+                    ? userProfile.displayName
+                    : truncatePrincipal(principal)}
                   <ChevronDown className="h-3 w-3 opacity-70" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="bg-[oklch(var(--cosmos-mid))] border-[oklch(var(--gold)/0.2)]"
+                className="bg-[oklch(var(--cosmos-mid))] border-[oklch(var(--gold)/0.2)] min-w-[180px]"
                 data-ocid="nav.wallet.dropdown_menu"
               >
+                <div className="px-3 py-2 border-b border-[oklch(1_0_0/0.06)]">
+                  <p className="text-xs text-[oklch(0.5_0.03_260)] mb-1">
+                    Signed in as
+                  </p>
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${roleConfig.badge}`}
+                    data-ocid="nav.role.toggle"
+                  >
+                    {roleConfig.label}
+                  </span>
+                  {userProfile && (
+                    <p className="text-xs font-mono text-[oklch(0.45_0.03_260)] mt-1 truncate max-w-[150px]">
+                      {truncatePrincipal(principal)}
+                    </p>
+                  )}
+                </div>
                 <DropdownMenuItem
                   onClick={handleCopyPrincipal}
                   className="cursor-pointer text-[oklch(0.8_0.02_260)]"
@@ -202,8 +252,20 @@ export function Navbar() {
                 >
                   <Copy className="h-4 w-4 mr-2" /> Copy Principal ID
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/admin/approvals"
+                      className="cursor-pointer text-[oklch(0.8_0.02_260)]"
+                      data-ocid="nav.wallet.approvals.button"
+                    >
+                      <ShieldCheck className="h-4 w-4 mr-2" /> Approvals
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
-                  onClick={clear}
+                  onClick={handleDisconnect}
                   className="cursor-pointer text-[oklch(0.7_0.15_27)]"
                   data-ocid="nav.wallet.disconnect.button"
                 >
@@ -212,19 +274,31 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button
-              size="sm"
-              onClick={login}
-              disabled={isLoggingIn}
-              className="hidden sm:flex btn-gold items-center gap-1.5"
-              data-ocid="nav.connect_wallet.button"
-            >
-              <Wallet className="h-4 w-4" />
-              {isLoggingIn ? "Connecting\u2026" : "Connect Wallet"}
-            </Button>
+            <div className="hidden sm:flex items-center gap-2">
+              <Link to="/register">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="gap-1.5 text-xs text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--pearl))]"
+                  data-ocid="nav.request_access.button"
+                >
+                  <UserPlus className="h-3.5 w-3.5" /> Request Access
+                </Button>
+              </Link>
+              <Button
+                size="sm"
+                onClick={iiLogin}
+                disabled={isLoggingIn}
+                className="btn-gold items-center gap-1.5"
+                data-ocid="nav.connect_wallet.button"
+              >
+                <Wallet className="h-4 w-4" />
+                {isLoggingIn ? "Connecting\u2026" : "Connect Wallet"}
+              </Button>
+            </div>
           )}
 
-          {/* Mobile menu trigger — plain button for custom animated drawer */}
+          {/* Mobile menu trigger */}
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
@@ -241,7 +315,6 @@ export function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               key="backdrop"
               initial={{ opacity: 0 }}
@@ -253,7 +326,6 @@ export function Navbar() {
               aria-hidden="true"
             />
 
-            {/* Drawer panel */}
             <motion.div
               key="drawer"
               initial={{ x: "100%" }}
@@ -267,7 +339,6 @@ export function Navbar() {
               }}
               data-ocid="nav.mobile_menu.sheet"
             >
-              {/* Drawer header */}
               <div
                 className="flex items-center justify-between px-5 h-16 shrink-0"
                 style={{ borderBottom: "1px solid oklch(var(--gold) / 0.10)" }}
@@ -289,7 +360,27 @@ export function Navbar() {
                 </button>
               </div>
 
-              {/* Nav links */}
+              {isConnected && (
+                <div
+                  className="px-4 py-3 flex items-center gap-3"
+                  style={{
+                    borderBottom: "1px solid oklch(var(--gold) / 0.08)",
+                  }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-[oklch(0.88_0.01_95)] truncate">
+                      {userProfile?.displayName ?? truncatePrincipal(principal)}
+                    </p>
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border mt-0.5 ${roleConfig.badge}`}
+                      data-ocid="nav.mobile.role.toggle"
+                    >
+                      {roleConfig.label}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               <div className="flex-1 overflow-y-auto py-4 px-3">
                 <div className="flex flex-col gap-0.5">
                   {NAV_LINKS.map((link, i) => {
@@ -323,10 +414,25 @@ export function Navbar() {
                       </motion.div>
                     );
                   })}
+                  {/* Admin Approvals */}
+                  {isAdmin && (
+                    <Link
+                      to="/admin/approvals"
+                      onClick={() => setMobileOpen(false)}
+                      data-ocid="nav.mobile.approvals.link"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 min-h-[48px] ${
+                        currentPath === "/admin/approvals"
+                          ? "text-[oklch(var(--gold))] bg-[oklch(var(--gold)/0.1)]"
+                          : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+                      }`}
+                    >
+                      <span className="w-1 shrink-0" />
+                      <ShieldCheck className="w-4 h-4" /> Approvals
+                    </Link>
+                  )}
                 </div>
               </div>
 
-              {/* Bottom controls */}
               <div
                 className="px-4 py-5 flex flex-col gap-3 shrink-0"
                 style={{ borderTop: "1px solid oklch(var(--gold) / 0.10)" }}
@@ -365,27 +471,39 @@ export function Navbar() {
                 {isConnected ? (
                   <Button
                     size="sm"
-                    onClick={clear}
+                    onClick={handleDisconnect}
                     variant="outline"
                     className="border-[oklch(0.7_0.15_27/0.4)] text-[oklch(0.7_0.15_27)] justify-start gap-2"
                     data-ocid="nav.mobile.wallet.disconnect.button"
                   >
-                    <LogOut className="h-4 w-4" /> Disconnect Wallet
+                    <LogOut className="h-4 w-4" /> Disconnect
                   </Button>
                 ) : (
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      login();
-                      setMobileOpen(false);
-                    }}
-                    disabled={isLoggingIn}
-                    className="btn-gold gap-2 w-full"
-                    data-ocid="nav.mobile.connect_wallet.button"
-                  >
-                    <Wallet className="h-4 w-4" />
-                    {isLoggingIn ? "Connecting\u2026" : "Connect Wallet"}
-                  </Button>
+                  <div className="flex flex-col gap-2">
+                    <Link to="/register" onClick={() => setMobileOpen(false)}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full gap-2 border-[oklch(var(--gold)/0.25)] text-[oklch(var(--pearl))]"
+                        data-ocid="nav.mobile.request_access.button"
+                      >
+                        <UserPlus className="h-4 w-4" /> Request Access
+                      </Button>
+                    </Link>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        iiLogin();
+                        setMobileOpen(false);
+                      }}
+                      disabled={isLoggingIn}
+                      className="btn-gold gap-2 w-full"
+                      data-ocid="nav.mobile.connect_wallet.button"
+                    >
+                      <Wallet className="h-4 w-4" />
+                      {isLoggingIn ? "Connecting\u2026" : "Connect Wallet"}
+                    </Button>
+                  </div>
                 )}
               </div>
             </motion.div>

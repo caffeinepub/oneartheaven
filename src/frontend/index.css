@@ -423,3 +423,327 @@
     border-radius: 9999px;
     line-height: 1.4;
   }
+
+/* ============================================================ */
+/* ===== ACCESSIBILITY & RESPONSIVE — Polish Step 8 =========== */
+/* ============================================================ */
+
+/* ── Skip to content link ─────────────────────────────────── */
+.skip-to-content {
+  position: fixed;
+  top: -100%;
+  left: 1rem;
+  z-index: 10000;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: oklch(var(--gold));
+  color: oklch(0.08 0.03 260);
+  text-decoration: none;
+  transition: top 0.15s ease;
+  outline: none;
+}
+
+.skip-to-content:focus {
+  top: 1rem;
+}
+
+/* ── Global :focus-visible ring ───────────────────────────── */
+/*
+   These rules provide a consistent, visible focus ring for all
+   interactive elements when navigated via keyboard. They apply
+   the platform's teal accent as a ring, with appropriate offsets.
+   They only trigger on :focus-visible (keyboard / programmatic),
+   not on mouse click, so they don't add visual noise for mouse users.
+*/
+
+/* Buttons: native <button> elements (filter pills, close buttons, etc.) */
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px oklch(var(--cosmos-deep)),
+    0 0 0 4px oklch(var(--teal) / 0.7);
+}
+
+/* Links */
+a:focus-visible {
+  outline: none;
+  border-radius: 0.25rem;
+  box-shadow:
+    0 0 0 2px oklch(var(--cosmos-deep)),
+    0 0 0 4px oklch(var(--teal) / 0.7);
+}
+
+/* Form inputs, textareas, selects */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px oklch(var(--cosmos-deep)),
+    0 0 0 4px oklch(var(--teal) / 0.6);
+}
+
+/* Radix / shadcn triggers that use [data-state] */
+[data-radix-collection-item]:focus-visible,
+[role="tab"]:focus-visible,
+[role="radio"]:focus-visible,
+[role="checkbox"]:focus-visible,
+[role="menuitem"]:focus-visible,
+[role="option"]:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px oklch(var(--cosmos-deep)),
+    0 0 0 4px oklch(var(--teal) / 0.65);
+}
+
+/* ── Ensure BTN-GOLD has visible focus ring ────────────────── */
+.btn-gold:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px oklch(var(--cosmos-deep)),
+    0 0 0 4px oklch(var(--gold) / 0.8);
+}
+
+/* ── Touch targets: minimum 44px on mobile ─────────────────── */
+@media (max-width: 768px) {
+  button,
+  a,
+  [role="button"],
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Exception: icon-in-row badges don't need full 44px width */
+  .badge-pill button,
+  .badge-pill a {
+    min-height: auto;
+    min-width: auto;
+  }
+
+  /* Filter pills — give them comfortable tap targets */
+  .filter-pill-row button {
+    min-height: 40px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Sheet and dialog: full-width on mobile */
+  [data-radix-dialog-content],
+  [data-radix-sheet-content] {
+    max-width: 100vw !important;
+    border-radius: 1rem 1rem 0 0;
+  }
+}
+
+/* ── Responsive hero stat bar: single-column on mobile ────── */
+@media (max-width: 480px) {
+  .stats-bar-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Responsive overflow: prevent horizontal scroll ───────── */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ── Accessible color: muted label minimum contrast ─────────
+   Ensures muted labels (e.g. oklch(0.45 0.03 260)) are boosted
+   to at least AA contrast (4.5:1) on dark surfaces.
+   Use oklch(0.60 0.04 260) or above for body text on cosmos-deep.
+*/
+.text-muted-accessible {
+  color: oklch(0.60 0.04 260);
+}
+
+/* ── Reduce motion: honor OS preference ────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Keep scroll smooth off for reduced-motion users */
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ── High-contrast mode support ────────────────────────────── */
+@media (forced-colors: active) {
+  .btn-gold,
+  .cosmos-card,
+  .card-item {
+    border: 2px solid ButtonText;
+  }
+
+  .skip-to-content {
+    background: ButtonFace;
+    color: ButtonText;
+    border: 2px solid ButtonText;
+  }
+}
+
+/* ── Screen-reader only utility ─────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── Focusable sr-only (skip links that appear on focus) ──── */
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── ARIA live region for dynamic announcements ─────────────── */
+[aria-live="polite"],
+[aria-live="assertive"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+[aria-live="polite"]:not(:empty),
+[aria-live="assertive"]:not(:empty) {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ── Responsive text: prevent font-size below 16px on mobile
+   (avoids auto-zoom on iOS Safari) ──────────────────────────── */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* ── Keyboard navigation indicator on interactive cards ─────── */
+.cosmos-card:focus-within,
+.card-item:focus-within {
+  outline: none;
+  box-shadow:
+    0 0 0 1px oklch(var(--cosmos-deep)),
+    0 0 0 3px oklch(var(--teal) / 0.4),
+    0 12px 32px oklch(0 0 0 / 0.35);
+}
+
+/* ── Filter pill rows: role listbox keyboard pattern ─────────── */
+.filter-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  role: group;
+}
+
+/* ── Responsive: sheet max-width on small screens ────────────── */
+@media (max-width: 640px) {
+  /* Radix Sheet right/left variants */
+  [data-state] > [role="dialog"] {
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+}
+
+/* ── Print styles ─────────────────────────────────────────── */
+@media print {
+  .nav-glass,
+  .skip-to-content,
+  [data-ocid="nav.mobile_menu.button"] {
+    display: none !important;
+  }
+
+  main {
+    padding-top: 0 !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Step 9 — Micro-Interactions & Motion
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Button press: subtle scale-down on click ──────────────── */
+button:not([disabled]):active,
+[role="button"]:not([disabled]):active,
+.btn-gold:not([disabled]):active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
+
+/* Ensure disabled buttons never show press state */
+button[disabled]:active,
+[role="button"][disabled]:active {
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* ── Hover-lift utility for interactive cards ───────────────── */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px -6px oklch(0 0 0 / 0.35);
+}
+
+/* ── Standardised stagger animation CSS variables ──────────── */
+:root {
+  --stagger-delay-base: 0.05s;
+  --stagger-duration: 0.4s;
+}
+
+/* ── Sheet / Dialog slide transitions (verify presence) ──────
+   shadcn already emits data-[state=open]:animate-in etc. via
+   tailwindcss-animate; this block ensures custom Sheet overrides
+   inherit the correct timing. */
+[data-radix-dialog-content],
+[data-radix-sheet-content] {
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ── Motion override: honour prefers-reduced-motion ─────────
+   (Step 8 rule is still active; this just guarantees the new
+   press-state transform is also suppressed.)  */
+@media (prefers-reduced-motion: reduce) {
+  button:not([disabled]):active,
+  [role="button"]:not([disabled]):active,
+  .btn-gold:not([disabled]):active,
+  .hover-lift:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    transition: none !important;
+  }
+}

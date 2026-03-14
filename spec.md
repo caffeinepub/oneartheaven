@@ -1,36 +1,33 @@
-# ONEartHeaven — Phase 5: Community Layer
+# ONEartHeaven™ — Area 2: User Approval Pipeline
 
 ## Current State
-- `/community` route exists but renders a stub page with placeholder text
-- All Phase 1–4 pages are live: Home, About, Members, Governance, Charter, Assembly, Councils, Resolutions, Policy Advisor, Delegates, Solutions, Portals
-- Data layers and hooks exist for portals, solutions, resolutions, delegates, and assembly
+- Area 1 (Authorization) is complete: `authTypes.ts`, `AuthContext.tsx`, `useAuth.ts`, `RequireRole.tsx` are all live.
+- `backend.d.ts` has authorization functions (`getCallerUserRole`, `assignCallerUserRole`, `isCallerAdmin`, etc.) but does NOT yet include user-approval functions (`isCallerApproved`, `requestApproval`, `listApprovals`, `setApproval`).
+- `/admin/approvals` route exists as a stub placeholder (shows "Area 2 — Coming Soon").
+- `user-approval` component has now been selected alongside `authorization`.
 
 ## Requested Changes (Diff)
 
 ### Add
-- `src/data/communityTypes.ts` — TypeScript types for all community entities
-- `src/data/communityData.ts` — Seed data for chapters, volunteers, compassion communities, youth council, citizen profiles
-- `src/hooks/useCommunity.ts` — Filter/search/select state management hook
-- `src/pages/Community.tsx` — Full community hub page replacing the stub
-- Five major sections in the Community page:
-  1. Hero with live stats (citizens, chapters, volunteers, nations)
-  2. ONEarth Citizens Portal — member stats, join CTA, featured citizen spotlights
-  3. Local Chapters — searchable grid of chapters by region with active projects, members, contact
-  4. Compassion Communities — thematic care groups (Mental Health, Refugees, Elderly, Youth, Environment) with join/contribute CTAs
-  5. Volunteer & Expertise Exchange — skill-based matching, open roles with expertise tags, apply flow
-  6. Youth Council — dedicated youth governance body, seat holders, upcoming events, apply CTA
+- `src/data/approvalTypes.ts` — TypeScript interfaces: `UserApplication`, `ApprovalStatus`, `OrgInvite`, `ApprovalStats`; seed data for demo pending applications
+- `src/hooks/useApprovals.ts` — hooks for pending/approved/rejected lists using backend `listApprovals`; `useRequestApproval` for submitters; `useApprovalStats`
+- `/register` route and `RegisterPage` component — applicant registration form (name, org, country, role requested, motivation); calls `requestApproval()` from backend; shows pending status screen after submit
+- `/admin/approvals` fully built — replaces stub with live admin dashboard: pending applications table, Approve/Reject actions via `setApproval`, role assignment, applicant detail sheet
+- Navbar: add "Request Access" CTA for unauthenticated/unapproved users; add "Approvals" link in admin nav
 
 ### Modify
-- `src/pages/stubs.tsx` — Remove `CommunityPage` stub export (Community.tsx takes over)
-- `src/App.tsx` — Update `/community` route to import from the new `Community.tsx` page
+- `backend.d.ts` — regenerated to include user-approval functions: `isCallerApproved`, `requestApproval`, `listApprovals`, `setApproval`, plus updated `UserApprovalInfo` type
+- `App.tsx` — add `/register` route
 
 ### Remove
-- `CommunityPage` stub from `stubs.tsx`
+- Admin stub placeholder content in `AdminApprovalsPage` (replaced by full implementation)
 
 ## Implementation Plan
-1. Create `communityTypes.ts` with all TypeScript interfaces and union types
-2. Create `communityData.ts` with seed data: 8 chapters, 5 compassion communities, 12 volunteer roles, 8 youth council members, 6 citizen spotlights
-3. Create `useCommunity.ts` hook with filter/search/tab state
-4. Build `Community.tsx` page with all 6 sections
-5. Update `stubs.tsx` to remove CommunityPage
-6. Update `App.tsx` to import CommunityPage from `Community.tsx`
+1. Regenerate Motoko backend to include user-approval + authorization models
+2. Build `approvalTypes.ts` with interfaces and seed data
+3. Build `useApprovals.ts` hook
+4. Build `RegisterPage` at `/register` — form + pending screen
+5. Build full `AdminApprovalsPage` at `/admin/approvals` — applications table + detail sheet + approve/reject
+6. Update Navbar with "Request Access" and admin "Approvals" links
+7. Wire `/register` route in `App.tsx`
+8. Validate and deploy

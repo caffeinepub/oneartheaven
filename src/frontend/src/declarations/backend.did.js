@@ -71,6 +71,15 @@ export const Language = IDL.Record({
   'code' : IDL.Text,
   'name' : IDL.Text,
 });
+export const ApprovalStatus = IDL.Variant({
+  'pending' : IDL.Null,
+  'approved' : IDL.Null,
+  'rejected' : IDL.Null,
+});
+export const UserApprovalInfo = IDL.Record({
+  'status' : ApprovalStatus,
+  'principal' : IDL.Principal,
+});
 export const StatType = IDL.Variant({
   'members' : IDL.Null,
   'communities' : IDL.Null,
@@ -131,9 +140,13 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'isCallerApproved' : IDL.Func([], [IDL.Bool], ['query']),
+  'listApprovals' : IDL.Func([], [IDL.Vec(UserApprovalInfo)], ['query']),
   'removeAnnouncement' : IDL.Func([IDL.Nat], [], []),
   'removeMember' : IDL.Func([IDL.Nat], [], []),
+  'requestApproval' : IDL.Func([], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'setApproval' : IDL.Func([IDL.Principal, ApprovalStatus], [], []),
   'updateMemberStatus' : IDL.Func([IDL.Nat, MemberStatus], [], []),
   'updateStat' : IDL.Func([StatType, IDL.Nat], [], []),
 });
@@ -204,6 +217,15 @@ export const idlFactory = ({ IDL }) => {
     'code' : IDL.Text,
     'name' : IDL.Text,
   });
+  const ApprovalStatus = IDL.Variant({
+    'pending' : IDL.Null,
+    'approved' : IDL.Null,
+    'rejected' : IDL.Null,
+  });
+  const UserApprovalInfo = IDL.Record({
+    'status' : ApprovalStatus,
+    'principal' : IDL.Principal,
+  });
   const StatType = IDL.Variant({
     'members' : IDL.Null,
     'communities' : IDL.Null,
@@ -264,9 +286,13 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'isCallerApproved' : IDL.Func([], [IDL.Bool], ['query']),
+    'listApprovals' : IDL.Func([], [IDL.Vec(UserApprovalInfo)], ['query']),
     'removeAnnouncement' : IDL.Func([IDL.Nat], [], []),
     'removeMember' : IDL.Func([IDL.Nat], [], []),
+    'requestApproval' : IDL.Func([], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'setApproval' : IDL.Func([IDL.Principal, ApprovalStatus], [], []),
     'updateMemberStatus' : IDL.Func([IDL.Nat, MemberStatus], [], []),
     'updateStat' : IDL.Func([StatType, IDL.Nat], [], []),
   });

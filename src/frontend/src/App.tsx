@@ -2,9 +2,11 @@ import { AnnouncementsBar } from "@/components/AnnouncementsBar";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { AboutPage } from "@/pages/About";
 import { AcademyPage } from "@/pages/Academy";
+import { AdminApprovalsPage } from "@/pages/AdminApprovals";
 import { AssemblyPage } from "@/pages/Assembly";
 import { CharterPage } from "@/pages/Charter";
 import { CommunityPage } from "@/pages/Community";
@@ -19,6 +21,7 @@ import { MembersPage } from "@/pages/Members";
 import { PolicyAdvisorPage } from "@/pages/PolicyAdvisor";
 import { PortalDetailPage } from "@/pages/PortalDetail";
 import { PortalsPage } from "@/pages/Portals";
+import { RegisterPage } from "@/pages/Register";
 import { ResolutionsPage } from "@/pages/ResolutionsPage";
 import { SolutionsPage } from "@/pages/Solutions";
 import { SustainabilityPage } from "@/pages/Sustainability";
@@ -32,23 +35,40 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 
+// ---------------------------------------------------------------------------
+// Layout
+// ---------------------------------------------------------------------------
+
 function Layout() {
   return (
     <LanguageProvider>
-      <div className="min-h-screen flex flex-col dark">
-        <Navbar />
-        <div className="pt-16 flex-1 flex flex-col">
-          <AnnouncementsBar />
-          <div className="flex-1">
-            <Outlet />
+      <AuthProvider>
+        <div className="min-h-screen flex flex-col dark">
+          <a
+            href="#main-content"
+            className="skip-to-content"
+            data-ocid="nav.skip_to_content.link"
+          >
+            Skip to main content
+          </a>
+          <Navbar />
+          <div className="pt-16 flex-1 flex flex-col">
+            <AnnouncementsBar />
+            <main id="main-content" className="flex-1" tabIndex={-1}>
+              <Outlet />
+            </main>
           </div>
+          <Footer />
+          <Toaster richColors position="top-right" />
         </div>
-        <Footer />
-        <Toaster richColors position="top-right" />
-      </div>
+      </AuthProvider>
     </LanguageProvider>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Routes
+// ---------------------------------------------------------------------------
 
 const rootRoute = createRootRoute({ component: Layout });
 const indexRoute = createRoute({
@@ -156,6 +176,16 @@ const integrationsRoute = createRoute({
   path: "/integrations",
   component: IntegrationsPage,
 });
+const registerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/register",
+  component: RegisterPage,
+});
+const adminApprovalsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/admin/approvals",
+  component: AdminApprovalsPage,
+});
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -179,6 +209,8 @@ const routeTree = rootRoute.addChildren([
   portalDetailRoute,
   transparencyRoute,
   integrationsRoute,
+  registerRoute,
+  adminApprovalsRoute,
 ]);
 
 const router = createRouter({ routeTree });

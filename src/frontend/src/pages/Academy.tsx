@@ -1,3 +1,14 @@
+import { CountUpNumber } from "@/components/CountUpNumber";
+import {
+  FFInlineBadge,
+  FFSpotlightHeader,
+  FFTierBadge,
+} from "@/components/FFBrand";
+import { SearchInput } from "@/components/SearchInput";
+import {
+  SheetDetailHeader,
+  SheetSectionLabel,
+} from "@/components/SheetDetailHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,11 +61,9 @@ import {
   GraduationCap,
   Lightbulb,
   Route,
-  Search,
   Star,
   ThumbsUp,
   Users,
-  X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
@@ -255,7 +264,7 @@ function AcademyHero() {
                   className="text-xl font-bold font-display"
                   style={{ color: item.color }}
                 >
-                  {item.value}
+                  <CountUpNumber value={item.value} />
                 </div>
                 <div
                   className="text-xs mt-0.5"
@@ -334,26 +343,13 @@ function CourseCatalog() {
               12 Courses. 10 Categories.
             </h2>
           </div>
-          <div className="relative">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-              style={{ color: "oklch(0.52 0.04 260)" }}
-            />
-            <input
-              data-ocid="courses.search_input"
-              type="text"
-              placeholder="Search courses..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-lg text-sm w-64"
-              style={{
-                background: "oklch(0.13 0.04 265)",
-                border: "1px solid oklch(0.22 0.04 265)",
-                color: "oklch(0.88 0.02 260)",
-                outline: "none",
-              }}
-            />
-          </div>
+          <SearchInput
+            data-ocid="courses.search_input"
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search courses..."
+            className="w-64"
+          />
         </div>
 
         {/* Category tabs */}
@@ -511,18 +507,7 @@ function CourseCatalog() {
                       {catConfig.emoji} {catConfig.label}
                     </span>
                     <div className="flex items-center gap-1.5">
-                      {course.ffTag && (
-                        <span
-                          className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                          style={{
-                            background: "oklch(0.72 0.16 75 / 0.15)",
-                            color: "oklch(0.72 0.16 75)",
-                            border: "1px solid oklch(0.72 0.16 75 / 0.35)",
-                          }}
-                        >
-                          FF™
-                        </span>
-                      )}
+                      {course.ffTag && <FFInlineBadge size="xs" />}
                       <span
                         className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
                         style={{
@@ -617,49 +602,49 @@ function CourseCatalog() {
         >
           {selectedCourse && (
             <>
-              <SheetHeader className="mb-6">
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <span
-                    className="text-xs font-bold px-2 py-0.5 rounded-full"
-                    style={{
-                      background: `${COURSE_CATEGORY_CONFIG[selectedCourse.category].color.replace(")", " / 0.15)")}`,
-                      color:
-                        COURSE_CATEGORY_CONFIG[selectedCourse.category].color,
-                      border: `1px solid ${COURSE_CATEGORY_CONFIG[selectedCourse.category].color.replace(")", " / 0.35)")}`,
-                    }}
-                  >
-                    {COURSE_CATEGORY_CONFIG[selectedCourse.category].emoji}{" "}
-                    {COURSE_CATEGORY_CONFIG[selectedCourse.category].label}
-                  </span>
-                  <span
-                    className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                    style={{
-                      background: `${COURSE_LEVEL_CONFIG[selectedCourse.level].color.replace(")", " / 0.12)")}`,
-                      color: COURSE_LEVEL_CONFIG[selectedCourse.level].color,
-                    }}
-                  >
-                    {COURSE_LEVEL_CONFIG[selectedCourse.level].label}
-                  </span>
-                  {selectedCourse.ffTag && (
-                    <span
-                      className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                      style={{
-                        background: "oklch(0.72 0.16 75 / 0.15)",
-                        color: "oklch(0.72 0.16 75)",
-                        border: "1px solid oklch(0.72 0.16 75 / 0.35)",
-                      }}
-                    >
-                      FinFracFran™
-                    </span>
-                  )}
-                </div>
-                <SheetTitle
-                  className="font-display text-xl font-bold leading-snug"
-                  style={{ color: "oklch(0.94 0.02 260)" }}
-                >
-                  {selectedCourse.title}
-                </SheetTitle>
-              </SheetHeader>
+              <SheetDetailHeader
+                badges={[
+                  {
+                    label: `${COURSE_CATEGORY_CONFIG[selectedCourse.category].emoji} ${COURSE_CATEGORY_CONFIG[selectedCourse.category].label}`,
+                    color:
+                      COURSE_CATEGORY_CONFIG[selectedCourse.category].color,
+                    bg: COURSE_CATEGORY_CONFIG[
+                      selectedCourse.category
+                    ].color.replace(")", " / 0.15)"),
+                    border: COURSE_CATEGORY_CONFIG[
+                      selectedCourse.category
+                    ].color.replace(")", " / 0.35)"),
+                  },
+                  {
+                    label: COURSE_LEVEL_CONFIG[selectedCourse.level].label,
+                    color: COURSE_LEVEL_CONFIG[selectedCourse.level].color,
+                    bg: COURSE_LEVEL_CONFIG[selectedCourse.level].color.replace(
+                      ")",
+                      " / 0.12)",
+                    ),
+                    border: COURSE_LEVEL_CONFIG[
+                      selectedCourse.level
+                    ].color.replace(")", " / 0.25)"),
+                  },
+                  ...(selectedCourse.ffTag
+                    ? [
+                        {
+                          label: "FinFracFran™",
+                          color: "oklch(0.72 0.16 75)",
+                          bg: "oklch(0.72 0.16 75 / 0.15)",
+                          border: "oklch(0.72 0.16 75 / 0.35)",
+                        },
+                      ]
+                    : []),
+                ]}
+                title={selectedCourse.title}
+                subtitle={`${selectedCourse.instructor} · ${selectedCourse.durationHours}h · ${selectedCourse.enrollmentCount.toLocaleString()} enrolled`}
+                onClose={closeCourse}
+                closeOcid="academy.course.sheet.close_button"
+                accentColor={
+                  COURSE_CATEGORY_CONFIG[selectedCourse.category].color
+                }
+              />
 
               <p
                 className="text-sm leading-relaxed mb-6"
@@ -1596,16 +1581,11 @@ function TrainingTracksAndCertifications() {
                           {catConfig.label}
                         </span>
                         {track.ffTierRequired && (
-                          <span
-                            className="text-[10px] font-bold px-2 py-0.5 rounded-full capitalize"
-                            style={{
-                              background: "oklch(0.72 0.16 75 / 0.12)",
-                              color: "oklch(0.72 0.16 75)",
-                              border: "1px solid oklch(0.72 0.16 75 / 0.3)",
-                            }}
-                          >
-                            FF™ {track.ffTierRequired}
-                          </span>
+                          <FFTierBadge
+                            tier={track.ffTierRequired ?? ""}
+                            size="xs"
+                            showIcon
+                          />
                         )}
                       </div>
                     </div>
@@ -1934,6 +1914,330 @@ function TrainingTracksAndCertifications() {
   );
 }
 
+// ─── FinFracFran™ Academy Spotlight ──────────────────────────────────────────
+function FinFracFranAcademySpotlight() {
+  const [applyOpen, setApplyOpen] = useState(false);
+  const [applyTier, setApplyTier] = useState("Seed");
+  const [applyName, setApplyName] = useState("");
+  const [applyOrg, setApplyOrg] = useState("");
+  const [applyMotivation, setApplyMotivation] = useState("");
+
+  const programs = [
+    {
+      id: "FFA-001",
+      title: "Franchise Readiness Program",
+      tier: "Seed" as const,
+      duration: "6 weeks",
+      description:
+        "Master the foundations of the FinFracFran™ model: fractionalization mechanics, royalty structures, and pilot nation selection.",
+      outcomes: [
+        "FinFracFran™ Foundations Certificate",
+        "Pilot nation business plan",
+        "Royalty model calculator toolkit",
+      ],
+    },
+    {
+      id: "FFA-002",
+      title: "Distribution Leadership Track",
+      tier: "Growth" as const,
+      duration: "12 weeks",
+      description:
+        "Scale from Growth to Scale tier — partner network expansion, multi-nation coordination, and community franchise management.",
+      outcomes: [
+        "FinFracFran™ Leadership Certificate",
+        "5-nation expansion blueprint",
+        "Partner onboarding playbook",
+      ],
+    },
+    {
+      id: "FFA-003",
+      title: "Capital Mobilization Masterclass",
+      tier: "Scale" as const,
+      duration: "8 weeks",
+      description:
+        "Unlock institutional capital channels, impact bond structuring, and FinFracFran™ Global-tier requirements for 50+ nation deployments.",
+      outcomes: [
+        "FinFracFran™ Capital Expert Certificate",
+        "Impact bond term sheet template",
+        "Global investor pitch deck",
+      ],
+    },
+  ] as const;
+
+  const tierPath = [
+    { tier: "Seed" as const, milestone: "1 nation pilot · 1 course" },
+    { tier: "Growth" as const, milestone: "5 nations · 2 tracks" },
+    { tier: "Scale" as const, milestone: "20 nations · 3 certs" },
+    { tier: "Global" as const, milestone: "50+ nations · Master cert" },
+  ] as const;
+
+  function handleApply() {
+    if (!applyName.trim() || !applyOrg.trim() || !applyMotivation.trim()) {
+      toast.error("Please complete all fields before submitting.");
+      return;
+    }
+    setApplyOpen(false);
+    setApplyName("");
+    setApplyOrg("");
+    setApplyMotivation("");
+    toast.success(
+      "FinFracFran™ Academy application submitted! Our team will contact you within 3 business days.",
+    );
+  }
+
+  return (
+    <section
+      id="finfracfran-academy"
+      data-ocid="academy.finfracfran.section"
+      className="py-20 relative overflow-hidden"
+      style={{ background: "oklch(0.09 0.04 260)" }}
+    >
+      {/* Gold glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 50% at 50% 30%, oklch(0.72 0.18 75 / 0.06) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FFSpotlightHeader
+          badge="FinFracFran™ Academy"
+          headline="Learn. Franchise. Scale."
+          subline="Dedicated programs to take your FinFracFran™ journey from Seed to Global — structured learning, real credentials, and a global franchise network."
+          align="center"
+          className="mb-14"
+        />
+
+        {/* Featured Programs */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+          {programs.map((prog, idx) => (
+            <motion.div
+              key={prog.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              data-ocid={`academy.finfracfran.item.${idx + 1}`}
+              className="rounded-2xl p-6 flex flex-col border"
+              style={{
+                background: "oklch(0.12 0.03 260)",
+                borderColor: "oklch(0.72 0.18 75 / 0.2)",
+              }}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <FFTierBadge tier={prog.tier} size="sm" showIcon />
+                <span
+                  className="text-xs px-2 py-0.5 rounded-full"
+                  style={{
+                    background: "oklch(0.18 0.03 260)",
+                    color: "oklch(0.65 0.04 260)",
+                  }}
+                >
+                  {prog.duration}
+                </span>
+              </div>
+              <h3
+                className="font-display text-lg font-bold mb-2 leading-snug"
+                style={{ color: "oklch(0.93 0.02 260)" }}
+              >
+                {prog.title}
+              </h3>
+              <p
+                className="text-sm leading-relaxed mb-4 flex-1"
+                style={{ color: "oklch(0.60 0.03 260)" }}
+              >
+                {prog.description}
+              </p>
+              <ul className="space-y-1.5">
+                {prog.outcomes.map((outcome) => (
+                  <li
+                    key={outcome}
+                    className="flex items-start gap-2 text-xs"
+                    style={{ color: "oklch(0.72 0.04 260)" }}
+                  >
+                    <span
+                      className="mt-0.5 shrink-0 text-[10px]"
+                      style={{ color: "oklch(0.78 0.18 75)" }}
+                    >
+                      ✦
+                    </span>
+                    {outcome}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Tier Progression Pathway */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="rounded-2xl p-8 mb-10 border"
+          style={{
+            background: "oklch(0.11 0.03 260)",
+            borderColor: "oklch(0.72 0.18 75 / 0.15)",
+          }}
+        >
+          <h3
+            className="font-display text-xl font-bold mb-6 text-center"
+            style={{ color: "oklch(0.85 0.18 75)" }}
+          >
+            Academy Tier Pathway
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {tierPath.map((step, idx) => (
+              <div
+                key={step.tier}
+                className="flex flex-col items-center text-center gap-2"
+              >
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold mb-1"
+                  style={{
+                    background: "oklch(0.72 0.18 75 / 0.15)",
+                    color: "oklch(0.85 0.18 75)",
+                    border: "1px solid oklch(0.72 0.18 75 / 0.3)",
+                  }}
+                >
+                  {idx + 1}
+                </div>
+                <FFTierBadge tier={step.tier} size="xs" showIcon />
+                <span
+                  className="text-[11px] leading-snug"
+                  style={{ color: "oklch(0.55 0.03 260)" }}
+                >
+                  {step.milestone}
+                </span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Apply CTA */}
+        <div className="text-center">
+          <Dialog open={applyOpen} onOpenChange={setApplyOpen}>
+            <DialogTrigger asChild>
+              <Button
+                size="lg"
+                data-ocid="academy.finfracfran.open_modal_button"
+                className="font-semibold px-8"
+                style={{
+                  background:
+                    "linear-gradient(135deg, oklch(0.72 0.18 75), oklch(0.62 0.16 85))",
+                  color: "oklch(0.12 0.02 260)",
+                }}
+              >
+                Apply for FinFracFran™ Academy Access
+              </Button>
+            </DialogTrigger>
+            <DialogContent
+              data-ocid="academy.finfracfran.dialog"
+              style={{
+                background: "oklch(0.12 0.03 260)",
+                borderColor: "oklch(0.72 0.18 75 / 0.3)",
+              }}
+            >
+              <DialogHeader>
+                <DialogTitle style={{ color: "oklch(0.85 0.18 75)" }}>
+                  Apply for FinFracFran™ Academy Access
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div>
+                  <Label
+                    className="text-xs mb-1.5 block"
+                    style={{ color: "oklch(0.65 0.04 260)" }}
+                  >
+                    Full Name
+                  </Label>
+                  <Input
+                    data-ocid="academy.finfracfran.input"
+                    placeholder="Your name"
+                    value={applyName}
+                    onChange={(e) => setApplyName(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label
+                    className="text-xs mb-1.5 block"
+                    style={{ color: "oklch(0.65 0.04 260)" }}
+                  >
+                    Organisation
+                  </Label>
+                  <Input
+                    placeholder="Your organisation"
+                    value={applyOrg}
+                    onChange={(e) => setApplyOrg(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label
+                    className="text-xs mb-1.5 block"
+                    style={{ color: "oklch(0.65 0.04 260)" }}
+                  >
+                    Starting Tier
+                  </Label>
+                  <Select value={applyTier} onValueChange={setApplyTier}>
+                    <SelectTrigger data-ocid="academy.finfracfran.select">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["Seed", "Growth", "Scale", "Global"].map((t) => (
+                        <SelectItem key={t} value={t}>
+                          {t}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label
+                    className="text-xs mb-1.5 block"
+                    style={{ color: "oklch(0.65 0.04 260)" }}
+                  >
+                    Motivation
+                  </Label>
+                  <Textarea
+                    data-ocid="academy.finfracfran.textarea"
+                    placeholder="Why do you want to join the FinFracFran™ Academy?"
+                    value={applyMotivation}
+                    onChange={(e) => setApplyMotivation(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="ghost"
+                  data-ocid="academy.finfracfran.cancel_button"
+                  onClick={() => setApplyOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  data-ocid="academy.finfracfran.submit_button"
+                  onClick={handleApply}
+                  style={{
+                    background:
+                      "linear-gradient(135deg, oklch(0.72 0.18 75), oklch(0.62 0.16 85))",
+                    color: "oklch(0.12 0.02 260)",
+                  }}
+                >
+                  Submit Application
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Academy Page ────────────────────────────────────────────────────────────────
 
 export function AcademyPage() {
@@ -1946,6 +2250,7 @@ export function AcademyPage() {
       <CourseCatalog />
       <IdeaIncubator />
       <TrainingTracksAndCertifications />
+      <FinFracFranAcademySpotlight />
     </main>
   );
 }

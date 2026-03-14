@@ -1,3 +1,15 @@
+import { CountUpNumber } from "@/components/CountUpNumber";
+import {
+  FFInlineBadge,
+  FFSpotlightHeader,
+  FFTierBadge,
+} from "@/components/FFBrand";
+import { SearchInput } from "@/components/SearchInput";
+import {
+  SheetDetailHeader,
+  SheetMetaRow,
+  SheetSectionLabel,
+} from "@/components/SheetDetailHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -79,7 +91,6 @@ import {
   FileText,
   Flag,
   Loader2,
-  Search,
   Shield,
   Vote,
 } from "lucide-react";
@@ -1668,57 +1679,13 @@ function FinFracFranDisclosureSection() {
       <div id="finfracfran" />
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+        <FFSpotlightHeader
+          badge="FinFracFran™ Disclosure Hub"
+          headline="Open Franchise Compliance"
+          subline="All franchise licensing agreements, compliance scores, and revenue-share disclosures — open, auditable, and on-chain."
+          align="left"
           className="mb-10"
-        >
-          <div
-            className="rounded-xl p-8"
-            style={{
-              background:
-                "linear-gradient(135deg, oklch(0.13 0.03 260), oklch(0.15 0.04 80 / 0.4))",
-              border: "1px solid oklch(0.78 0.18 85 / 0.25)",
-              borderLeft: "4px solid oklch(0.78 0.18 85)",
-            }}
-          >
-            <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className="text-xs font-bold px-2 py-0.5 rounded-full"
-                    style={{
-                      background: "oklch(0.78 0.18 85 / 0.15)",
-                      color: "oklch(0.78 0.18 85)",
-                      border: "1px solid oklch(0.78 0.18 85 / 0.3)",
-                    }}
-                  >
-                    Phase 6 · Part G
-                  </span>
-                </div>
-                <h2
-                  className="text-2xl sm:text-3xl font-bold mb-2"
-                  style={{ color: "oklch(0.78 0.18 85)" }}
-                >
-                  FinFracFran™ Disclosure Hub
-                </h2>
-                <p
-                  className="text-sm max-w-2xl"
-                  style={{ color: "oklch(0.65 0.05 260)" }}
-                >
-                  All franchise licensing agreements, compliance scores, and
-                  revenue-share disclosures — open, auditable, and on-chain.
-                </p>
-              </div>
-              <Coins
-                className="h-10 w-10 opacity-30"
-                style={{ color: "oklch(0.78 0.18 85)" }}
-              />
-            </div>
-          </div>
-        </motion.div>
+        />
 
         {/* Stats row */}
         <motion.div
@@ -1904,25 +1871,13 @@ function OpenContractsSection() {
 
         {/* ── Filter bar ── */}
         <div className="flex flex-wrap gap-3 mb-8">
-          <div className="relative flex-1 min-w-[220px]">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none"
-              style={{ color: "oklch(0.45 0.05 260)" }}
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search vendor or council…"
-              data-ocid="contracts.search.input"
-              className="w-full pl-9 pr-4 py-2 rounded-lg text-sm outline-none focus:ring-1"
-              style={{
-                background: "oklch(0.13 0.03 195 / 0.7)",
-                border: "1px solid oklch(0.55 0.22 195 / 0.2)",
-                color: "oklch(0.82 0.03 260)",
-              }}
-            />
-          </div>
+          <SearchInput
+            data-ocid="contracts.search.input"
+            value={search}
+            onChange={setSearch}
+            placeholder="Search vendor or council..."
+            className="flex-1 min-w-[220px]"
+          />
           <div className="flex flex-wrap gap-2">
             {STATUS_FILTER_TABS.map((tab) => {
               const isActive = statusFilter === tab.key;
@@ -2600,7 +2555,7 @@ function HeroStats({
               className="text-xl font-bold font-display"
               style={{ color: "oklch(var(--gold))" }}
             >
-              {s.value}
+              <CountUpNumber value={s.value} />
             </div>
             <div className="text-xs" style={{ color: "oklch(0.5 0.04 260)" }}>
               {s.label}

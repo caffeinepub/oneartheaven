@@ -6,13 +6,45 @@ import Nat "mo:core/Nat";
 import Array "mo:core/Array";
 import Principal "mo:core/Principal";
 import Iter "mo:core/Iter";
+import UserApproval "user-approval/approval";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
   // Initialize the access control system state
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
+
+  // User Approval System
+  let approvalState = UserApproval.initState(accessControlState);
+
+  // Callers can check their approval status (admins always approved)
+  public query ({ caller }) func isCallerApproved() : async Bool {
+    AccessControl.hasPermission(accessControlState, caller, #admin) or UserApproval.isApproved(approvalState, caller);
+  };
+
+  // Callers can request approval
+  public shared ({ caller }) func requestApproval() : async () {
+    UserApproval.requestApproval(approvalState, caller);
+  };
+
+  // Admin-only: Set approval status for a user
+  public shared ({ caller }) func setApproval(user : Principal, status : UserApproval.ApprovalStatus) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can perform this action");
+    };
+    UserApproval.setApproval(approvalState, user, status);
+  };
+
+  // Admin-only: List all approvals
+  public query ({ caller }) func listApprovals() : async [UserApproval.UserApprovalInfo] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can perform this action");
+    };
+    UserApproval.listApprovals(approvalState);
+  };
 
   // Existing UserProfile System
   public type UserProfile = {
@@ -506,3 +538,4 @@ actor {
     id;
   };
 };
+

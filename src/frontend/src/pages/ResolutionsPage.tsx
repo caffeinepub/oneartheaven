@@ -1,3 +1,4 @@
+import { SearchInput } from "@/components/SearchInput";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +23,6 @@ import {
   BarChart3,
   ChevronRight,
   Globe2,
-  Search,
   Sparkles,
   TrendingUp,
   Users,
@@ -880,19 +880,13 @@ export function ResolutionsPage() {
 
           {/* Search + Category row */}
           <div className="flex flex-col sm:flex-row gap-3 mb-8">
-            <div className="relative flex-1">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-                style={{ color: "oklch(0.42 0.04 260)" }}
-              />
-              <Input
-                data-ocid="resolutions.search_input"
-                placeholder="Search resolutions…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 bg-transparent border-[oklch(var(--teal)/0.2)] text-white placeholder:text-[oklch(0.38_0.04_260)] focus-visible:ring-[oklch(var(--teal)/0.35)]"
-              />
-            </div>
+            <SearchInput
+              data-ocid="resolutions.search_input"
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search resolutions..."
+              className="flex-1"
+            />
             <Select
               value={activeCategory}
               onValueChange={(v) =>

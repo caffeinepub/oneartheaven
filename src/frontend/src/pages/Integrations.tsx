@@ -1,3 +1,14 @@
+import { CountUpNumber } from "@/components/CountUpNumber";
+import {
+  FFInlineBadge,
+  FFSpotlightHeader,
+  FFTierBadge,
+} from "@/components/FFBrand";
+import { SearchInput } from "@/components/SearchInput";
+import {
+  SheetDetailHeader,
+  SheetSectionLabel,
+} from "@/components/SheetDetailHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,7 +69,6 @@ import {
   Globe,
   Key,
   Layers,
-  Search,
   Server,
   Users,
   Webhook,
@@ -435,7 +445,7 @@ export function IntegrationsPage() {
                     className="text-2xl font-bold font-display"
                     style={{ color: stat.color }}
                   >
-                    {stat.value}
+                    <CountUpNumber value={stat.value} />
                   </div>
                   <div
                     className="text-xs mt-1"
@@ -541,24 +551,13 @@ export function IntegrationsPage() {
               ))}
             </div>
 
-            <div className="relative flex-1 min-w-[180px]">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-                style={{ color: "oklch(0.45 0.04 260)" }}
-              />
-              <Input
-                placeholder="Search endpoints..."
-                value={epState.search}
-                onChange={(e) => epState.setSearch(e.target.value)}
-                className="pl-9 text-sm"
-                style={{
-                  background: "oklch(var(--cosmos-surface) / 0.5)",
-                  borderColor: "oklch(0.22 0.04 260)",
-                  color: "oklch(var(--pearl))",
-                }}
-                data-ocid="integrations.endpoints.search_input"
-              />
-            </div>
+            <SearchInput
+              data-ocid="integrations.endpoints.search_input"
+              value={epState.search}
+              onChange={epState.setSearch}
+              placeholder="Search endpoints..."
+              className="flex-1 min-w-[180px]"
+            />
 
             {epState.activeFilterCount > 0 && (
               <button
@@ -732,33 +731,37 @@ export function IntegrationsPage() {
         >
           {epState.selectedEndpoint && (
             <>
-              <SheetHeader className="mb-6">
-                <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <MethodBadge method={epState.selectedEndpoint.method} />
-                  <StatusBadge status={epState.selectedEndpoint.status} />
-                  <span
-                    className="text-xs px-2 py-0.5 rounded font-semibold"
-                    style={{
-                      color: "oklch(0.72 0.16 75)",
-                      background: "oklch(0.72 0.16 75 / 0.1)",
-                    }}
-                  >
-                    {epState.selectedEndpoint.version}
-                  </span>
-                </div>
-                <SheetTitle
-                  className="font-mono text-sm break-all"
-                  style={{ color: "oklch(0.7 0.18 195)" }}
-                >
-                  {epState.selectedEndpoint.path}
-                </SheetTitle>
-                <div
-                  className="font-display font-bold text-xl"
-                  style={{ color: "oklch(var(--pearl))" }}
-                >
-                  {epState.selectedEndpoint.name}
-                </div>
-              </SheetHeader>
+              <SheetDetailHeader
+                badges={[
+                  {
+                    label: epState.selectedEndpoint.method,
+                    color:
+                      HTTP_METHOD_CONFIG[epState.selectedEndpoint.method]
+                        ?.color ?? "oklch(0.65 0.14 220)",
+                    bg: "oklch(0.65 0.14 220 / 0.12)",
+                    border: "oklch(0.65 0.14 220 / 0.30)",
+                  },
+                  {
+                    label: epState.selectedEndpoint.status,
+                    color:
+                      ENDPOINT_STATUS_CONFIG[epState.selectedEndpoint.status]
+                        ?.color ?? "oklch(0.65 0.18 142)",
+                    bg: "oklch(0.65 0.18 142 / 0.12)",
+                    border: "oklch(0.65 0.18 142 / 0.30)",
+                  },
+                  {
+                    label: epState.selectedEndpoint.version,
+                    color: "oklch(0.72 0.16 75)",
+                    bg: "oklch(0.72 0.16 75 / 0.10)",
+                    border: "oklch(0.72 0.16 75 / 0.30)",
+                  },
+                ]}
+                title={epState.selectedEndpoint.name}
+                subtitle={epState.selectedEndpoint.path}
+                onClose={() => epState.closeEndpoint()}
+                closeOcid="integrations.endpoint.sheet.close_button"
+                accentColor="oklch(0.55 0.14 195)"
+              />
 
               <div className="space-y-5">
                 <p
@@ -983,24 +986,13 @@ export function IntegrationsPage() {
               ))}
             </div>
 
-            <div className="relative flex-1 min-w-[180px]">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-                style={{ color: "oklch(0.45 0.04 260)" }}
-              />
-              <Input
-                placeholder="Search partners..."
-                value={partnerState.search}
-                onChange={(e) => partnerState.setSearch(e.target.value)}
-                className="pl-9 text-sm"
-                style={{
-                  background: "oklch(var(--cosmos-surface) / 0.5)",
-                  borderColor: "oklch(0.22 0.04 260)",
-                  color: "oklch(var(--pearl))",
-                }}
-                data-ocid="integrations.partners.search_input"
-              />
-            </div>
+            <SearchInput
+              data-ocid="integrations.partners.search_input"
+              value={partnerState.search}
+              onChange={partnerState.setSearch}
+              placeholder="Search partners..."
+              className="flex-1 min-w-[180px]"
+            />
 
             {partnerState.activeFilterCount > 0 && (
               <button
@@ -1141,16 +1133,11 @@ export function IntegrationsPage() {
 
                       {/* FF Tier */}
                       {partner.ffTier && (
-                        <div
-                          className="flex items-center gap-1.5 text-xs px-2 py-1 rounded w-fit"
-                          style={{
-                            color: "oklch(0.72 0.16 75)",
-                            background: "oklch(0.72 0.16 75 / 0.1)",
-                            border: "1px solid oklch(0.72 0.16 75 / 0.25)",
-                          }}
-                        >
-                          💎 FinFracFran™ {partner.ffTier}
-                        </div>
+                        <FFTierBadge
+                          tier={partner.ffTier ?? ""}
+                          size="xs"
+                          showIcon
+                        />
                       )}
 
                       <div
@@ -2625,39 +2612,13 @@ curl https://api.onearthheaven.org/v1/finfracfran/license/apply \
         style={{ background: "oklch(0.14 0.03 240 / 0.6)" }}
       >
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+        <FFSpotlightHeader
+          badge="FinFracFran™ API Spotlight"
+          headline="FinFracFran™ API Spotlight"
+          subline="Power your franchise with open data and automation — standardized endpoints for every tier."
+          align="left"
           className="mb-12"
-        >
-          <div
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono mb-4"
-            style={{
-              background: "oklch(0.28 0.08 80 / 0.4)",
-              color: "oklch(0.82 0.12 80)",
-              border: "1px solid oklch(0.55 0.12 80 / 0.35)",
-            }}
-          >
-            <Layers className="w-3 h-3" />
-            FinFracFran™ API Spotlight
-          </div>
-          <h2
-            className="text-4xl font-bold mb-3"
-            style={{
-              background:
-                "linear-gradient(135deg, oklch(0.90 0.14 85), oklch(0.75 0.18 75))",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            FinFracFran™ API Spotlight
-          </h2>
-          <p style={{ color: "oklch(0.65 0.04 240)" }} className="text-lg">
-            Power your franchise with open data and automation
-          </p>
-        </motion.div>
+        />
 
         {/* ── Featured Endpoint Cards ── */}
         <motion.div
@@ -2860,16 +2821,9 @@ curl https://api.onearthheaven.org/v1/finfracfran/license/apply \
                   >
                     {i + 1}
                   </div>
-                  <Badge
-                    className="mb-3 font-semibold"
-                    style={{
-                      background: t.bg,
-                      color: t.color,
-                      border: `1px solid ${t.border}`,
-                    }}
-                  >
-                    {t.tier}
-                  </Badge>
+                  <div className="mb-3">
+                    <FFTierBadge tier={t.tier} size="sm" showIcon />
+                  </div>
                   <p
                     className="text-xs leading-relaxed"
                     style={{ color: "oklch(0.62 0.04 240)" }}

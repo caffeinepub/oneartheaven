@@ -1,3 +1,9 @@
+import { SearchInput } from "@/components/SearchInput";
+import {
+  SheetDetailHeader,
+  SheetMetaRow,
+  SheetSectionLabel,
+} from "@/components/SheetDetailHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +36,7 @@ import type {
   TrendDirection,
   WorldRegion,
 } from "@/data/sustainabilityTypes";
+import { useCountUp } from "@/hooks/useCountUp";
 import {
   useEnvironmentalReports,
   useImpactMetrics,
@@ -43,7 +50,6 @@ import {
   Globe2,
   Leaf,
   RefreshCw,
-  Search,
   Target,
   TrendingDown,
   TrendingUp,
@@ -90,6 +96,17 @@ function StatCard({
   accentColor,
   delay,
 }: StatCardProps) {
+  const rawNum =
+    typeof value === "number"
+      ? value
+      : Number.parseFloat(String(value).replace(/,/g, ""));
+  const isNumeric = !Number.isNaN(rawNum) && rawNum > 0;
+  const animated = useCountUp({ end: isNumeric ? rawNum : 0 });
+  const displayValue = isNumeric
+    ? rawNum >= 1000
+      ? animated.toLocaleString()
+      : animated
+    : value;
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -124,7 +141,7 @@ function StatCard({
           className="font-display text-2xl font-bold"
           style={{ color: accentColor }}
         >
-          {typeof value === "number" ? value.toLocaleString() : value}
+          {displayValue}
         </span>
         {unit && (
           <span className="text-xs" style={{ color: "oklch(0.5 0.04 180)" }}>
@@ -284,41 +301,27 @@ function SDGDetailSheet({
         }}
         data-ocid="sustainability.sdg.sheet"
       >
-        <SheetHeader className="mb-6">
-          <div className="flex items-center gap-3">
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg"
-              style={{ background: cfg.color, color: "#fff" }}
-            >
-              {sdg.goal}
-            </div>
-            <div className="flex-1 min-w-0">
-              <SheetTitle className="text-white font-display text-lg leading-snug">
-                {cfg.icon} {sdg.name}
-              </SheetTitle>
-              <span
-                className="text-xs font-bold px-2 py-0.5 rounded-full mt-1 inline-block"
-                style={{
-                  background: `${statusCfg.color}20`,
-                  border: `1px solid ${statusCfg.color}50`,
-                  color: statusCfg.color,
-                }}
-              >
-                {statusCfg.label}
-              </span>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="shrink-0"
-              style={{ color: "oklch(0.5 0.04 180)" }}
-              data-ocid="sustainability.sdg.close_button"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </SheetHeader>
+        <SheetDetailHeader
+          badges={[
+            {
+              label: `SDG ${sdg.goal}`,
+              color: cfg.color,
+              bg: `${cfg.color}18`,
+              border: `${cfg.color}40`,
+            },
+            {
+              label: statusCfg.label,
+              color: statusCfg.color,
+              bg: `${statusCfg.color}18`,
+              border: `${statusCfg.color}40`,
+            },
+          ]}
+          title={`${cfg.icon} ${sdg.name}`}
+          subtitle={sdg.description?.slice(0, 90)}
+          onClose={onClose}
+          closeOcid="sustainability.sdg.close_button"
+          accentColor={cfg.color}
+        />
         <div className="space-y-6 text-sm">
           <p style={{ color: "oklch(0.62 0.04 180)" }}>{sdg.description}</p>
           <div
@@ -837,34 +840,27 @@ function MetricDetailSheet({
         }}
         data-ocid="sustainability.metric.sheet"
       >
-        <SheetHeader className="mb-6">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <span
-                className="text-xs font-bold px-2 py-0.5 rounded-full mb-2 inline-block"
-                style={{
-                  background: `${catCfg.color}18`,
-                  border: `1px solid ${catCfg.color}40`,
-                  color: catCfg.color,
-                }}
-              >
-                {catCfg.label}
-              </span>
-              <SheetTitle className="text-white font-display text-base leading-snug">
-                {metric.name}
-              </SheetTitle>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              style={{ color: "oklch(0.5 0.04 180)" }}
-              data-ocid="sustainability.metric.close_button"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </SheetHeader>
+        <SheetDetailHeader
+          badges={[
+            {
+              label: catCfg.label,
+              color: catCfg.color,
+              bg: `${catCfg.color}18`,
+              border: `${catCfg.color}40`,
+            },
+            {
+              label: metric.unit,
+              color: "oklch(0.65 0.04 260)",
+              bg: "oklch(0.18 0.02 260)",
+              border: "oklch(0.28 0.03 260)",
+            },
+          ]}
+          title={metric.name}
+          subtitle={`Baseline: ${metric.baselineValue} ${metric.unit} · Target: ${metric.targetValue} ${metric.unit}`}
+          onClose={onClose}
+          closeOcid="sustainability.metric.close_button"
+          accentColor={catCfg.color}
+        />
         <div className="space-y-5 text-sm">
           <div
             className="rounded-xl p-4 space-y-3"
@@ -1888,31 +1884,28 @@ function NationDetailSheet({
           }}
           data-ocid="sustainability.nation.sheet"
         >
-          <SheetHeader className="mb-6">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <SheetTitle className="text-white font-display text-xl">
-                  {nation.nation}
-                </SheetTitle>
-                <p
-                  className="text-xs mt-1"
-                  style={{ color: "oklch(0.5 0.04 180)" }}
-                >
-                  {WORLD_REGION_CONFIG[nation.region]?.label ?? nation.region} ·
-                  Last reported: {nation.lastReportDate}
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onClose}
-                style={{ color: "oklch(0.5 0.04 180)" }}
-                data-ocid="sustainability.nation.close_button"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </SheetHeader>
+          <SheetDetailHeader
+            badges={[
+              {
+                label:
+                  WORLD_REGION_CONFIG[nation.region]?.label ?? nation.region,
+                color: "oklch(0.65 0.14 195)",
+                bg: "oklch(0.65 0.14 195 / 0.12)",
+                border: "oklch(0.65 0.14 195 / 0.30)",
+              },
+              {
+                label: `Score: ${nation.complianceScore}%`,
+                color: color,
+                bg: `${color}18`,
+                border: `${color}40`,
+              },
+            ]}
+            title={nation.nation}
+            subtitle={`Last reported: ${nation.lastReportDate} · ${nation.sdgsTracked} SDGs tracked`}
+            onClose={onClose}
+            closeOcid="sustainability.nation.close_button"
+            accentColor={color}
+          />
           <div className="space-y-5 text-sm">
             {/* Score */}
             <div
@@ -2168,22 +2161,13 @@ function NationProgressSection() {
         </motion.div>
 
         {/* Search */}
-        <div className="relative mb-4">
-          <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5"
-            style={{ color: "oklch(0.48 0.04 180)" }}
-          />
-          <input
-            type="text"
-            placeholder="Search nations…"
-            className="w-full sm:w-72 pl-9 pr-4 py-2 rounded-xl text-sm text-white placeholder-[oklch(0.4_0.04_180)] outline-none"
-            style={{
-              background: "oklch(0.15 0.03 160)",
-              border: "1px solid oklch(0.24 0.03 180)",
-            }}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+        <div className="mb-4">
+          <SearchInput
             data-ocid="sustainability.nations.search_input"
+            value={search}
+            onChange={setSearch}
+            placeholder="Search nations..."
+            className="w-full sm:w-72"
           />
         </div>
 

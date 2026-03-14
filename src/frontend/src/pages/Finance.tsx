@@ -1,3 +1,14 @@
+import { CountUpNumber } from "@/components/CountUpNumber";
+import {
+  FFInlineBadge,
+  FFSpotlightHeader,
+  FFTierBadge,
+} from "@/components/FFBrand";
+import {
+  SheetDetailHeader,
+  SheetMetaRow,
+  SheetSectionLabel,
+} from "@/components/SheetDetailHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -1651,7 +1662,7 @@ export function FinancePage() {
                     fontFamily: "'Cabinet Grotesk', sans-serif",
                   }}
                 >
-                  {card.value}
+                  <CountUpNumber value={card.value} />
                 </div>
                 <div
                   className="text-sm font-medium"
@@ -2038,71 +2049,40 @@ export function FinancePage() {
         >
           {selectedFranchise && (
             <>
-              <SheetHeader
-                className="px-6 pt-6 pb-5 border-b"
-                style={{ borderColor: "oklch(0.65 0.18 142 / 0.15)" }}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span
-                        className="text-xs font-mono"
-                        style={{ color: "oklch(0.45 0.02 260)" }}
-                      >
-                        {selectedFranchise.id}
-                      </span>
-                      <span
-                        className="text-xs font-semibold px-2 py-0.5 rounded-full border"
-                        style={{
-                          background: `${FRANCHISE_TIER_CONFIG[
-                            selectedFranchise.tier
-                          ].color.replace(
-                            ")",
-                            ` / ${
-                              FRANCHISE_TIER_CONFIG[selectedFranchise.tier]
-                                .bgOpacity
-                            })`,
-                          )})`,
-                          borderColor: `${FRANCHISE_TIER_CONFIG[
-                            selectedFranchise.tier
-                          ].color.replace(")", " / 0.35)")}`,
-                          color:
-                            FRANCHISE_TIER_CONFIG[selectedFranchise.tier].color,
-                        }}
-                      >
-                        {selectedFranchise.tier}
-                      </span>
-                      <span
-                        className="text-xs px-2 py-0.5 rounded-full border font-medium"
-                        style={{
-                          background:
-                            STATUS_CONFIG[selectedFranchise.status].bg,
-                          borderColor: `${STATUS_CONFIG[selectedFranchise.status].color.replace(")", " / 0.35)")}`,
-                          color: STATUS_CONFIG[selectedFranchise.status].color,
-                        }}
-                      >
-                        {selectedFranchise.status}
-                      </span>
-                    </div>
-                    <SheetTitle
-                      className="text-xl font-bold leading-snug"
-                      style={{
-                        color: "oklch(var(--pearl))",
-                        fontFamily: "'Cabinet Grotesk', sans-serif",
-                      }}
-                    >
-                      {selectedFranchise.name}
-                    </SheetTitle>
-                  </div>
-                </div>
-              </SheetHeader>
-
+              {/* SheetDetailHeader applied via component */}
+              <SheetDetailHeader
+                badges={[
+                  {
+                    label: selectedFranchise.id,
+                    color: "oklch(0.50 0.04 260)",
+                    bg: "oklch(0.16 0.02 260)",
+                    border: "oklch(0.25 0.03 260)",
+                  },
+                  {
+                    label: selectedFranchise.tier,
+                    color: FRANCHISE_TIER_CONFIG[selectedFranchise.tier].color,
+                    bg: `${FRANCHISE_TIER_CONFIG[selectedFranchise.tier].color.replace(")", " / 0.12)")}`,
+                    border: `${FRANCHISE_TIER_CONFIG[selectedFranchise.tier].color.replace(")", " / 0.30)")}`,
+                  },
+                  {
+                    label: selectedFranchise.status,
+                    color: STATUS_CONFIG[selectedFranchise.status].color,
+                    bg: `${STATUS_CONFIG[selectedFranchise.status].color.replace(")", " / 0.12)")}`,
+                    border: `${STATUS_CONFIG[selectedFranchise.status].color.replace(")", " / 0.25)")}`,
+                  },
+                ]}
+                title={selectedFranchise.name}
+                subtitle={`${selectedFranchise.description?.slice(0, 100)}...`}
+                onClose={closeFranchise}
+                closeOcid="finance.franchise_detail.close_button"
+                accentColor="oklch(0.65 0.18 142)"
+              />
               <ScrollArea className="h-[calc(100vh-180px)]">
                 <div className="px-6 py-5 space-y-6">
                   {/* Description */}
                   <div>
                     <h4
-                      className="text-xs font-semibold uppercase tracking-wider mb-2"
+                      className="text-xs font-semibold uppercase tracking-widest mb-3"
                       style={{ color: "oklch(0.50 0.02 260)" }}
                     >
                       Overview
@@ -2709,7 +2689,7 @@ export function FinancePage() {
                       {/* Description */}
                       <div>
                         <h4
-                          className="text-xs font-semibold uppercase tracking-wider mb-2"
+                          className="text-xs font-semibold uppercase tracking-widest mb-3"
                           style={{ color: "oklch(0.50 0.02 260)" }}
                         >
                           About This Campaign
@@ -3428,46 +3408,13 @@ function FinFracFranFinanceSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-14"
-        >
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold mb-5 border"
-            style={{
-              background: "oklch(0.72 0.16 75 / 0.12)",
-              color: "oklch(0.82 0.16 75)",
-              borderColor: "oklch(0.72 0.16 75 / 0.3)",
-            }}
-          >
-            <Zap className="w-4 h-4" />
-            FinFracFran™ Finance Spotlight
-          </div>
-          <h2
-            className="text-4xl sm:text-5xl font-bold mb-4"
-            style={{
-              fontFamily: "Fraunces, serif",
-              background:
-                "linear-gradient(135deg, oklch(0.82 0.16 75) 0%, oklch(0.72 0.18 185) 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            Finance the Future
-          </h2>
-          <p
-            className="text-lg max-w-2xl mx-auto"
-            style={{ color: "oklch(0.58 0.03 260)" }}
-          >
-            FinFracFran™ turns governance into revenue — enabling every
-            franchise, enterprise, and nation to participate in sustainable
-            economic growth.
-          </p>
-        </motion.div>
+        <FFSpotlightHeader
+          badge="FinFracFran™ Finance Spotlight"
+          headline="Finance the Future"
+          subline="FinFracFran™ turns governance into revenue — enabling every franchise, enterprise, and nation to participate in sustainable economic growth."
+          align="center"
+          className="mb-14"
+        />
 
         {/* Featured Program Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
