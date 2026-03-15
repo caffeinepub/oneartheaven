@@ -18,6 +18,7 @@ import {
   Layers,
   Leaf,
   Network,
+  Paintbrush,
   ScrollText,
   Shield,
   Sparkles,
@@ -103,7 +104,7 @@ function StubPage({
   );
 }
 
-// ─── Governance Hub Portal ────────────────────────────────────────────────────
+// ─── Governance Hub Portal ──────────────────────────────────────────────────
 
 type AvailableRoute =
   | "/"
@@ -124,7 +125,8 @@ type AvailableRoute =
   | "/sustainability"
   | "/transparency"
   | "/integrations"
-  | "/admin/orgs";
+  | "/admin/orgs"
+  | "/admin/whitelabel";
 
 interface GovernancePortalCard {
   icon: React.ElementType;
@@ -319,6 +321,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     accentColor: "oklch(0.72 0.15 260)",
     accentColorRaw: "0.72 0.15 260",
   },
+  {
+    icon: Paintbrush,
+    title: "White Label Studio",
+    description:
+      "Configure brand identity, colors, typography, and publishing settings for each tenant organization. Full PaaS white-labeling.",
+    link: "/admin/whitelabel",
+    phaseLabel: "Phase 12 · White Label",
+    phaseNum: "12",
+    isAvailable: true,
+    accentColor: "oklch(0.70 0.18 310)",
+    accentColorRaw: "0.70 0.18 310",
+  },
 ];
 
 const PLATFORM_STATS = [
@@ -366,7 +380,7 @@ export function GovernancePage() {
       style={{ background: "oklch(var(--cosmos-deep))" }}
       data-ocid="governance.page"
     >
-      {/* ── Hero ────────────────────────────────────────────────── */}
+      {/* ── Hero ────────────────────────────────────────────── */}
       <section
         data-ocid="governance.hero.section"
         className="relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-28"
@@ -473,7 +487,7 @@ export function GovernancePage() {
             className="text-base sm:text-lg max-w-2xl mx-auto mb-3 leading-relaxed"
             style={{ color: "oklch(0.65 0.04 260)" }}
           >
-            Where humanity's greatest challenges meet its most innovative
+            Where humanity’s greatest challenges meet its most innovative
             solutions.{" "}
             <span style={{ color: "oklch(var(--teal-bright))" }}>
               Transparent.
@@ -489,8 +503,9 @@ export function GovernancePage() {
             className="text-sm max-w-xl mx-auto mb-10"
             style={{ color: "oklch(0.50 0.04 260)" }}
           >
-            All 10 phases are live — from the Founding Charter to the
-            FinFracFran™ Economic Layer. Navigate the full platform below.
+            All 12 phases are live — from the Founding Charter to the
+            FinFracFran™ Economic Layer and White Label PaaS Studio. Navigate
+            the full platform below.
           </motion.p>
 
           {/* Dual CTAs */}
@@ -507,7 +522,7 @@ export function GovernancePage() {
                 data-ocid="governance.explore.primary_button"
               >
                 <Sparkles className="h-4 w-4" />
-                Explore All 10 Phases
+                Explore All Phases
               </Button>
             </a>
             <Link to="/charter">
@@ -530,7 +545,7 @@ export function GovernancePage() {
         </div>
       </section>
 
-      {/* ── Platform Stats Bar ──────────────────────────────────── */}
+      {/* ── Platform Stats Bar ───────────────────────────── */}
       <section
         data-ocid="governance.stats.section"
         className="relative py-6"
@@ -586,7 +601,7 @@ export function GovernancePage() {
         </div>
       </section>
 
-      {/* ── Section Divider ────────────────────────────────────────── */}
+      {/* ── Section Divider ──────────────────────────────────── */}
       <div
         id="portals"
         className="relative flex items-center justify-center py-10"
@@ -621,7 +636,7 @@ export function GovernancePage() {
             className="text-xs font-bold tracking-widest uppercase"
             style={{ color: "oklch(var(--gold))" }}
           >
-            All 10 Live Phases
+            All Phases Live
           </span>
           <Sparkles
             className="h-4 w-4"
@@ -630,7 +645,7 @@ export function GovernancePage() {
         </motion.div>
       </div>
 
-      {/* ── Portal Cards Grid ─────────────────────────────────────── */}
+      {/* ── Portal Cards Grid ───────────────────────────────────── */}
       <section
         data-ocid="governance.portals.section"
         className="pb-20 sm:pb-28"
@@ -768,7 +783,7 @@ export function GovernancePage() {
         </div>
       </section>
 
-      {/* ── Footer CTA ──────────────────────────────────────────── */}
+      {/* ── Footer CTA ────────────────────────────────────────── */}
       <section
         data-ocid="governance.footer-cta.section"
         className="relative overflow-hidden py-16 sm:py-20"

@@ -9,6 +9,7 @@ import { AboutPage } from "@/pages/About";
 import { AcademyPage } from "@/pages/Academy";
 import { AdminApprovalsPage } from "@/pages/AdminApprovals";
 import { AdminOrgsPage } from "@/pages/AdminOrgs";
+import { AdminWhiteLabelPage } from "@/pages/AdminWhiteLabel";
 import { AssemblyPage } from "@/pages/Assembly";
 import { CharterPage } from "@/pages/Charter";
 import { CommunityPage } from "@/pages/Community";
@@ -197,6 +198,11 @@ const adminOrgsRoute = createRoute({
   path: "/admin/orgs",
   component: AdminOrgsPage,
 });
+const adminWhiteLabelRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/admin/whitelabel",
+  component: AdminWhiteLabelPage,
+});
 const vendorRegisterRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/vendor/register",
@@ -233,6 +239,7 @@ const routeTree = rootRoute.addChildren([
   registerRoute,
   adminApprovalsRoute,
   adminOrgsRoute,
+  adminWhiteLabelRoute,
   vendorRegisterRoute,
   vendorDashboardRoute,
 ]);

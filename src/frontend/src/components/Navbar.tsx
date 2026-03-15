@@ -24,6 +24,7 @@ import {
   Globe,
   LogOut,
   Menu,
+  Paintbrush,
   ShieldCheck,
   ShoppingBag,
   UserPlus,
@@ -256,6 +257,19 @@ export function Navbar() {
               <ShieldCheck className="w-3 h-3" /> Approvals
             </Link>
           )}
+          {isAdmin && (
+            <Link
+              to="/admin/whitelabel"
+              data-ocid="nav.whitelabel.link"
+              className={`relative px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-1 ${
+                currentPath === "/admin/whitelabel"
+                  ? "text-[oklch(var(--gold))]"
+                  : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+              }`}
+            >
+              <Paintbrush className="w-3 h-3" /> White Label
+            </Link>
+          )}
           {isVendor && (
             <Link
               to="/vendor/dashboard"
@@ -416,6 +430,17 @@ export function Navbar() {
                     >
                       <ShieldCheck className="h-4 w-4 mr-2" /> Approvals
                       Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/admin/whitelabel"
+                      className="cursor-pointer text-[oklch(0.8_0.02_260)]"
+                      data-ocid="nav.wallet.whitelabel.button"
+                    >
+                      <Paintbrush className="h-4 w-4 mr-2" /> White Label Studio
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -633,6 +658,21 @@ export function Navbar() {
                     >
                       <span className="w-1 shrink-0" />
                       <ShieldCheck className="w-4 h-4" /> Approvals
+                    </Link>
+                  )}
+                  {isAdmin && (
+                    <Link
+                      to="/admin/whitelabel"
+                      onClick={() => setMobileOpen(false)}
+                      data-ocid="nav.mobile.whitelabel.link"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 min-h-[48px] ${
+                        currentPath === "/admin/whitelabel"
+                          ? "text-[oklch(var(--gold))] bg-[oklch(var(--gold)/0.1)]"
+                          : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+                      }`}
+                    >
+                      <span className="w-1 shrink-0" />
+                      <Paintbrush className="w-4 h-4" /> White Label
                     </Link>
                   )}
                   {isVendor && (
