@@ -9,6 +9,7 @@ import {
   BarChart3,
   BookOpen,
   Bot,
+  Building2,
   Coins,
   Construction,
   Globe,
@@ -122,7 +123,8 @@ type AvailableRoute =
   | "/finance"
   | "/sustainability"
   | "/transparency"
-  | "/integrations";
+  | "/integrations"
+  | "/admin/orgs";
 
 interface GovernancePortalCard {
   icon: React.ElementType;
@@ -304,6 +306,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     isAvailable: true,
     accentColor: "oklch(var(--gold))",
     accentColorRaw: "var(--gold)",
+  },
+  {
+    icon: Building2,
+    title: "Org Management",
+    description:
+      "Administer tenant organizations, configure feature flags, and manage membership caps.",
+    link: "/admin/orgs",
+    phaseLabel: "Phase 11 · Multi-Tenancy",
+    phaseNum: "11",
+    isAvailable: true,
+    accentColor: "oklch(0.72 0.15 260)",
+    accentColorRaw: "0.72 0.15 260",
   },
 ];
 

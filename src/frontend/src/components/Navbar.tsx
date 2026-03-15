@@ -3,23 +3,23 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTenantContext } from "@/context/TenantContext";
 import { ROLE_CONFIG } from "@/data/authTypes";
+import { getAllOrgs } from "@/data/orgData";
 import { useAuth } from "@/hooks/useAuth";
 import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import { useGetSupportedLanguages } from "@/hooks/useQueries";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
+  Building2,
+  CheckCircle2,
   ChevronDown,
+  ChevronsUpDown,
   Copy,
   Globe,
   LogOut,
@@ -41,7 +41,7 @@ const LANGUAGE_FLAGS: Record<string, string> = {
   zh: "\uD83C\uDDE8\uD83C\uDDF3",
   pt: "\uD83C\uDDE7\uD83C\uDDF7",
   hi: "\uD83C\uDDEE\uD83C\uDDF3",
-  sw: "\uD83C\uDDF0\uD83C\uDDEA",
+  sw: "\uD83C\uDDF0\uD83C\uDDE6",
   ru: "\uD83C\uDDF7\uD83C\uDDFA",
   de: "\uD83C\uDDE9\uD83C\uDDEA",
 };
@@ -66,6 +66,96 @@ function truncatePrincipal(p: string) {
   return p.length <= 12 ? p : `${p.slice(0, 6)}\u2026${p.slice(-4)}`;
 }
 
+function truncate(str: string, max: number) {
+  return str.length <= max ? str : `${str.slice(0, max)}\u2026`;
+}
+
+/** Shared Org Switcher dropdown content used by both desktop and mobile triggers */
+function OrgSwitcherDropdown() {
+  const { activeOrg, setActiveOrgId } = useTenantContext();
+  const allOrgs = getAllOrgs();
+
+  return (
+    <DropdownMenuContent
+      align="end"
+      style={{ width: 240 }}
+      className="bg-[oklch(var(--cosmos-mid))] border-[oklch(var(--gold)/0.2)]"
+      data-ocid="nav.org_switcher.dropdown_menu"
+    >
+      <DropdownMenuLabel className="text-xs text-[oklch(0.5_0.03_260)] font-normal pb-1">
+        Switch Organization
+      </DropdownMenuLabel>
+      <DropdownMenuSeparator className="bg-[oklch(1_0_0/0.06)] mb-1" />
+      {allOrgs.map((org, idx) => {
+        const isActive = activeOrg?.orgId === org.orgId;
+        return (
+          <DropdownMenuItem
+            key={org.orgId}
+            onClick={() => setActiveOrgId(org.orgId)}
+            data-ocid={`nav.org_switcher.item.${idx + 1}`}
+            className="cursor-pointer flex items-center gap-2 min-h-[36px] px-2"
+          >
+            <span
+              className="rounded-full inline-block shrink-0"
+              style={{
+                background: org.primaryColor,
+                width: 6,
+                height: 6,
+              }}
+            />
+            <span
+              className={`flex-1 text-sm truncate ${
+                isActive
+                  ? "text-[oklch(var(--gold))]"
+                  : "text-[oklch(0.8_0.02_260)]"
+              }`}
+            >
+              {truncate(org.name, 22)}
+            </span>
+            <span className="text-xs text-[oklch(0.5_0.03_260)] shrink-0">
+              {org.type}
+            </span>
+            {isActive && (
+              <CheckCircle2
+                className="h-3.5 w-3.5 shrink-0"
+                style={{ color: "oklch(var(--gold))" }}
+              />
+            )}
+          </DropdownMenuItem>
+        );
+      })}
+      <DropdownMenuSeparator className="bg-[oklch(1_0_0/0.06)] my-1" />
+      <DropdownMenuItem
+        onClick={() => setActiveOrgId(null)}
+        data-ocid="nav.org_switcher.platform.button"
+        className="cursor-pointer flex items-center gap-2 min-h-[36px] px-2"
+      >
+        <Globe
+          className="h-3.5 w-3.5 shrink-0"
+          style={{
+            color: activeOrg === null ? "oklch(var(--gold))" : undefined,
+          }}
+        />
+        <span
+          className={`flex-1 text-sm ${
+            activeOrg === null
+              ? "text-[oklch(var(--gold))]"
+              : "text-[oklch(0.8_0.02_260)]"
+          }`}
+        >
+          Platform View
+        </span>
+        {activeOrg === null && (
+          <CheckCircle2
+            className="h-3.5 w-3.5 shrink-0"
+            style={{ color: "oklch(var(--gold))" }}
+          />
+        )}
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  );
+}
+
 export function Navbar() {
   const { location } = useRouterState();
   const {
@@ -77,6 +167,7 @@ export function Navbar() {
   const { userProfile, role, logout: authLogout } = useAuth();
   const { data: languages } = useGetSupportedLanguages();
   const { selectedLanguage, setSelectedLanguage } = useLanguage();
+  const { activeOrg } = useTenantContext();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isConnected = isLoginSuccess && !!identity;
@@ -97,6 +188,9 @@ export function Navbar() {
   function handleDisconnect() {
     authLogout();
   }
+
+  const orgDotColor = activeOrg?.primaryColor ?? "oklch(0.72 0.16 75)";
+  const orgLabel = activeOrg ? truncate(activeOrg.name, 16) : "Platform";
 
   return (
     <nav className="nav-glass fixed top-0 left-0 right-0 z-50 h-16">
@@ -150,7 +244,20 @@ export function Navbar() {
               </Link>
             );
           })}
-          {/* Admin-only Approvals link */}
+          {/* Admin-only links */}
+          {isAdmin && (
+            <Link
+              to="/admin/orgs"
+              data-ocid="nav.orgs.link"
+              className={`relative px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-1 ${
+                currentPath === "/admin/orgs"
+                  ? "text-[oklch(var(--gold))]"
+                  : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+              }`}
+            >
+              <Building2 className="w-3 h-3" /> Org Management
+            </Link>
+          )}
           {isAdmin && (
             <Link
               to="/admin/approvals"
@@ -168,6 +275,27 @@ export function Navbar() {
 
         {/* Right controls */}
         <div className="flex items-center gap-2 shrink-0">
+          {/* Desktop Org Switcher */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hidden sm:flex items-center gap-1.5 text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)] px-2 max-w-[160px]"
+                data-ocid="nav.org_switcher.button"
+              >
+                <span
+                  className="rounded-full inline-block shrink-0"
+                  style={{ background: orgDotColor, width: 8, height: 8 }}
+                />
+                <span className="text-xs truncate">{orgLabel}</span>
+                <ChevronsUpDown className="h-3 w-3 shrink-0 opacity-60" />
+              </Button>
+            </DropdownMenuTrigger>
+            <OrgSwitcherDropdown />
+          </DropdownMenu>
+
+          {/* Language picker */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -252,6 +380,17 @@ export function Navbar() {
                 >
                   <Copy className="h-4 w-4 mr-2" /> Copy Principal ID
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/admin/orgs"
+                      className="cursor-pointer text-[oklch(0.8_0.02_260)]"
+                      data-ocid="nav.wallet.orgs.button"
+                    >
+                      <Building2 className="h-4 w-4 mr-2" /> Org Management
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 {isAdmin && (
                   <DropdownMenuItem asChild>
                     <Link
@@ -360,6 +499,7 @@ export function Navbar() {
                 </button>
               </div>
 
+              {/* User info */}
               {isConnected && (
                 <div
                   className="px-4 py-3 flex items-center gap-3"
@@ -380,6 +520,33 @@ export function Navbar() {
                   </div>
                 </div>
               )}
+
+              {/* Mobile Org Switcher */}
+              <div
+                className="px-4 py-2"
+                style={{ borderBottom: "1px solid oklch(var(--gold) / 0.08)" }}
+              >
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start gap-2 text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)] min-h-[44px]"
+                      data-ocid="nav.mobile.org_switcher.button"
+                    >
+                      <span
+                        className="rounded-full inline-block shrink-0"
+                        style={{ background: orgDotColor, width: 8, height: 8 }}
+                      />
+                      <span className="text-sm flex-1 text-left truncate">
+                        {orgLabel}
+                      </span>
+                      <ChevronsUpDown className="h-3 w-3 shrink-0 opacity-60" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <OrgSwitcherDropdown />
+                </DropdownMenu>
+              </div>
 
               <div className="flex-1 overflow-y-auto py-4 px-3">
                 <div className="flex flex-col gap-0.5">
@@ -414,6 +581,22 @@ export function Navbar() {
                       </motion.div>
                     );
                   })}
+                  {/* Admin Org Management */}
+                  {isAdmin && (
+                    <Link
+                      to="/admin/orgs"
+                      onClick={() => setMobileOpen(false)}
+                      data-ocid="nav.mobile.orgs.link"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 min-h-[48px] ${
+                        currentPath === "/admin/orgs"
+                          ? "text-[oklch(var(--gold))] bg-[oklch(var(--gold)/0.1)]"
+                          : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+                      }`}
+                    >
+                      <span className="w-1 shrink-0" />
+                      <Building2 className="w-4 h-4" /> Org Management
+                    </Link>
+                  )}
                   {/* Admin Approvals */}
                   {isAdmin && (
                     <Link

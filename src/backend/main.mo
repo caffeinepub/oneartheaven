@@ -9,9 +9,9 @@ import Iter "mo:core/Iter";
 import UserApproval "user-approval/approval";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
-import Migration "migration";
 
-(with migration = Migration.run)
+
+
 actor {
   // Initialize the access control system state
   let accessControlState = AccessControl.initState();

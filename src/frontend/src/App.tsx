@@ -4,9 +4,11 @@ import { Navbar } from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { TenantProvider } from "@/context/TenantContext";
 import { AboutPage } from "@/pages/About";
 import { AcademyPage } from "@/pages/Academy";
 import { AdminApprovalsPage } from "@/pages/AdminApprovals";
+import { AdminOrgsPage } from "@/pages/AdminOrgs";
 import { AssemblyPage } from "@/pages/Assembly";
 import { CharterPage } from "@/pages/Charter";
 import { CommunityPage } from "@/pages/Community";
@@ -43,24 +45,26 @@ function Layout() {
   return (
     <LanguageProvider>
       <AuthProvider>
-        <div className="min-h-screen flex flex-col dark">
-          <a
-            href="#main-content"
-            className="skip-to-content"
-            data-ocid="nav.skip_to_content.link"
-          >
-            Skip to main content
-          </a>
-          <Navbar />
-          <div className="pt-16 flex-1 flex flex-col">
-            <AnnouncementsBar />
-            <main id="main-content" className="flex-1" tabIndex={-1}>
-              <Outlet />
-            </main>
+        <TenantProvider>
+          <div className="min-h-screen flex flex-col dark">
+            <a
+              href="#main-content"
+              className="skip-to-content"
+              data-ocid="nav.skip_to_content.link"
+            >
+              Skip to main content
+            </a>
+            <Navbar />
+            <div className="pt-16 flex-1 flex flex-col">
+              <AnnouncementsBar />
+              <main id="main-content" className="flex-1" tabIndex={-1}>
+                <Outlet />
+              </main>
+            </div>
+            <Footer />
+            <Toaster richColors position="top-right" />
           </div>
-          <Footer />
-          <Toaster richColors position="top-right" />
-        </div>
+        </TenantProvider>
       </AuthProvider>
     </LanguageProvider>
   );
@@ -187,6 +191,12 @@ const adminApprovalsRoute = createRoute({
   component: AdminApprovalsPage,
 });
 
+const adminOrgsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/admin/orgs",
+  component: AdminOrgsPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   aboutRoute,
@@ -211,6 +221,7 @@ const routeTree = rootRoute.addChildren([
   integrationsRoute,
   registerRoute,
   adminApprovalsRoute,
+  adminOrgsRoute,
 ]);
 
 const router = createRouter({ routeTree });
