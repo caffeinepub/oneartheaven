@@ -25,6 +25,7 @@ import {
   LogOut,
   Menu,
   ShieldCheck,
+  ShoppingBag,
   UserPlus,
   Wallet,
   X,
@@ -70,7 +71,6 @@ function truncate(str: string, max: number) {
   return str.length <= max ? str : `${str.slice(0, max)}\u2026`;
 }
 
-/** Shared Org Switcher dropdown content used by both desktop and mobile triggers */
 function OrgSwitcherDropdown() {
   const { activeOrg, setActiveOrgId } = useTenantContext();
   const allOrgs = getAllOrgs();
@@ -97,18 +97,10 @@ function OrgSwitcherDropdown() {
           >
             <span
               className="rounded-full inline-block shrink-0"
-              style={{
-                background: org.primaryColor,
-                width: 6,
-                height: 6,
-              }}
+              style={{ background: org.primaryColor, width: 6, height: 6 }}
             />
             <span
-              className={`flex-1 text-sm truncate ${
-                isActive
-                  ? "text-[oklch(var(--gold))]"
-                  : "text-[oklch(0.8_0.02_260)]"
-              }`}
+              className={`flex-1 text-sm truncate ${isActive ? "text-[oklch(var(--gold))]" : "text-[oklch(0.8_0.02_260)]"}`}
             >
               {truncate(org.name, 22)}
             </span>
@@ -137,11 +129,7 @@ function OrgSwitcherDropdown() {
           }}
         />
         <span
-          className={`flex-1 text-sm ${
-            activeOrg === null
-              ? "text-[oklch(var(--gold))]"
-              : "text-[oklch(0.8_0.02_260)]"
-          }`}
+          className={`flex-1 text-sm ${activeOrg === null ? "text-[oklch(var(--gold))]" : "text-[oklch(0.8_0.02_260)]"}`}
         >
           Platform View
         </span>
@@ -177,16 +165,14 @@ export function Navbar() {
 
   const roleConfig = ROLE_CONFIG[role];
   const isAdmin = ADMIN_ROLES.includes(role as (typeof ADMIN_ROLES)[number]);
+  const isVendor = role === "Vendor";
+  const showBecomeVendor = !isVendor && !isAdmin;
 
   function handleCopyPrincipal() {
     if (principal) {
       navigator.clipboard.writeText(principal);
       toast.success("Principal ID copied to clipboard");
     }
-  }
-
-  function handleDisconnect() {
-    authLogout();
   }
 
   const orgDotColor = activeOrg?.primaryColor ?? "oklch(0.72 0.16 75)";
@@ -244,7 +230,6 @@ export function Navbar() {
               </Link>
             );
           })}
-          {/* Admin-only links */}
           {isAdmin && (
             <Link
               to="/admin/orgs"
@@ -269,6 +254,19 @@ export function Navbar() {
               }`}
             >
               <ShieldCheck className="w-3 h-3" /> Approvals
+            </Link>
+          )}
+          {isVendor && (
+            <Link
+              to="/vendor/dashboard"
+              data-ocid="nav.vendor_dashboard.link"
+              className={`relative px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-1 ${
+                currentPath === "/vendor/dashboard"
+                  ? "text-[oklch(var(--gold))]"
+                  : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+              }`}
+            >
+              <ShoppingBag className="w-3 h-3" /> Vendor Dashboard
             </Link>
           )}
         </div>
@@ -321,11 +319,7 @@ export function Navbar() {
                 <DropdownMenuItem
                   key={lang.code}
                   onClick={() => setSelectedLanguage(lang.code)}
-                  className={`cursor-pointer text-sm ${
-                    selectedLanguage === lang.code
-                      ? "text-[oklch(var(--gold))]"
-                      : "text-[oklch(0.8_0.02_260)]"
-                  }`}
+                  className={`cursor-pointer text-sm ${selectedLanguage === lang.code ? "text-[oklch(var(--gold))]" : "text-[oklch(0.8_0.02_260)]"}`}
                 >
                   {LANGUAGE_FLAGS[lang.code] ?? "\uD83C\uDF10"}{" "}
                   {lang.nativeName}
@@ -380,6 +374,28 @@ export function Navbar() {
                 >
                   <Copy className="h-4 w-4 mr-2" /> Copy Principal ID
                 </DropdownMenuItem>
+                {showBecomeVendor && (
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/vendor/register"
+                      className="cursor-pointer text-[oklch(0.8_0.02_260)]"
+                      data-ocid="nav.wallet.become_vendor.button"
+                    >
+                      <ShoppingBag className="h-4 w-4 mr-2" /> Become a Vendor
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                {isVendor && (
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/vendor/dashboard"
+                      className="cursor-pointer text-[oklch(0.8_0.02_260)]"
+                      data-ocid="nav.wallet.vendor_dashboard.button"
+                    >
+                      <ShoppingBag className="h-4 w-4 mr-2" /> Vendor Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 {isAdmin && (
                   <DropdownMenuItem asChild>
                     <Link
@@ -404,7 +420,7 @@ export function Navbar() {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem
-                  onClick={handleDisconnect}
+                  onClick={authLogout}
                   className="cursor-pointer text-[oklch(0.7_0.15_27)]"
                   data-ocid="nav.wallet.disconnect.button"
                 >
@@ -414,6 +430,16 @@ export function Navbar() {
             </DropdownMenu>
           ) : (
             <div className="hidden sm:flex items-center gap-2">
+              <Link to="/vendor/register">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="gap-1.5 text-xs text-[oklch(0.65_0.18_195)] hover:text-[oklch(0.75_0.15_195)] hover:bg-[oklch(0.65_0.18_195/0.08)]"
+                  data-ocid="nav.become_vendor.button"
+                >
+                  <ShoppingBag className="h-3.5 w-3.5" /> Become a Vendor
+                </Button>
+              </Link>
               <Link to="/register">
                 <Button
                   size="sm"
@@ -450,7 +476,7 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile drawer overlay */}
+      {/* Mobile drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -464,7 +490,6 @@ export function Navbar() {
               onClick={() => setMobileOpen(false)}
               aria-hidden="true"
             />
-
             <motion.div
               key="drawer"
               initial={{ x: "100%" }}
@@ -499,7 +524,6 @@ export function Navbar() {
                 </button>
               </div>
 
-              {/* User info */}
               {isConnected && (
                 <div
                   className="px-4 py-3 flex items-center gap-3"
@@ -581,7 +605,6 @@ export function Navbar() {
                       </motion.div>
                     );
                   })}
-                  {/* Admin Org Management */}
                   {isAdmin && (
                     <Link
                       to="/admin/orgs"
@@ -597,7 +620,6 @@ export function Navbar() {
                       <Building2 className="w-4 h-4" /> Org Management
                     </Link>
                   )}
-                  {/* Admin Approvals */}
                   {isAdmin && (
                     <Link
                       to="/admin/approvals"
@@ -611,6 +633,32 @@ export function Navbar() {
                     >
                       <span className="w-1 shrink-0" />
                       <ShieldCheck className="w-4 h-4" /> Approvals
+                    </Link>
+                  )}
+                  {isVendor && (
+                    <Link
+                      to="/vendor/dashboard"
+                      onClick={() => setMobileOpen(false)}
+                      data-ocid="nav.mobile.vendor_dashboard.link"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 min-h-[48px] ${
+                        currentPath === "/vendor/dashboard"
+                          ? "text-[oklch(var(--gold))] bg-[oklch(var(--gold)/0.1)]"
+                          : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+                      }`}
+                    >
+                      <span className="w-1 shrink-0" />
+                      <ShoppingBag className="w-4 h-4" /> Vendor Dashboard
+                    </Link>
+                  )}
+                  {showBecomeVendor && (
+                    <Link
+                      to="/vendor/register"
+                      onClick={() => setMobileOpen(false)}
+                      data-ocid="nav.mobile.become_vendor.link"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 min-h-[48px] text-[oklch(0.65_0.18_195)] hover:text-[oklch(0.75_0.15_195)] hover:bg-[oklch(0.65_0.18_195/0.08)]"
+                    >
+                      <span className="w-1 shrink-0" />
+                      <ShoppingBag className="w-4 h-4" /> Become a Vendor
                     </Link>
                   )}
                 </div>
@@ -654,7 +702,7 @@ export function Navbar() {
                 {isConnected ? (
                   <Button
                     size="sm"
-                    onClick={handleDisconnect}
+                    onClick={authLogout}
                     variant="outline"
                     className="border-[oklch(0.7_0.15_27/0.4)] text-[oklch(0.7_0.15_27)] justify-start gap-2"
                     data-ocid="nav.mobile.wallet.disconnect.button"
@@ -663,6 +711,19 @@ export function Navbar() {
                   </Button>
                 ) : (
                   <div className="flex flex-col gap-2">
+                    <Link
+                      to="/vendor/register"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full gap-2 border-[oklch(0.65_0.18_195/0.3)] text-[oklch(0.65_0.18_195)]"
+                        data-ocid="nav.mobile.become_vendor.button"
+                      >
+                        <ShoppingBag className="h-4 w-4" /> Become a Vendor
+                      </Button>
+                    </Link>
                     <Link to="/register" onClick={() => setMobileOpen(false)}>
                       <Button
                         variant="outline"

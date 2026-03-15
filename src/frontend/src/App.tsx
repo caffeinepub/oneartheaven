@@ -28,6 +28,8 @@ import { ResolutionsPage } from "@/pages/ResolutionsPage";
 import { SolutionsPage } from "@/pages/Solutions";
 import { SustainabilityPage } from "@/pages/Sustainability";
 import { TransparencyPage } from "@/pages/TransparencyPage";
+import { VendorDashboardPage } from "@/pages/VendorDashboard";
+import { VendorRegisterPage } from "@/pages/VendorRegister";
 import { GovernancePage } from "@/pages/stubs";
 import {
   Outlet,
@@ -190,11 +192,20 @@ const adminApprovalsRoute = createRoute({
   path: "/admin/approvals",
   component: AdminApprovalsPage,
 });
-
 const adminOrgsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/admin/orgs",
   component: AdminOrgsPage,
+});
+const vendorRegisterRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/vendor/register",
+  component: VendorRegisterPage,
+});
+const vendorDashboardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/vendor/dashboard",
+  component: VendorDashboardPage,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -222,6 +233,8 @@ const routeTree = rootRoute.addChildren([
   registerRoute,
   adminApprovalsRoute,
   adminOrgsRoute,
+  vendorRegisterRoute,
+  vendorDashboardRoute,
 ]);
 
 const router = createRouter({ routeTree });
