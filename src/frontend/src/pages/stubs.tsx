@@ -12,9 +12,11 @@ import {
   Building2,
   Coins,
   Construction,
+  CreditCard,
   Globe,
   Globe2,
   GraduationCap,
+  HelpCircle,
   Layers,
   Leaf,
   Network,
@@ -126,7 +128,11 @@ type AvailableRoute =
   | "/transparency"
   | "/integrations"
   | "/admin/orgs"
-  | "/admin/whitelabel";
+  | "/admin/whitelabel"
+  | "/pricing"
+  | "/admin/subscription"
+  | "/admin/analytics"
+  | "/docs";
 
 interface GovernancePortalCard {
   icon: React.ElementType;
@@ -332,6 +338,66 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     isAvailable: true,
     accentColor: "oklch(0.70 0.18 310)",
     accentColorRaw: "0.70 0.18 310",
+  },
+  {
+    icon: CreditCard,
+    title: "Pricing & Plans",
+    description:
+      "Explore PaaS plans from Starter to Global. Compare features, FinFracFran™ tier alignment, and upgrade your organization's subscription.",
+    link: "/pricing",
+    phaseLabel: "Phase 12 · PaaS",
+    phaseNum: "12",
+    isAvailable: true,
+    accentColor: "oklch(0.72 0.16 75)",
+    accentColorRaw: "0.72 0.16 75",
+  },
+  {
+    icon: BarChart3,
+    title: "Subscription Dashboard",
+    description:
+      "Monitor your organization's active plan, usage metrics, billing history, and upgrade your subscription in real time.",
+    link: "/admin/subscription",
+    phaseLabel: "Phase 12 · Billing",
+    phaseNum: "12",
+    isAvailable: true,
+    accentColor: "oklch(0.68 0.17 155)",
+    accentColorRaw: "0.68 0.17 155",
+  },
+  {
+    icon: BookOpen,
+    title: "Documentation",
+    description:
+      "Developer & API docs, SDK guides, webhook references, and FinFracFran™ integration documentation.",
+    link: "/docs",
+    phaseLabel: "Phase 12 · Docs",
+    phaseNum: "12",
+    isAvailable: true,
+    accentColor: "oklch(0.70 0.18 310)",
+    accentColorRaw: "0.70 0.18 310",
+  },
+  {
+    icon: HelpCircle,
+    title: "Onboarding & Help",
+    description:
+      "Guided tours for every role, contextual help articles, and an in-app Help Center widget. Phase 12 onboarding system.",
+    link: "/",
+    phaseLabel: "Phase 12 · Onboarding",
+    phaseNum: "12",
+    isAvailable: true,
+    accentColor: "oklch(0.70 0.18 200)",
+    accentColorRaw: "0.70 0.18 200",
+  },
+  {
+    icon: BarChart3,
+    title: "Platform Analytics",
+    description:
+      "Super Admin analytics dashboard: platform-wide stats, 30-day trends, org metrics, vendor leaderboard, and platform health.",
+    link: "/admin/analytics",
+    phaseLabel: "Phase 12 · Analytics",
+    phaseNum: "12",
+    isAvailable: true,
+    accentColor: "oklch(0.65 0.18 275)",
+    accentColorRaw: "0.65 0.18 275",
   },
 ];
 
@@ -768,7 +834,11 @@ export function GovernancePage() {
                   key={portal.title}
                   to={portal.link}
                   className="block h-full hover:-translate-y-1 transition-transform duration-200"
-                  data-ocid={`governance.portal.card.${idx + 1}`}
+                  data-ocid={
+                    portal.title === "Documentation"
+                      ? "governance.docs.card"
+                      : `governance.portal.card.${idx + 1}`
+                  }
                   aria-label={`Open ${portal.title}`}
                 >
                   {cardInner}

@@ -678,6 +678,86 @@ body {
   }
 }
 
+
+/* ══════════════════════════════════════════════════════════════
+   INPUT FIELD VISIBILITY — Deep Cosmos Dark Theme Fix
+   Ensures all form inputs, textareas, and selects are clearly
+   visible against the dark navy backgrounds across all pages.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Base: visible background, border, and text ────────────── */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+textarea,
+select {
+  background-color: oklch(0.18 0.04 260) !important;
+  border: 1px solid oklch(0.32 0.05 260) !important;
+  color: oklch(0.95 0.01 95) !important;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* ── Placeholder: muted but legible ────────────────────────── */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"])::placeholder,
+textarea::placeholder {
+  color: oklch(0.55 0.04 260) !important;
+  opacity: 1;
+}
+
+/* ── Focus: gold border + subtle glow ──────────────────────── */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):focus,
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none !important;
+  border-color: oklch(0.72 0.16 75) !important;
+  box-shadow: 0 0 0 2px oklch(0.72 0.16 75 / 0.25) !important;
+}
+
+/* ── Select: fix native dropdown arrow visibility ───────────── */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='oklch(0.72 0.16 75)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.25rem;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* ── Command palette search input ──────────────────────────── */
+[cmdk-input],
+input[type="search"] {
+  background-color: oklch(0.18 0.04 260) !important;
+  border: 1px solid oklch(0.32 0.05 260) !important;
+  color: oklch(0.95 0.01 95) !important;
+}
+
+[cmdk-input]::placeholder,
+input[type="search"]::placeholder {
+  color: oklch(0.55 0.04 260) !important;
+  opacity: 1;
+}
+
+[cmdk-input]:focus,
+[cmdk-input]:focus-visible,
+input[type="search"]:focus,
+input[type="search"]:focus-visible {
+  outline: none !important;
+  border-color: oklch(0.72 0.16 75) !important;
+  box-shadow: 0 0 0 2px oklch(0.72 0.16 75 / 0.25) !important;
+}
+
+/* ── Disabled state: visually dimmed but still readable ────── */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: oklch(0.14 0.03 260) !important;
+  border-color: oklch(0.22 0.04 260) !important;
+  color: oklch(0.55 0.04 260) !important;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 /* ── Print styles ─────────────────────────────────────────── */
 @media print {
   .nav-glass,

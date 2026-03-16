@@ -1,0 +1,466 @@
+import type {
+  AnalyticsDashboard,
+  OrgActivityRecord,
+  OrgMetrics,
+  PlatformHealth,
+  PlatformStat,
+  TimeSeriesData,
+  VendorMetrics,
+} from "./analyticsTypes";
+
+function genSeries(
+  base: number,
+  variance: number,
+  days = 30,
+): { date: string; value: number }[] {
+  const pts: { date: string; value: number }[] = [];
+  const now = new Date("2026-03-15");
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const v = Math.round(base + (Math.random() * variance * 2 - variance));
+    pts.push({ date: d.toISOString().slice(0, 10), value: Math.max(0, v) });
+  }
+  return pts;
+}
+
+export const PLATFORM_STATS: PlatformStat[] = [
+  {
+    id: "stat-orgs",
+    label: "Total Organizations",
+    value: 6,
+    unit: "orgs",
+    trend: "up",
+    trendPct: 20,
+    trendLabel: "vs last 30 days",
+    icon: "Building2",
+    color: "emerald",
+  },
+  {
+    id: "stat-users",
+    label: "Active Users",
+    value: 24872,
+    unit: "users",
+    trend: "up",
+    trendPct: 12.4,
+    trendLabel: "vs last 30 days",
+    icon: "Users",
+    color: "blue",
+  },
+  {
+    id: "stat-vendors",
+    label: "Active Vendors",
+    value: 6,
+    unit: "vendors",
+    trend: "flat",
+    trendPct: 0,
+    trendLabel: "vs last 30 days",
+    icon: "Store",
+    color: "violet",
+  },
+  {
+    id: "stat-revenue",
+    label: "Platform Revenue",
+    value: 2847300,
+    unit: "USD",
+    trend: "up",
+    trendPct: 18.7,
+    trendLabel: "vs last quarter",
+    icon: "DollarSign",
+    color: "amber",
+  },
+  {
+    id: "stat-nations",
+    label: "Nations Reached",
+    value: 194,
+    unit: "nations",
+    trend: "up",
+    trendPct: 3.7,
+    trendLabel: "vs last 30 days",
+    icon: "Globe",
+    color: "teal",
+  },
+  {
+    id: "stat-ff",
+    label: "FinFracFran\u2122 Earnings",
+    value: 206960,
+    unit: "USD",
+    trend: "up",
+    trendPct: 22.1,
+    trendLabel: "vs last quarter",
+    icon: "TrendingUp",
+    color: "gold",
+  },
+  {
+    id: "stat-sessions",
+    label: "Active Sessions",
+    value: 1482,
+    unit: "sessions",
+    trend: "up",
+    trendPct: 8.3,
+    trendLabel: "right now",
+    icon: "Activity",
+    color: "sky",
+  },
+  {
+    id: "stat-uptime",
+    label: "Platform Uptime",
+    value: 99.97,
+    unit: "%",
+    trend: "flat",
+    trendPct: 0.01,
+    trendLabel: "last 30 days",
+    icon: "ShieldCheck",
+    color: "emerald",
+  },
+];
+
+export const PLATFORM_TIME_SERIES: TimeSeriesData[] = [
+  {
+    id: "ts-new-users",
+    label: "New Users",
+    color: "#60a5fa",
+    points: genSeries(85, 30),
+  },
+  {
+    id: "ts-new-orgs",
+    label: "New Orgs",
+    color: "#34d399",
+    points: genSeries(2, 2),
+  },
+  {
+    id: "ts-vendor-revenue",
+    label: "Vendor Revenue (USD)",
+    color: "#f59e0b",
+    points: genSeries(9200, 3000),
+  },
+  {
+    id: "ts-api-calls",
+    label: "API Calls (K)",
+    color: "#a78bfa",
+    points: genSeries(1200, 400),
+  },
+];
+
+export const ACTIVITY_FEED: OrgActivityRecord[] = [
+  {
+    id: "act-001",
+    orgId: "org-finfracfran-hub-006",
+    orgName: "FinFracFran\u2122 Franchise Hub",
+    orgType: "Corporate",
+    action: "listing_published",
+    actorRole: "Vendor",
+    actorName: "Maria Santos",
+    timestamp: "2026-03-15T09:14:00Z",
+  },
+  {
+    id: "act-002",
+    orgId: "org-africa-climate-002",
+    orgName: "African Climate Alliance",
+    orgType: "NGO",
+    action: "member_joined",
+    actorRole: "Delegate",
+    actorName: "Kwame Asante",
+    timestamp: "2026-03-15T08:52:00Z",
+  },
+  {
+    id: "act-003",
+    orgId: "org-global-solutions-dao-005",
+    orgName: "Global Solutions DAO",
+    orgType: "DAO",
+    action: "subscription_upgraded",
+    actorRole: "OrgAdmin",
+    actorName: "Yuki Tanaka",
+    timestamp: "2026-03-15T08:31:00Z",
+  },
+  {
+    id: "act-004",
+    orgId: "org-eu-cooperative-003",
+    orgName: "European Cooperative Network",
+    orgType: "Cooperative",
+    action: "whitelabel_published",
+    actorRole: "OrgAdmin",
+    actorName: "Lena Fischer",
+    timestamp: "2026-03-15T07:58:00Z",
+  },
+  {
+    id: "act-005",
+    orgId: "org-oneearth-platform-001",
+    orgName: "ONEartHeaven\u2122 Platform",
+    orgType: "Foundation",
+    action: "vendor_approved",
+    actorRole: "SuperAdmin",
+    actorName: "Platform Admin",
+    timestamp: "2026-03-15T07:20:00Z",
+  },
+  {
+    id: "act-006",
+    orgId: "org-pacific-nations-004",
+    orgName: "Pacific Island Nations Council",
+    orgType: "Nation",
+    action: "payout_requested",
+    actorRole: "Vendor",
+    actorName: "Tane Raupach",
+    timestamp: "2026-03-15T06:45:00Z",
+  },
+  {
+    id: "act-007",
+    orgId: "org-africa-climate-002",
+    orgName: "African Climate Alliance",
+    orgType: "NGO",
+    action: "tour_completed",
+    actorRole: "Delegate",
+    actorName: "Amara Diallo",
+    timestamp: "2026-03-14T22:10:00Z",
+  },
+  {
+    id: "act-008",
+    orgId: "org-global-solutions-dao-005",
+    orgName: "Global Solutions DAO",
+    orgType: "DAO",
+    action: "vendor_registered",
+    actorRole: "Vendor",
+    actorName: "Chen Wei",
+    timestamp: "2026-03-14T19:34:00Z",
+  },
+  {
+    id: "act-009",
+    orgId: "org-eu-cooperative-003",
+    orgName: "European Cooperative Network",
+    orgType: "Cooperative",
+    action: "doc_viewed",
+    actorRole: "OrgAdmin",
+    actorName: "Henrik Larsson",
+    timestamp: "2026-03-14T17:08:00Z",
+  },
+  {
+    id: "act-010",
+    orgId: "org-oneearth-platform-001",
+    orgName: "ONEartHeaven\u2122 Platform",
+    orgType: "Foundation",
+    action: "org_created",
+    actorRole: "SuperAdmin",
+    actorName: "Platform Admin",
+    timestamp: "2026-03-14T14:22:00Z",
+  },
+  {
+    id: "act-011",
+    orgId: "org-finfracfran-hub-006",
+    orgName: "FinFracFran\u2122 Franchise Hub",
+    orgType: "Corporate",
+    action: "member_joined",
+    actorRole: "Delegate",
+    actorName: "Priya Nair",
+    timestamp: "2026-03-14T12:05:00Z",
+  },
+  {
+    id: "act-012",
+    orgId: "org-pacific-nations-004",
+    orgName: "Pacific Island Nations Council",
+    orgType: "Nation",
+    action: "listing_published",
+    actorRole: "Vendor",
+    actorName: "Moana Kealoha",
+    timestamp: "2026-03-13T10:41:00Z",
+  },
+];
+
+export const ORG_METRICS: OrgMetrics[] = [
+  {
+    orgId: "org-oneearth-platform-001",
+    orgName: "ONEartHeaven\u2122 Platform",
+    orgType: "Foundation",
+    tier: "Global",
+    region: "Global",
+    memberCount: 12847,
+    activeListings: 4,
+    totalRevenue: 680000,
+    finfracfranEarnings: 81600,
+    nationsReached: 194,
+    subscriptionPlan: "Global",
+    lastActiveAt: "2026-03-15T09:14:00Z",
+    growthPct: 14.2,
+  },
+  {
+    orgId: "org-finfracfran-hub-006",
+    orgName: "FinFracFran\u2122 Franchise Hub",
+    orgType: "Corporate",
+    tier: "Global",
+    region: "Asia",
+    memberCount: 7458,
+    activeListings: 2,
+    totalRevenue: 833000,
+    finfracfranEarnings: 99960,
+    nationsReached: 194,
+    subscriptionPlan: "Global",
+    lastActiveAt: "2026-03-15T09:14:00Z",
+    growthPct: 22.8,
+  },
+  {
+    orgId: "org-global-solutions-dao-005",
+    orgName: "Global Solutions DAO",
+    orgType: "DAO",
+    tier: "Scale",
+    region: "Global",
+    memberCount: 3241,
+    activeListings: 2,
+    totalRevenue: 533000,
+    finfracfranEarnings: 53300,
+    nationsReached: 45,
+    subscriptionPlan: "Enterprise",
+    lastActiveAt: "2026-03-15T08:31:00Z",
+    growthPct: 31.5,
+  },
+  {
+    orgId: "org-eu-cooperative-003",
+    orgName: "European Cooperative Network",
+    orgType: "Cooperative",
+    tier: "Scale",
+    region: "Europe",
+    memberCount: 823,
+    activeListings: 1,
+    totalRevenue: 365000,
+    finfracfranEarnings: 36500,
+    nationsReached: 27,
+    subscriptionPlan: "Professional",
+    lastActiveAt: "2026-03-15T07:58:00Z",
+    growthPct: 18.3,
+  },
+  {
+    orgId: "org-africa-climate-002",
+    orgName: "African Climate Alliance",
+    orgType: "NGO",
+    tier: "Growth",
+    region: "Africa",
+    memberCount: 347,
+    activeListings: 1,
+    totalRevenue: 163500,
+    finfracfranEarnings: 13080,
+    nationsReached: 54,
+    subscriptionPlan: "Starter",
+    lastActiveAt: "2026-03-15T08:52:00Z",
+    growthPct: 9.7,
+  },
+  {
+    orgId: "org-pacific-nations-004",
+    orgName: "Pacific Island Nations Council",
+    orgType: "Nation",
+    tier: "Seed",
+    region: "Oceania",
+    memberCount: 156,
+    activeListings: 1,
+    totalRevenue: 42800,
+    finfracfranEarnings: 2140,
+    nationsReached: 14,
+    subscriptionPlan: "Starter",
+    lastActiveAt: "2026-03-15T06:45:00Z",
+    growthPct: 5.1,
+  },
+];
+
+export const VENDOR_LEADERBOARD: VendorMetrics[] = [
+  {
+    vendorId: "vendor-001",
+    vendorName: "FinFracFran\u2122 Franchise Hub",
+    orgId: "org-finfracfran-hub-006",
+    tier: "Global",
+    region: "Asia",
+    activeListings: 2,
+    totalRevenue: 833000,
+    finfracfranEarnings: 99960,
+    nationsReached: 194,
+    rank: 1,
+  },
+  {
+    vendorId: "vendor-006",
+    vendorName: "ONEartHeaven\u2122 Academy Vendor",
+    orgId: "org-oneearth-platform-001",
+    tier: "Global",
+    region: "Global",
+    activeListings: 2,
+    totalRevenue: 680000,
+    finfracfranEarnings: 81600,
+    nationsReached: 147,
+    rank: 2,
+  },
+  {
+    vendorId: "vendor-005",
+    vendorName: "Global Solutions DAO",
+    orgId: "org-global-solutions-dao-005",
+    tier: "Scale",
+    region: "Global",
+    activeListings: 2,
+    totalRevenue: 533000,
+    finfracfranEarnings: 53300,
+    nationsReached: 45,
+    rank: 3,
+  },
+  {
+    vendorId: "vendor-003",
+    vendorName: "European Cooperative Network",
+    orgId: "org-eu-cooperative-003",
+    tier: "Scale",
+    region: "Europe",
+    activeListings: 1,
+    totalRevenue: 365000,
+    finfracfranEarnings: 36500,
+    nationsReached: 27,
+    rank: 4,
+  },
+  {
+    vendorId: "vendor-002",
+    vendorName: "African Climate Alliance",
+    orgId: "org-africa-climate-002",
+    tier: "Growth",
+    region: "Africa",
+    activeListings: 1,
+    totalRevenue: 163500,
+    finfracfranEarnings: 13080,
+    nationsReached: 54,
+    rank: 5,
+  },
+];
+
+export const PLATFORM_HEALTH: PlatformHealth = {
+  uptimePct: 99.97,
+  avgResponseMs: 184,
+  activeOrgs: 6,
+  activeSessions: 1482,
+  errorsLastHour: 3,
+  apiCallsToday: 2841920,
+  storageUsedGB: 3002,
+  storageTotalGB: 10000,
+  lastCheckedAt: "2026-03-15T09:14:00Z",
+};
+
+export const ANALYTICS_DASHBOARD: AnalyticsDashboard = {
+  generatedAt: "2026-03-15T09:14:00Z",
+  period: "month",
+  stats: PLATFORM_STATS,
+  timeSeries: PLATFORM_TIME_SERIES,
+  activityFeed: ACTIVITY_FEED,
+  orgMetrics: ORG_METRICS,
+  vendorLeaderboard: VENDOR_LEADERBOARD,
+  health: PLATFORM_HEALTH,
+};
+
+export function getDashboard() {
+  return ANALYTICS_DASHBOARD;
+}
+export function getOrgMetrics(orgId?: string) {
+  return orgId ? ORG_METRICS.filter((m) => m.orgId === orgId) : ORG_METRICS;
+}
+export function getVendorLeaderboard(topN = 5) {
+  return VENDOR_LEADERBOARD.slice(0, topN);
+}
+export function getActivityFeed(limit = 20) {
+  return ACTIVITY_FEED.slice(0, limit);
+}
+export function getPlatformHealth() {
+  return PLATFORM_HEALTH;
+}
+export function getTimeSeries(seriesId?: string) {
+  return seriesId
+    ? PLATFORM_TIME_SERIES.filter((s) => s.id === seriesId)
+    : PLATFORM_TIME_SERIES;
+}

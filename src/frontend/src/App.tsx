@@ -1,14 +1,18 @@
 import { AnnouncementsBar } from "@/components/AnnouncementsBar";
 import { Footer } from "@/components/Footer";
+import { HelpCenter } from "@/components/HelpCenter";
 import { Navbar } from "@/components/Navbar";
+import { OnboardingTourOverlay } from "@/components/OnboardingTourOverlay";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { TenantProvider } from "@/context/TenantContext";
 import { AboutPage } from "@/pages/About";
 import { AcademyPage } from "@/pages/Academy";
+import { AdminAnalyticsPage } from "@/pages/AdminAnalytics";
 import { AdminApprovalsPage } from "@/pages/AdminApprovals";
 import { AdminOrgsPage } from "@/pages/AdminOrgs";
+import { AdminSubscriptionPage } from "@/pages/AdminSubscription";
 import { AdminWhiteLabelPage } from "@/pages/AdminWhiteLabel";
 import { AssemblyPage } from "@/pages/Assembly";
 import { CharterPage } from "@/pages/Charter";
@@ -17,6 +21,7 @@ import { CouncilDetailPage } from "@/pages/CouncilDetail";
 import { CouncilsPage } from "@/pages/Councils";
 import { DelegateDetailPage } from "@/pages/DelegateDetail";
 import { DelegatesPage } from "@/pages/Delegates";
+import { DocsPortalPage } from "@/pages/DocsPortal";
 import { FinancePage } from "@/pages/Finance";
 import { Home } from "@/pages/Home";
 import { IntegrationsPage } from "@/pages/Integrations";
@@ -24,6 +29,7 @@ import { MembersPage } from "@/pages/Members";
 import { PolicyAdvisorPage } from "@/pages/PolicyAdvisor";
 import { PortalDetailPage } from "@/pages/PortalDetail";
 import { PortalsPage } from "@/pages/Portals";
+import { PricingPage } from "@/pages/Pricing";
 import { RegisterPage } from "@/pages/Register";
 import { ResolutionsPage } from "@/pages/ResolutionsPage";
 import { SolutionsPage } from "@/pages/Solutions";
@@ -39,12 +45,15 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
+import { useState } from "react";
 
 // ---------------------------------------------------------------------------
 // Layout
 // ---------------------------------------------------------------------------
 
 function Layout() {
+  const [activeTourId, setActiveTourId] = useState<string | null>(null);
+
   return (
     <LanguageProvider>
       <AuthProvider>
@@ -57,7 +66,7 @@ function Layout() {
             >
               Skip to main content
             </a>
-            <Navbar />
+            <Navbar onStartTour={setActiveTourId} />
             <div className="pt-16 flex-1 flex flex-col">
               <AnnouncementsBar />
               <main id="main-content" className="flex-1" tabIndex={-1}>
@@ -66,6 +75,13 @@ function Layout() {
             </div>
             <Footer />
             <Toaster richColors position="top-right" />
+            <HelpCenter onStartTour={setActiveTourId} />
+            {activeTourId && (
+              <OnboardingTourOverlay
+                tourId={activeTourId}
+                onClose={() => setActiveTourId(null)}
+              />
+            )}
           </div>
         </TenantProvider>
       </AuthProvider>
@@ -203,6 +219,26 @@ const adminWhiteLabelRoute = createRoute({
   path: "/admin/whitelabel",
   component: AdminWhiteLabelPage,
 });
+const adminSubscriptionRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/admin/subscription",
+  component: AdminSubscriptionPage,
+});
+const adminAnalyticsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/admin/analytics",
+  component: AdminAnalyticsPage,
+});
+const pricingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/pricing",
+  component: PricingPage,
+});
+const docsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/docs",
+  component: DocsPortalPage,
+});
 const vendorRegisterRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/vendor/register",
@@ -240,6 +276,10 @@ const routeTree = rootRoute.addChildren([
   adminApprovalsRoute,
   adminOrgsRoute,
   adminWhiteLabelRoute,
+  adminSubscriptionRoute,
+  adminAnalyticsRoute,
+  pricingRoute,
+  docsRoute,
   vendorRegisterRoute,
   vendorDashboardRoute,
 ]);

@@ -16,17 +16,21 @@ import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import { useGetSupportedLanguages } from "@/hooks/useQueries";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
+  BarChart3,
   Building2,
   CheckCircle2,
   ChevronDown,
   ChevronsUpDown,
   Copy,
+  CreditCard,
   Globe,
   LogOut,
   Menu,
   Paintbrush,
+  PlayCircle,
   ShieldCheck,
   ShoppingBag,
+  Tag,
   UserPlus,
   Wallet,
   X,
@@ -60,6 +64,8 @@ const NAV_LINKS = [
   { label: "Sustainability", path: "/sustainability" as const },
   { label: "Transparency", path: "/transparency" as const },
   { label: "Integrations", path: "/integrations" as const },
+  { label: "Pricing", path: "/pricing" as const },
+  { label: "Docs", path: "/docs" as const },
 ];
 
 const ADMIN_ROLES = ["SuperAdmin", "OrgAdmin"] as const;
@@ -145,7 +151,11 @@ function OrgSwitcherDropdown() {
   );
 }
 
-export function Navbar() {
+interface NavbarProps {
+  onStartTour?: (tourId: string) => void;
+}
+
+export function Navbar({ onStartTour }: NavbarProps = {}) {
   const { location } = useRouterState();
   const {
     login: iiLogin,
@@ -156,7 +166,7 @@ export function Navbar() {
   const { userProfile, role, logout: authLogout } = useAuth();
   const { data: languages } = useGetSupportedLanguages();
   const { selectedLanguage, setSelectedLanguage } = useLanguage();
-  const { activeOrg } = useTenantContext();
+  const { activeOrg, activeWhiteLabel } = useTenantContext();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isConnected = isLoginSuccess && !!identity;
@@ -179,6 +189,10 @@ export function Navbar() {
   const orgDotColor = activeOrg?.primaryColor ?? "oklch(0.72 0.16 75)";
   const orgLabel = activeOrg ? truncate(activeOrg.name, 16) : "Platform";
 
+  // Derive brand display name from white-label config if active
+  const brandName = activeWhiteLabel?.brandName ?? "ONEartHeaven";
+  const isBranded = !!activeWhiteLabel;
+
   return (
     <nav className="nav-glass fixed top-0 left-0 right-0 z-50 h-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between gap-4">
@@ -196,11 +210,20 @@ export function Navbar() {
               (e.currentTarget as HTMLImageElement).style.display = "none";
             }}
           />
+          {isBranded && (
+            <span
+              className="text-[oklch(0.5_0.03_260)] text-xs select-none"
+              aria-hidden="true"
+            >
+              |
+            </span>
+          )}
           <span
             className="font-display font-bold text-lg tracking-tight"
             style={{ color: "oklch(var(--gold))" }}
+            data-ocid="nav.brand.name"
           >
-            ONEartHeaven
+            {brandName}
           </span>
         </Link>
 
@@ -268,6 +291,32 @@ export function Navbar() {
               }`}
             >
               <Paintbrush className="w-3 h-3" /> White Label
+            </Link>
+          )}
+          {isAdmin && (
+            <Link
+              to="/admin/subscription"
+              data-ocid="nav.subscription.link"
+              className={`relative px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-1 ${
+                currentPath === "/admin/subscription"
+                  ? "text-[oklch(var(--gold))]"
+                  : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+              }`}
+            >
+              <CreditCard className="w-3 h-3" /> Subscription
+            </Link>
+          )}
+          {role === "SuperAdmin" && (
+            <Link
+              to="/admin/analytics"
+              data-ocid="nav.analytics.link"
+              className={`relative px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-1 ${
+                currentPath === "/admin/analytics"
+                  ? "text-[oklch(var(--gold))]"
+                  : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+              }`}
+            >
+              <BarChart3 className="w-3 h-3" /> Analytics
             </Link>
           )}
           {isVendor && (
@@ -444,6 +493,45 @@ export function Navbar() {
                     </Link>
                   </DropdownMenuItem>
                 )}
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/admin/subscription"
+                      className="cursor-pointer text-[oklch(0.8_0.02_260)]"
+                      data-ocid="nav.wallet.subscription.button"
+                    >
+                      <CreditCard className="h-4 w-4 mr-2" /> Subscription
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                {role === "SuperAdmin" && (
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/admin/analytics"
+                      className="cursor-pointer text-[oklch(0.8_0.02_260)]"
+                      data-ocid="nav.wallet.analytics.button"
+                    >
+                      <BarChart3 className="h-4 w-4 mr-2" /> Platform Analytics
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                {onStartTour && isConnected && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      const tourMap: Record<string, string> = {
+                        Delegate: "delegate-quickstart",
+                        OrgAdmin: "org-admin-quickstart",
+                        Vendor: "vendor-quickstart",
+                      };
+                      const tourId = tourMap[role ?? ""] ?? "platform-overview";
+                      onStartTour(tourId);
+                    }}
+                    className="cursor-pointer text-[oklch(0.8_0.02_260)]"
+                    data-ocid="nav.wallet.restart_tour.button"
+                  >
+                    <PlayCircle className="h-4 w-4 mr-2" /> Restart Tour
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   onClick={authLogout}
                   className="cursor-pointer text-[oklch(0.7_0.15_27)]"
@@ -455,6 +543,16 @@ export function Navbar() {
             </DropdownMenu>
           ) : (
             <div className="hidden sm:flex items-center gap-2">
+              <Link to="/pricing">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="gap-1.5 text-xs text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+                  data-ocid="nav.pricing.button"
+                >
+                  <Tag className="h-3.5 w-3.5" /> Pricing
+                </Button>
+              </Link>
               <Link to="/vendor/register">
                 <Button
                   size="sm"
@@ -535,8 +633,10 @@ export function Navbar() {
                 <span
                   className="font-display font-bold text-base"
                   style={{ color: "oklch(var(--gold))" }}
+                  data-ocid="nav.brand.name"
                 >
-                  ONEartHeaven™
+                  {brandName}
+                  {isBranded ? "" : "\u2122"}
                 </span>
                 <button
                   type="button"
@@ -673,6 +773,36 @@ export function Navbar() {
                     >
                       <span className="w-1 shrink-0" />
                       <Paintbrush className="w-4 h-4" /> White Label
+                    </Link>
+                  )}
+                  {isAdmin && (
+                    <Link
+                      to="/admin/subscription"
+                      onClick={() => setMobileOpen(false)}
+                      data-ocid="nav.mobile.subscription.link"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 min-h-[48px] ${
+                        currentPath === "/admin/subscription"
+                          ? "text-[oklch(var(--gold))] bg-[oklch(var(--gold)/0.1)]"
+                          : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+                      }`}
+                    >
+                      <span className="w-1 shrink-0" />
+                      <CreditCard className="w-4 h-4" /> Subscription
+                    </Link>
+                  )}
+                  {role === "SuperAdmin" && (
+                    <Link
+                      to="/admin/analytics"
+                      onClick={() => setMobileOpen(false)}
+                      data-ocid="nav.mobile.analytics.link"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 min-h-[48px] ${
+                        currentPath === "/admin/analytics"
+                          ? "text-[oklch(var(--gold))] bg-[oklch(var(--gold)/0.1)]"
+                          : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+                      }`}
+                    >
+                      <span className="w-1 shrink-0" />
+                      <BarChart3 className="w-4 h-4" /> Analytics
                     </Link>
                   )}
                   {isVendor && (
