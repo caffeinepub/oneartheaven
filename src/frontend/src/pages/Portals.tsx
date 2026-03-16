@@ -6,7 +6,19 @@ import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { usePortals } from "@/hooks/usePortals";
 import { Link } from "@tanstack/react-router";
-import { Building2, Globe, Users, Zap } from "lucide-react";
+import {
+  Building2,
+  Globe,
+  Globe2,
+  HandshakeIcon,
+  Layers,
+  Lightbulb,
+  RefreshCw,
+  Scale,
+  Shield,
+  Users,
+  Zap,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
 function formatNum(n: number): string {
@@ -96,9 +108,9 @@ export function PortalsPage() {
             className="text-lg sm:text-xl max-w-2xl mx-auto mb-8 leading-relaxed"
             style={{ color: "oklch(0.72 0.03 260)" }}
           >
-            Nine thematic action portals — where global policy becomes local
-            reality. Join initiatives, access open resources, and replicate
-            proven solutions through FinFracFran™.
+            Nine thematic action portals — where shared commitments become
+            tangible solutions. Join initiatives, co-create with partners
+            worldwide, and scale proven impact through FinFracFran™.
           </motion.p>
 
           {/* CTA */}
@@ -368,6 +380,128 @@ export function PortalsPage() {
               </div>
             )}
           </AnimatePresence>
+        </section>
+
+        {/* Our Shared Commitments */}
+        <section
+          data-ocid="portals.commitments.section"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-14"
+          >
+            <span
+              className="inline-block text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-4"
+              style={{
+                background: "oklch(var(--gold) / 0.15)",
+                color: "oklch(var(--gold))",
+              }}
+            >
+              Our Shared Commitments
+            </span>
+            <h2
+              className="text-3xl sm:text-4xl font-display font-bold mb-4"
+              style={{ color: "oklch(var(--gold-bright))" }}
+            >
+              How We Work Together
+            </h2>
+            <p
+              className="text-base max-w-2xl mx-auto"
+              style={{ color: "oklch(0.72 0.03 260)" }}
+            >
+              Every portal is built on a foundation of shared values — open
+              participation, transparent outcomes, and genuine co-creation with
+              all who join.
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Globe2,
+                title: "Open Participation",
+                desc: "Every portal welcomes all people, organizations, and communities — regardless of size, geography, or background.",
+                color: "oklch(var(--gold))",
+              },
+              {
+                icon: Lightbulb,
+                title: "Local Action, Global Impact",
+                desc: "Solutions begin where people live and scale worldwide through FinFracFran™ replication and community adoption.",
+                color: "oklch(0.72 0.16 155)",
+              },
+              {
+                icon: HandshakeIcon,
+                title: "Co-Creation & Partnership",
+                desc: "All initiatives are developed in concert with stakeholders — your ideas, ideals, and initiatives belong at the center.",
+                color: "oklch(0.70 0.18 200)",
+              },
+              {
+                icon: Shield,
+                title: "Transparent Progress",
+                desc: "All actions, outcomes, and resources are openly tracked and reported, ensuring trust and accountability at every step.",
+                color: "oklch(0.68 0.17 275)",
+              },
+              {
+                icon: RefreshCw,
+                title: "FinFracFran™ Scaling",
+                desc: "Proven solutions are fractionalized and franchised for rapid, inclusive replication across nations and communities.",
+                color: "oklch(0.65 0.20 30)",
+              },
+              {
+                icon: Layers,
+                title: "Shared Stewardship",
+                desc: "Every member is a steward of the solutions we build together — contributing to a legacy of sustainable, lasting change.",
+                color: "oklch(0.72 0.16 310)",
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                data-ocid={`portals.commitment.card.${i + 1}`}
+                className="rounded-xl p-6 flex gap-4 items-start"
+                style={{
+                  background: "oklch(0.13 0.02 260 / 0.8)",
+                  borderLeft: `4px solid ${item.color}`,
+                  border: "1px solid oklch(0.22 0.03 260)",
+                  borderLeftWidth: "4px",
+                  borderLeftColor: item.color,
+                }}
+              >
+                <div
+                  className="mt-0.5 shrink-0 p-2 rounded-lg"
+                  style={{
+                    background: `color-mix(in oklch, ${item.color} 15%, transparent)`,
+                  }}
+                >
+                  <item.icon
+                    className="h-5 w-5"
+                    style={{ color: item.color }}
+                  />
+                </div>
+                <div>
+                  <h3
+                    className="font-bold text-base mb-1"
+                    style={{ color: "oklch(0.92 0.015 95)" }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ color: "oklch(0.68 0.02 260)" }}
+                  >
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </section>
       </div>
     </div>

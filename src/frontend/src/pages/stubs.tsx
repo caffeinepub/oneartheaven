@@ -132,7 +132,8 @@ type AvailableRoute =
   | "/pricing"
   | "/admin/subscription"
   | "/admin/analytics"
-  | "/docs";
+  | "/docs"
+  | "/launch";
 
 interface GovernancePortalCard {
   icon: React.ElementType;
@@ -398,6 +399,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     isAvailable: true,
     accentColor: "oklch(0.65 0.18 275)",
     accentColorRaw: "0.65 0.18 275",
+  },
+  {
+    icon: Globe2,
+    title: "Worldwide Launch Plan",
+    description:
+      "Global adoption roadmap, phased rollout strategy, stakeholder pathways, FinFracFran™ scaling model, and our commitments to every partner worldwide.",
+    link: "/launch",
+    phaseLabel: "Global · Launch",
+    phaseNum: "13",
+    isAvailable: true,
+    accentColor: "oklch(var(--gold))",
+    accentColorRaw: "0.88 0.025 95",
   },
 ];
 

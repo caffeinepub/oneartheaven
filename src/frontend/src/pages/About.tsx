@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import {
   Brain,
-  Check,
   Download,
   Eye,
   FileText,
@@ -16,11 +15,16 @@ import {
   Layers,
   MapPin,
   Network,
+  Shield,
+  Sparkles,
   Star,
+  Target,
   UserPlus,
-  X,
+  Users,
+  Wallet,
+  Zap,
 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -96,62 +100,62 @@ const CHARTER_ARTICLES = [
   },
 ];
 
-const COMPARISONS = [
+const COMMITMENTS = [
   {
-    dimension: "Participation",
-    challenge:
-      "Formal structures can limit engagement to nation-states, leaving billions without a direct voice",
-    approach:
-      "Every human being, organisation, cooperative, city, and nation warmly welcomed",
+    icon: Users,
+    title: "Participation",
+    commitment:
+      "Every human being, organisation, cooperative, city, and nation warmly welcomed — no exclusions, no barriers, no prerequisites. The more diverse our voices, the richer our solutions.",
+    accent: "var(--teal-bright)",
   },
   {
-    dimension: "Decision-Making",
-    challenge:
-      "Concentrated voting power can stall progress and marginalise smaller communities",
-    approach:
-      "Weighted consensus — every voice matters, no single entity holds permanent advantage",
+    icon: Sparkles,
+    title: "Decision-Making",
+    commitment:
+      "Weighted consensus ensures every voice matters and no single entity holds permanent advantage. Decisions emerge from the whole — not from the top.",
+    accent: "var(--gold)",
   },
   {
-    dimension: "Transparency",
-    challenge:
-      "Limited visibility into budgets and deliberations can erode public trust",
-    approach:
-      "Full on-chain audit trail — every vote, fund movement, and decision is publicly visible",
+    icon: Eye,
+    title: "Transparency",
+    commitment:
+      "Full on-chain audit trail means every vote, fund movement, and decision is publicly visible. Trust is built through openness, not authority.",
+    accent: "var(--teal)",
   },
   {
-    dimension: "Responsiveness",
-    challenge:
-      "Complex governance processes can slow the response to fast-moving global challenges",
-    approach:
-      "AI-accelerated deliberation with structured timelines and clear accountability",
+    icon: Zap,
+    title: "Responsiveness",
+    commitment:
+      "AI-accelerated deliberation with structured timelines and clear accountability keeps us moving at the pace our world needs — without sacrificing care or depth.",
+    accent: "var(--gold-bright)",
   },
   {
-    dimension: "Impact",
-    challenge:
-      "Well-intentioned reports and declarations can struggle to translate into measurable action",
-    approach:
-      "Actionable solutions library with impact ledgers, replication toolkits, and accountability",
+    icon: Target,
+    title: "Impact",
+    commitment:
+      "An actionable solutions library with impact ledgers, replication toolkits, and accountability frameworks turns shared intentions into measurable, replicable change.",
+    accent: "var(--teal-bright)",
   },
   {
-    dimension: "Infrastructure",
-    challenge:
-      "Centralised systems can be vulnerable to disruption, political pressure, or funding shifts",
-    approach:
-      "ICP decentralised DePin — resilient, open, with no single point of failure",
+    icon: Shield,
+    title: "Infrastructure",
+    commitment:
+      "ICP decentralised DePin provides resilient, open infrastructure with no single point of failure — serving all people equally, without political capture or shutdown risk.",
+    accent: "var(--gold)",
   },
   {
-    dimension: "Funding",
-    challenge:
-      "Dependence on assessed contributions and major donors can create influence imbalances",
-    approach:
-      "FinFracFran™ community funding pools — diversified, transparent, community-directed",
+    icon: Wallet,
+    title: "Funding",
+    commitment:
+      "FinFracFran™ community funding pools are diversified, transparent, and community-directed — ensuring resources flow to need rather than influence.",
+    accent: "var(--teal)",
   },
   {
-    dimension: "Scale",
-    challenge:
-      "Top-down coordination can disconnect solutions from the communities they serve",
-    approach:
-      "Bottom-up from local chapters globally — proven at community level before scaling",
+    icon: Globe,
+    title: "Scale",
+    commitment:
+      "Bottom-up from local chapters globally — every approach is proven at community level before scaling, so growth never outpaces wisdom or local relevance.",
+    accent: "var(--gold-bright)",
   },
 ];
 
@@ -542,126 +546,102 @@ function CharterSection() {
   );
 }
 
-// ─── Section: Comparison Table ────────────────────────────────────────────
+// ─── Section: Our Commitments ──────────────────────────────────────────────
 
-function ComparisonSection() {
+function CommitmentsSection() {
   return (
     <section
-      data-ocid="about.comparison.section"
+      data-ocid="about.commitments.section"
       className="py-20 sm:py-28"
       style={{ background: "oklch(var(--cosmos-deep))" }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-14"
         >
           <p
             className="text-sm font-semibold tracking-widest uppercase mb-3"
-            style={{ color: "oklch(0.65 0.12 27)" }}
+            style={{ color: "oklch(var(--teal-bright))" }}
           >
-            Why We Exist
+            What We Promise
           </p>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white mb-4">
-            Our Complementary{" "}
-            <span className="gold-gradient-text">
-              Approach to Global Governance
-            </span>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white mb-5">
+            Our <span className="gold-gradient-text">Commitments</span>
           </h2>
           <p
-            className="text-base max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "oklch(0.62 0.04 260)" }}
+            className="text-base sm:text-lg max-w-2xl mx-auto leading-relaxed"
+            style={{ color: "oklch(0.65 0.04 260)" }}
           >
-            We honour the dedication of all who have worked for a better world.
-            ONEartHeaven is designed to complement and extend those efforts —
-            bringing every idea and initiative to the centre for shared
-            consideration.
+            These are the principles that guide every decision we make — our
+            sincere commitment to all who join us on this journey toward shared,
+            sustainable solutions.
           </p>
         </motion.div>
 
-        {/* Column Headers */}
-        <div className="hidden md:grid grid-cols-[200px_1fr_1fr] gap-3 mb-3 px-4">
-          <div />
-          <div
-            className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold uppercase tracking-wider"
-            style={{
-              background: "oklch(0.55 0.1 27 / 0.1)",
-              color: "oklch(0.65 0.12 27)",
-            }}
-          >
-            <Check className="h-4 w-4" />
-            Identified Challenges
-          </div>
-          <div
-            className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold uppercase tracking-wider"
-            style={{
-              background: "oklch(var(--teal) / 0.1)",
-              color: "oklch(var(--teal-bright))",
-            }}
-          >
-            <Check className="h-4 w-4" />
-            Our Collaborative Approach
-          </div>
-        </div>
+        {/* Commitment Cards — single column */}
+        <div className="flex flex-col gap-4">
+          {COMMITMENTS.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <motion.div
+                key={item.title}
+                data-ocid={`about.commitments.item.${idx + 1}`}
+                initial={{ opacity: 0, x: -24 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-30px" }}
+                transition={{ duration: 0.5, delay: idx * 0.08 }}
+                className="relative flex items-start gap-5 rounded-2xl px-6 py-5 group transition-all duration-300"
+                style={{
+                  background: "oklch(var(--cosmos-surface) / 0.55)",
+                  border: "1px solid oklch(var(--cosmos-border) / 0.4)",
+                  borderLeft: `3px solid oklch(${item.accent})`,
+                }}
+              >
+                {/* Hover glow */}
+                <div
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(ellipse 60% 80% at 0% 50%, oklch(${item.accent} / 0.06) 0%, transparent 70%)`,
+                  }}
+                />
 
-        {/* Comparison Rows */}
-        <div className="flex flex-col gap-3">
-          {COMPARISONS.map((item, idx) => (
-            <motion.div
-              key={item.dimension}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.5, delay: idx * 0.07 }}
-              className="grid grid-cols-1 md:grid-cols-[200px_1fr_1fr] gap-3"
-            >
-              {/* Dimension Label */}
-              <div className="flex items-center md:justify-end pr-0 md:pr-4">
-                <span
-                  className="text-xs font-bold tracking-widest uppercase"
-                  style={{ color: "oklch(0.55 0.04 260)" }}
+                {/* Icon */}
+                <div
+                  className="relative z-10 shrink-0 w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    background: `oklch(${item.accent} / 0.1)`,
+                    border: `1px solid oklch(${item.accent} / 0.25)`,
+                  }}
                 >
-                  {item.dimension}
-                </span>
-              </div>
-
-              {/* Challenge */}
-              <div className="comparison-bad rounded-xl px-5 py-4">
-                <div className="flex items-start gap-3">
-                  <Check
-                    className="h-4 w-4 mt-0.5 shrink-0"
-                    style={{ color: "oklch(0.6 0.14 27)" }}
+                  <Icon
+                    className="h-5 w-5"
+                    style={{ color: `oklch(${item.accent})` }}
                   />
+                </div>
+
+                {/* Text */}
+                <div className="relative z-10 flex-1 min-w-0">
+                  <h3
+                    className="font-display text-base font-bold mb-1.5 leading-snug"
+                    style={{ color: "oklch(var(--pearl))" }}
+                  >
+                    {item.title}
+                  </h3>
                   <p
                     className="text-sm leading-relaxed"
-                    style={{ color: "oklch(0.75 0.04 260)" }}
+                    style={{ color: "oklch(0.65 0.04 260)" }}
                   >
-                    {item.challenge}
+                    {item.commitment}
                   </p>
                 </div>
-              </div>
-
-              {/* ONEartHeaven (Good) */}
-              <div className="comparison-good rounded-xl px-5 py-4">
-                <div className="flex items-start gap-3">
-                  <Check
-                    className="h-4 w-4 mt-0.5 shrink-0"
-                    style={{ color: "oklch(var(--teal-bright))" }}
-                  />
-                  <p
-                    className="text-sm leading-relaxed font-medium"
-                    style={{ color: "oklch(0.82 0.04 200)" }}
-                  >
-                    {item.approach}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -975,7 +955,7 @@ export function AboutPage() {
       <AboutHero />
       <ValuesSection />
       <CharterSection />
-      <ComparisonSection />
+      <CommitmentsSection />
       <CouncilSection />
       <JoinCTASection />
     </main>

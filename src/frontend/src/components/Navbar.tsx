@@ -66,6 +66,7 @@ const NAV_LINKS = [
   { label: "Integrations", path: "/integrations" as const },
   { label: "Pricing", path: "/pricing" as const },
   { label: "Docs", path: "/docs" as const },
+  { label: "Launch Plan", path: "/launch" as const },
 ];
 
 const ADMIN_ROLES = ["SuperAdmin", "OrgAdmin"] as const;

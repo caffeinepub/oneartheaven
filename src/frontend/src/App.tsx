@@ -25,6 +25,7 @@ import { DocsPortalPage } from "@/pages/DocsPortal";
 import { FinancePage } from "@/pages/Finance";
 import { Home } from "@/pages/Home";
 import { IntegrationsPage } from "@/pages/Integrations";
+import { LaunchPlanPage } from "@/pages/LaunchPlan";
 import { MembersPage } from "@/pages/Members";
 import { PolicyAdvisorPage } from "@/pages/PolicyAdvisor";
 import { PortalDetailPage } from "@/pages/PortalDetail";
@@ -249,6 +250,11 @@ const vendorDashboardRoute = createRoute({
   path: "/vendor/dashboard",
   component: VendorDashboardPage,
 });
+const launchRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/launch",
+  component: LaunchPlanPage,
+});
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -282,6 +288,7 @@ const routeTree = rootRoute.addChildren([
   docsRoute,
   vendorRegisterRoute,
   vendorDashboardRoute,
+  launchRoute,
 ]);
 
 const router = createRouter({ routeTree });

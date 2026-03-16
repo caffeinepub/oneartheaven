@@ -500,10 +500,12 @@ function PreambleSection() {
                   We, the peoples and communities of ONEartHeaven, united in our
                   commitment to justice, sustainability, peace, and shared
                   prosperity, hereby establish this Charter as the living
-                  constitution of our global community. Unlike the institutions
-                  of the past, we bind ourselves not to the interests of states
-                  alone, but to every human being, every community, and every
-                  living system on Earth. We commit to radical transparency,
+                  constitution of our global community. Building upon the wisdom
+                  and dedication of all who came before us, we bind ourselves to
+                  every human being, every community, and every living system on
+                  Earth — honoring the work of all global institutions while
+                  opening new pathways for participation, transparency, and
+                  shared progress. We commit to radical transparency,
                   decentralized power, AI-augmented wisdom, and the FinFracFran
                   principles of fractionalization and franchising for universal
                   participation.
