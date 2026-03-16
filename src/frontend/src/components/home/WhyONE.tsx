@@ -1,33 +1,42 @@
-import { Check, X } from "lucide-react";
+import { Handshake, Lightbulb } from "lucide-react";
 import { motion } from "motion/react";
 
 const COMPARISONS = [
   {
-    problem: "Bureaucratic gridlock — decisions take years",
-    solution:
-      "AI-augmented governance with smart consensus and rapid iteration",
+    challenge:
+      "Governance processes can be slow to respond to fast-moving crises",
+    approach:
+      "AI-augmented deliberation with smart consensus, clear timelines, and rapid iteration",
   },
   {
-    problem: "Veto-power inequality — 5 nations block the world",
-    solution: "Weighted participation: no single veto, no permanent privilege",
+    challenge:
+      "Concentrated decision-making power can limit broader representation",
+    approach:
+      "Weighted participation — every voice welcomed, no permanent gatekeeping",
   },
   {
-    problem: "Opacity and systemic corruption",
-    solution:
-      "On-chain transparency: open budgets, public audit trails, forever",
+    challenge:
+      "Lack of financial transparency erodes trust in global institutions",
+    approach:
+      "On-chain transparency: open budgets, public audit trails, and community accountability",
   },
   {
-    problem: "Disconnected from ordinary people",
-    solution: "Every citizen on Earth can participate, propose, and vote",
+    challenge:
+      "Ordinary citizens often feel distant from global decision-making",
+    approach:
+      "Every individual on Earth can participate, propose, and contribute",
   },
   {
-    problem: "Slow crisis response — lives lost in delays",
-    solution:
-      "Real-time monitoring, AI early warning, decentralized rapid response",
+    challenge:
+      "Crisis response can lag behind the urgency of real-world events",
+    approach:
+      "Real-time monitoring, AI early-warning systems, and decentralised rapid response",
   },
   {
-    problem: "Nation-states only — billions excluded",
-    solution: "Nations, cities, NGOs, cooperatives, individuals — all welcome",
+    challenge:
+      "Formal structures often exclude individuals, cities, and civil society",
+    approach:
+      "Nations, cities, NGOs, cooperatives, and individuals — all warmly welcomed",
   },
 ];
 
@@ -50,23 +59,27 @@ export function WhyONE() {
             className="text-sm font-semibold tracking-widest uppercase mb-3"
             style={{ color: "oklch(var(--teal))" }}
           >
-            Why We Exist
+            Our Approach
           </p>
           <h2
             className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight"
             style={{ color: "oklch(var(--cosmos-deep))" }}
           >
-            Why ONEartHeaven
+            Building Together —
             <br />
-            <span style={{ color: "oklch(var(--gold))" }}>Over the UN?</span>
+            <span style={{ color: "oklch(var(--gold))" }}>
+              A New Chapter in Global Cooperation
+            </span>
           </h2>
           <p
             className="mt-4 text-base max-w-2xl mx-auto"
             style={{ color: "oklch(0.4 0.03 260)" }}
           >
-            We respect the ideals of the United Nations. But we are honest about
-            its structural failures — and we have designed something
-            categorically different.
+            We deeply respect the vision, ideals, and dedication of all who have
+            worked toward a better world. ONEartHeaven is designed to complement
+            those efforts — extending participation, deepening transparency, and
+            bringing every idea and initiative to the centre for shared
+            consideration.
           </p>
         </motion.div>
 
@@ -79,8 +92,8 @@ export function WhyONE() {
               color: "oklch(0.5 0.12 27)",
             }}
           >
-            <X className="h-4 w-4" />
-            The UN's Pitfalls
+            <Lightbulb className="h-4 w-4" />
+            Challenges We Seek to Address
           </div>
           <div
             className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold uppercase tracking-wider"
@@ -89,8 +102,8 @@ export function WhyONE() {
               color: "oklch(var(--teal))",
             }}
           >
-            <Check className="h-4 w-4" />
-            ONEartHeaven's Answers
+            <Handshake className="h-4 w-4" />
+            Our Collaborative Approach
           </div>
         </div>
 
@@ -98,7 +111,7 @@ export function WhyONE() {
         <div className="flex flex-col gap-3">
           {COMPARISONS.map((item, idx) => (
             <motion.div
-              key={item.problem}
+              key={item.challenge}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-40px" }}
@@ -106,10 +119,10 @@ export function WhyONE() {
               className="grid grid-cols-1 md:grid-cols-2 gap-3"
               data-ocid={`why.comparison.item.${idx + 1}`}
             >
-              {/* Problem */}
+              {/* Challenge */}
               <div className="comparison-bad rounded-xl px-5 py-4">
                 <div className="flex items-start gap-3">
-                  <X
+                  <Lightbulb
                     className="h-4 w-4 mt-0.5 shrink-0"
                     style={{ color: "oklch(0.6 0.14 27)" }}
                   />
@@ -117,15 +130,15 @@ export function WhyONE() {
                     className="text-sm leading-relaxed"
                     style={{ color: "oklch(0.35 0.04 260)" }}
                   >
-                    {item.problem}
+                    {item.challenge}
                   </p>
                 </div>
               </div>
 
-              {/* Solution */}
+              {/* Approach */}
               <div className="comparison-good rounded-xl px-5 py-4">
                 <div className="flex items-start gap-3">
-                  <Check
+                  <Handshake
                     className="h-4 w-4 mt-0.5 shrink-0"
                     style={{ color: "oklch(var(--teal))" }}
                   />
@@ -133,7 +146,7 @@ export function WhyONE() {
                     className="text-sm leading-relaxed font-medium"
                     style={{ color: "oklch(0.25 0.04 260)" }}
                   >
-                    {item.solution}
+                    {item.approach}
                   </p>
                 </div>
               </div>
@@ -153,12 +166,12 @@ export function WhyONE() {
             className="font-display text-xl font-bold mb-2"
             style={{ color: "oklch(var(--cosmos-deep))" }}
           >
-            The world doesn't need another institution.
+            In Thoughts, Words, and Deeds — committed to working with all.
           </p>
           <p className="text-base" style={{ color: "oklch(0.4 0.03 260)" }}>
-            It needs a living network of sovereign, compassionate, empowered
-            humans — connected by purpose and powered by decentralized
-            technology.
+            A living network of sovereign, compassionate, empowered humans —
+            connected by purpose, powered by shared technology, and united in
+            the spirit of sincere, sustainable solutions.
           </p>
         </motion.div>
       </div>

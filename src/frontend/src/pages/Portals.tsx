@@ -189,17 +189,17 @@ export function PortalsPage() {
         </div>
       </section>
 
-      {/* No Veto Strip */}
+      {/* Open Access Strip */}
       <div className="border-y border-white/10 bg-white/3 py-3 px-4">
         <p className="text-center text-sm text-white/60">
           <span
             className="font-semibold"
             style={{ color: "oklch(0.72 0.18 75)" }}
           >
-            No Veto. No Gatekeepers.
+            Open to All. Inclusive by Design.
           </span>{" "}
-          Every portal is open to all registered members — no nation-state
-          permission required.
+          Every portal welcomes all registered members — individuals,
+          organisations, and communities from every nation.
         </p>
       </div>
 

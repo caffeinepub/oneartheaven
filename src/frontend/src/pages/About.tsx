@@ -98,44 +98,60 @@ const CHARTER_ARTICLES = [
 
 const COMPARISONS = [
   {
-    dimension: "Membership",
-    un: "Nation-states only — billions excluded from formal participation",
-    one: "Every human being, organization, cooperative, city, and nation welcomed",
+    dimension: "Participation",
+    challenge:
+      "Formal structures can limit engagement to nation-states, leaving billions without a direct voice",
+    approach:
+      "Every human being, organisation, cooperative, city, and nation warmly welcomed",
   },
   {
-    dimension: "Voting Power",
-    un: "P5 veto power blocks global progress at the will of 5 nations",
-    one: "Weighted consensus model — no single veto, no permanent privilege",
+    dimension: "Decision-Making",
+    challenge:
+      "Concentrated voting power can stall progress and marginalise smaller communities",
+    approach:
+      "Weighted consensus — every voice matters, no single entity holds permanent advantage",
   },
   {
     dimension: "Transparency",
-    un: "Opaque budgets, backroom deals, and non-public deliberations",
-    one: "Full on-chain audit trail — every vote, dollar, and decision is public",
+    challenge:
+      "Limited visibility into budgets and deliberations can erode public trust",
+    approach:
+      "Full on-chain audit trail — every vote, fund movement, and decision is publicly visible",
   },
   {
-    dimension: "Speed",
-    un: "Years to pass resolutions — crises outpace bureaucracy",
-    one: "AI-accelerated deliberation with structured timelines and accountability",
+    dimension: "Responsiveness",
+    challenge:
+      "Complex governance processes can slow the response to fast-moving global challenges",
+    approach:
+      "AI-accelerated deliberation with structured timelines and clear accountability",
   },
   {
-    dimension: "Solutions",
-    un: "Reports and declarations — rarely translated into measurable action",
-    one: "Actionable solutions library with impact ledgers and replication toolkits",
+    dimension: "Impact",
+    challenge:
+      "Well-intentioned reports and declarations can struggle to translate into measurable action",
+    approach:
+      "Actionable solutions library with impact ledgers, replication toolkits, and accountability",
   },
   {
     dimension: "Infrastructure",
-    un: "Centralized, vulnerable to political capture and funding withdrawal",
-    one: "ICP decentralized DePin — censorship-resistant, no single point of failure",
+    challenge:
+      "Centralised systems can be vulnerable to disruption, political pressure, or funding shifts",
+    approach:
+      "ICP decentralised DePin — resilient, open, with no single point of failure",
   },
   {
     dimension: "Funding",
-    un: "Assessed contributions and donor dependency breed influence and bias",
-    one: "FinFracFran™ community funding pools — diversified, transparent, community-directed",
+    challenge:
+      "Dependence on assessed contributions and major donors can create influence imbalances",
+    approach:
+      "FinFracFran™ community funding pools — diversified, transparent, community-directed",
   },
   {
     dimension: "Scale",
-    un: "Top-down directives from headquarters to member states",
-    one: "Bottom-up from local chapters globally, scaled only when proven",
+    challenge:
+      "Top-down coordination can disconnect solutions from the communities they serve",
+    approach:
+      "Bottom-up from local chapters globally — proven at community level before scaling",
   },
 ];
 
@@ -249,8 +265,8 @@ function AboutHero() {
             className="text-base sm:text-lg italic font-medium leading-relaxed pl-6 text-left"
             style={{ color: "oklch(0.88 0.025 95)" }}
           >
-            "Where the United Nations fell short, ONEartHeaven rises — open,
-            transparent, intelligent, and unstoppable."
+            "Where shared ideals call us forward, ONEartHeaven answers — open,
+            transparent, intelligent, and committed to all."
           </p>
         </motion.blockquote>
       </div>
@@ -289,8 +305,8 @@ function ValuesSection() {
             className="text-base max-w-2xl mx-auto leading-relaxed"
             style={{ color: "oklch(0.62 0.04 260)" }}
           >
-            Six principles that distinguish ONEartHeaven from every
-            international institution that came before it — designed to endure,
+            Six principles that guide ONEartHeaven's commitment to open,
+            inclusive, and accountable global cooperation — designed to endure,
             scale, and serve all of humanity.
           </p>
         </motion.div>
@@ -551,16 +567,19 @@ function ComparisonSection() {
             Why We Exist
           </p>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white mb-4">
-            Why ONEartHeaven,{" "}
-            <span className="gold-gradient-text">Not the UN</span>
+            Our Complementary{" "}
+            <span className="gold-gradient-text">
+              Approach to Global Governance
+            </span>
           </h2>
           <p
             className="text-base max-w-2xl mx-auto leading-relaxed"
             style={{ color: "oklch(0.62 0.04 260)" }}
           >
-            We honour the ideals behind the United Nations. But we are honest
-            about its structural failures — and we have designed something
-            categorically different.
+            We honour the dedication of all who have worked for a better world.
+            ONEartHeaven is designed to complement and extend those efforts —
+            bringing every idea and initiative to the centre for shared
+            consideration.
           </p>
         </motion.div>
 
@@ -574,8 +593,8 @@ function ComparisonSection() {
               color: "oklch(0.65 0.12 27)",
             }}
           >
-            <X className="h-4 w-4" />
-            The United Nations
+            <Check className="h-4 w-4" />
+            Identified Challenges
           </div>
           <div
             className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold uppercase tracking-wider"
@@ -585,7 +604,7 @@ function ComparisonSection() {
             }}
           >
             <Check className="h-4 w-4" />
-            ONEartHeaven
+            Our Collaborative Approach
           </div>
         </div>
 
@@ -610,10 +629,10 @@ function ComparisonSection() {
                 </span>
               </div>
 
-              {/* UN (Bad) */}
+              {/* Challenge */}
               <div className="comparison-bad rounded-xl px-5 py-4">
                 <div className="flex items-start gap-3">
-                  <X
+                  <Check
                     className="h-4 w-4 mt-0.5 shrink-0"
                     style={{ color: "oklch(0.6 0.14 27)" }}
                   />
@@ -621,7 +640,7 @@ function ComparisonSection() {
                     className="text-sm leading-relaxed"
                     style={{ color: "oklch(0.75 0.04 260)" }}
                   >
-                    {item.un}
+                    {item.challenge}
                   </p>
                 </div>
               </div>
@@ -637,7 +656,7 @@ function ComparisonSection() {
                     className="text-sm leading-relaxed font-medium"
                     style={{ color: "oklch(0.82 0.04 200)" }}
                   >
-                    {item.one}
+                    {item.approach}
                   </p>
                 </div>
               </div>
