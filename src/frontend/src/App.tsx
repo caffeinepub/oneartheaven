@@ -15,6 +15,7 @@ import { AdminOrgsPage } from "@/pages/AdminOrgs";
 import { AdminSubscriptionPage } from "@/pages/AdminSubscription";
 import { AdminWhiteLabelPage } from "@/pages/AdminWhiteLabel";
 import { AssemblyPage } from "@/pages/Assembly";
+import { CampaignsPage } from "@/pages/CampaignsPage";
 import { CharterPage } from "@/pages/Charter";
 import { CommunityPage } from "@/pages/Community";
 import { CouncilDetailPage } from "@/pages/CouncilDetail";
@@ -250,6 +251,11 @@ const vendorDashboardRoute = createRoute({
   path: "/vendor/dashboard",
   component: VendorDashboardPage,
 });
+const campaignsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/campaigns",
+  component: CampaignsPage,
+});
 const launchRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/launch",
@@ -289,6 +295,7 @@ const routeTree = rootRoute.addChildren([
   vendorRegisterRoute,
   vendorDashboardRoute,
   launchRoute,
+  campaignsRoute,
 ]);
 
 const router = createRouter({ routeTree });

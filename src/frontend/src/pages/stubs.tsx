@@ -19,6 +19,7 @@ import {
   HelpCircle,
   Layers,
   Leaf,
+  Megaphone,
   Network,
   Paintbrush,
   ScrollText,
@@ -133,7 +134,8 @@ type AvailableRoute =
   | "/admin/subscription"
   | "/admin/analytics"
   | "/docs"
-  | "/launch";
+  | "/launch"
+  | "/campaigns";
 
 interface GovernancePortalCard {
   icon: React.ElementType;
@@ -411,6 +413,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     isAvailable: true,
     accentColor: "oklch(var(--gold))",
     accentColorRaw: "0.88 0.025 95",
+  },
+  {
+    icon: Megaphone,
+    title: "Campaign Hub",
+    description:
+      "Social media campaign designs across every life area — ready to share, adapt, and amplify worldwide. 15 campaigns, 6 platforms.",
+    link: "/campaigns",
+    phaseLabel: "Outreach · Campaigns",
+    phaseNum: "✦",
+    isAvailable: true,
+    accentColor: "oklch(0.82 0.14 75)",
+    accentColorRaw: "0.82 0.14 75",
   },
 ];
 

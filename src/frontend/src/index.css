@@ -1,0 +1,890 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ONEartHeaven Design System — Deep Cosmos / Civilizational Gold */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  :root {
+    --radius: 0.5rem;
+
+    /* === LIGHT MODE === */
+    --background: 0.97 0.008 95;
+    --foreground: 0.13 0.02 260;
+
+    --card: 1 0 0;
+    --card-foreground: 0.13 0.02 260;
+
+    --popover: 1 0 0;
+    --popover-foreground: 0.13 0.02 260;
+
+    /* Gold primary */
+    --primary: 0.62 0.14 75;
+    --primary-foreground: 0.98 0.005 80;
+
+    --secondary: 0.94 0.015 260;
+    --secondary-foreground: 0.2 0.03 260;
+
+    --muted: 0.93 0.01 95;
+    --muted-foreground: 0.48 0.04 260;
+
+    /* Teal accent */
+    --accent: 0.55 0.12 195;
+    --accent-foreground: 0.97 0.005 195;
+
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.985 0 0;
+
+    --border: 0.88 0.015 260;
+    --input: 0.88 0.015 260;
+    --ring: 0.62 0.14 75;
+
+    --chart-1: 0.62 0.14 75;
+    --chart-2: 0.55 0.12 195;
+    --chart-3: 0.45 0.15 260;
+    --chart-4: 0.75 0.18 140;
+    --chart-5: 0.65 0.2 30;
+
+    --sidebar: 0.13 0.04 260;
+    --sidebar-foreground: 0.95 0.01 95;
+    --sidebar-primary: 0.62 0.14 75;
+    --sidebar-primary-foreground: 0.98 0.005 80;
+    --sidebar-accent: 0.2 0.05 260;
+    --sidebar-accent-foreground: 0.95 0.01 95;
+    --sidebar-border: 0.22 0.04 260;
+    --sidebar-ring: 0.62 0.14 75;
+
+    /* Custom ONEartHeaven tokens */
+    --cosmos-deep: 0.08 0.03 260;
+    --cosmos-mid: 0.14 0.05 260;
+    --cosmos-surface: 0.18 0.04 260;
+    --gold: 0.72 0.16 75;
+    --gold-bright: 0.82 0.18 85;
+    --gold-dim: 0.52 0.1 75;
+    --teal: 0.6 0.14 195;
+    --teal-bright: 0.72 0.16 190;
+    --pearl: 0.97 0.01 95;
+
+    /* === GRADIENT TOKENS (reusable across all phases) === */
+    /* Hero gradients */
+    --gradient-hero-navy: linear-gradient(
+      160deg,
+      oklch(0.08 0.03 260) 0%,
+      oklch(0.12 0.05 240) 50%,
+      oklch(0.1 0.04 260) 100%
+    );
+    --gradient-hero-teal: linear-gradient(
+      160deg,
+      oklch(0.08 0.03 260) 0%,
+      oklch(0.12 0.06 200) 50%,
+      oklch(0.1 0.04 225) 100%
+    );
+    --gradient-hero-gold: linear-gradient(
+      160deg,
+      oklch(0.08 0.03 260) 0%,
+      oklch(0.12 0.05 240) 40%,
+      oklch(0.14 0.06 200) 100%
+    );
+    --gradient-hero-green: linear-gradient(
+      160deg,
+      oklch(0.07 0.04 250) 0%,
+      oklch(0.1 0.05 190) 50%,
+      oklch(0.08 0.04 200) 100%
+    );
+    --gradient-hero-indigo: linear-gradient(
+      160deg,
+      oklch(0.08 0.04 270) 0%,
+      oklch(0.12 0.07 265) 50%,
+      oklch(0.1 0.05 260) 100%
+    );
+    /* Section gradients */
+    --gradient-section-alt: oklch(0.96 0.01 90);
+    --gradient-card: linear-gradient(
+      135deg,
+      oklch(0.18 0.04 260) 0%,
+      oklch(0.16 0.06 260) 100%
+    );
+    /* Accent gradients */
+    --gradient-gold: linear-gradient(
+      135deg,
+      oklch(0.72 0.16 75) 0%,
+      oklch(0.82 0.18 85) 100%
+    );
+    --gradient-teal: linear-gradient(
+      135deg,
+      oklch(0.55 0.12 195) 0%,
+      oklch(0.65 0.16 190) 100%
+    );
+    --gradient-gold-teal: linear-gradient(
+      135deg,
+      oklch(0.82 0.18 85) 0%,
+      oklch(0.72 0.16 75) 40%,
+      oklch(0.65 0.16 190) 100%
+    );
+  }
+
+  .dark {
+    --background: 0.08 0.025 260;
+    --foreground: 0.95 0.01 95;
+
+    --card: 0.12 0.035 260;
+    --card-foreground: 0.95 0.01 95;
+
+    --popover: 0.14 0.04 260;
+    --popover-foreground: 0.95 0.01 95;
+
+    --primary: 0.72 0.16 75;
+    --primary-foreground: 0.1 0.02 260;
+
+    --secondary: 0.2 0.04 260;
+    --secondary-foreground: 0.9 0.01 95;
+
+    --muted: 0.18 0.04 260;
+    --muted-foreground: 0.6 0.04 260;
+
+    --accent: 0.55 0.14 195;
+    --accent-foreground: 0.97 0.005 195;
+
+    --destructive: 0.704 0.191 22.216;
+    --destructive-foreground: 0.985 0 0;
+
+    --border: 0.22 0.04 260;
+    --input: 0.22 0.04 260;
+    --ring: 0.72 0.16 75;
+
+    --chart-1: 0.72 0.16 75;
+    --chart-2: 0.65 0.16 195;
+    --chart-3: 0.55 0.18 260;
+    --chart-4: 0.78 0.2 140;
+    --chart-5: 0.7 0.22 30;
+
+    --sidebar: 0.1 0.03 260;
+    --sidebar-foreground: 0.95 0.01 95;
+    --sidebar-primary: 0.72 0.16 75;
+    --sidebar-primary-foreground: 0.1 0.02 260;
+    --sidebar-accent: 0.18 0.04 260;
+    --sidebar-accent-foreground: 0.95 0.01 95;
+    --sidebar-border: 0.22 0.04 260;
+    --sidebar-ring: 0.72 0.16 75;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+  }
+
+  /* ===== GLOBAL HEADING HIERARCHY ===== */
+  h1 {
+    font-family: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  h2 {
+    font-family: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-family: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  h4 {
+    font-family: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.4;
+  }
+
+  p {
+    line-height: 1.7;
+  }
+}
+
+/* ===== COSMOS THEME LAYER ===== */
+@layer components {
+  /* ===== TYPOGRAPHY UTILITIES ===== */
+  .heading-hero {
+    font-family: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+  }
+
+  .heading-section {
+    font-family: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .heading-card {
+    font-family: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .heading-label {
+    font-family: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+
+  .body-lead {
+    font-family: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+
+  /* ===== COSMOS BACKGROUNDS ===== */
+  .cosmos-bg {
+    background: oklch(var(--cosmos-deep));
+  }
+
+  .hero-navy {
+    background: var(--gradient-hero-navy);
+  }
+
+  .hero-teal {
+    background: var(--gradient-hero-teal);
+  }
+
+  .hero-green {
+    background: var(--gradient-hero-green);
+  }
+
+  .hero-indigo {
+    background: var(--gradient-hero-indigo);
+  }
+
+  /* ===== TEXT UTILITIES ===== */
+  .gold-text {
+    color: oklch(var(--gold));
+  }
+
+  .gold-gradient-text {
+    background: var(--gradient-gold-teal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .teal-text {
+    color: oklch(var(--teal));
+  }
+
+  /* ===== CARD UTILITIES ===== */
+  .cosmos-card {
+    background: oklch(var(--cosmos-surface) / 0.9);
+    border: 1px solid oklch(var(--gold-dim) / 0.25);
+    backdrop-filter: blur(12px);
+  }
+
+  .cosmos-card:hover {
+    border-color: oklch(var(--gold) / 0.5);
+    box-shadow: 0 0 32px oklch(var(--gold) / 0.12), 0 8px 32px
+      oklch(0.05 0.02 260 / 0.5);
+  }
+
+  .impact-card {
+    background: var(--gradient-card);
+    border: 1px solid oklch(var(--gold-dim) / 0.3);
+  }
+
+  .portal-card {
+    background: oklch(var(--cosmos-surface) / 0.95);
+    border: 1px solid oklch(var(--gold-dim) / 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .portal-card:hover {
+    background: oklch(0.2 0.05 260);
+    border-color: oklch(var(--gold) / 0.5);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px oklch(0.05 0.03 260 / 0.6), 0 0 40px
+      oklch(var(--gold) / 0.08);
+  }
+
+  /* ===== HERO OVERLAY ===== */
+  .hero-overlay {
+    background: linear-gradient(
+      160deg,
+      oklch(var(--cosmos-deep) / 0.92) 0%,
+      oklch(0.1 0.04 260 / 0.85) 40%,
+      oklch(0.12 0.05 220 / 0.75) 70%,
+      oklch(var(--cosmos-deep) / 0.95) 100%
+    );
+  }
+
+  /* ===== SECTION UTILITIES ===== */
+  .section-alt {
+    background: oklch(0.96 0.01 90);
+  }
+
+  .section-cosmos {
+    background: oklch(var(--cosmos-mid));
+  }
+
+  /* ===== BUTTON UTILITIES ===== */
+  .btn-gold {
+    background: var(--gradient-gold);
+    color: oklch(0.1 0.02 260);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+  }
+
+  .btn-gold:hover {
+    box-shadow: 0 0 24px oklch(var(--gold) / 0.4);
+    transform: translateY(-1px);
+  }
+
+  /* ===== NAV UTILITIES ===== */
+  .nav-glass {
+    background: oklch(var(--cosmos-deep) / 0.88);
+    backdrop-filter: blur(20px) saturate(1.5);
+    border-bottom: 1px solid oklch(var(--gold) / 0.15);
+  }
+
+  /* Active nav link indicator */
+  .nav-link-active {
+    position: relative;
+    color: oklch(var(--gold));
+  }
+
+  .nav-link-active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 2px;
+    background: var(--gradient-gold);
+    border-radius: 9999px;
+  }
+
+  /* ===== COMPARISON UTILITIES ===== */
+  .comparison-good {
+    background: oklch(0.45 0.12 195 / 0.12);
+    border-left: 3px solid oklch(var(--teal));
+  }
+
+  .comparison-bad {
+    background: oklch(0.55 0.1 27 / 0.1);
+    border-left: 3px solid oklch(0.65 0.12 27);
+  }
+
+  /* ===== SCROLL / MISC UTILITIES ===== */
+  .scroll-indicator {
+    animation: bounce-subtle 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce-subtle {
+    0%,
+    100% {
+      transform: translateY(0);
+      opacity: 0.7;
+    }
+    50% {
+      transform: translateY(8px);
+      opacity: 1;
+    }
+  }
+
+  .announcement-bar {
+    background: linear-gradient(
+      90deg,
+      oklch(0.55 0.16 260) 0%,
+      oklch(0.45 0.18 230) 100%
+    );
+  }
+
+  .grain-overlay::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.3;
+  }
+}
+
+/* ===== HERO GRID TEXTURE (standardized across all phase heroes) ===== */
+.hero-grid-texture {
+  background-image: linear-gradient(
+      oklch(0.9 0.01 260 / 0.035) 1px,
+      transparent 1px
+    ), linear-gradient(90deg, oklch(0.9 0.01 260 / 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* ===== CARD POLISH UTILITIES ===== */
+/* Universal card hover lift — add class "card-item" to any data card */
+.card-item {
+  border-radius: 0.75rem; /* rounded-xl */
+  border: 1px solid oklch(1 0 0 / 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px oklch(0 0 0 / 0.35), 0 2px 8px oklch(0 0 0 / 0.2);
+  border-color: oklch(1 0 0 / 0.14);
+}
+
+/* Shimmer keyframe for skeletons */
+@keyframes shimmer {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Badge pill — uniform sizing across all phases */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600;
+  padding: 0.125rem 0.625rem; /* py-0.5 px-2.5 */
+  border-radius: 9999px;
+  line-height: 1.4;
+}
+
+/* ============================================================ */
+/* ===== ACCESSIBILITY & RESPONSIVE — Polish Step 8 =========== */
+/* ============================================================ */
+
+/* ── Skip to content link ─────────────────────────────────── */
+.skip-to-content {
+  position: fixed;
+  top: -100%;
+  left: 1rem;
+  z-index: 10000;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: oklch(var(--gold));
+  color: oklch(0.08 0.03 260);
+  text-decoration: none;
+  transition: top 0.15s ease;
+  outline: none;
+}
+
+.skip-to-content:focus {
+  top: 1rem;
+}
+
+/* ── Global :focus-visible ring ───────────────────────────── */
+/*
+   These rules provide a consistent, visible focus ring for all
+   interactive elements when navigated via keyboard. They apply
+   the platform's teal accent as a ring, with appropriate offsets.
+   They only trigger on :focus-visible (keyboard / programmatic),
+   not on mouse click, so they don't add visual noise for mouse users.
+*/
+
+/* Buttons: native <button> elements (filter pills, close buttons, etc.) */
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px oklch(var(--cosmos-deep)), 0 0 0 4px
+    oklch(var(--teal) / 0.7);
+}
+
+/* Links */
+a:focus-visible {
+  outline: none;
+  border-radius: 0.25rem;
+  box-shadow: 0 0 0 2px oklch(var(--cosmos-deep)), 0 0 0 4px
+    oklch(var(--teal) / 0.7);
+}
+
+/* Form inputs, textareas, selects */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px oklch(var(--cosmos-deep)), 0 0 0 4px
+    oklch(var(--teal) / 0.6);
+}
+
+/* Radix / shadcn triggers that use [data-state] */
+[data-radix-collection-item]:focus-visible,
+[role="tab"]:focus-visible,
+[role="radio"]:focus-visible,
+[role="checkbox"]:focus-visible,
+[role="menuitem"]:focus-visible,
+[role="option"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px oklch(var(--cosmos-deep)), 0 0 0 4px
+    oklch(var(--teal) / 0.65);
+}
+
+/* ── Ensure BTN-GOLD has visible focus ring ────────────────── */
+.btn-gold:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px oklch(var(--cosmos-deep)), 0 0 0 4px
+    oklch(var(--gold) / 0.8);
+}
+
+/* ── Touch targets: minimum 44px on mobile ─────────────────── */
+@media (max-width: 768px) {
+  button,
+  a,
+  [role="button"],
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Exception: icon-in-row badges don't need full 44px width */
+  .badge-pill button,
+  .badge-pill a {
+    min-height: auto;
+    min-width: auto;
+  }
+
+  /* Filter pills — give them comfortable tap targets */
+  .filter-pill-row button {
+    min-height: 40px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Sheet and dialog: full-width on mobile */
+  [data-radix-dialog-content],
+  [data-radix-sheet-content] {
+    max-width: 100vw !important;
+    border-radius: 1rem 1rem 0 0;
+  }
+}
+
+/* ── Responsive hero stat bar: single-column on mobile ────── */
+@media (max-width: 480px) {
+  .stats-bar-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Responsive overflow: prevent horizontal scroll ───────── */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ── Accessible color: muted label minimum contrast ─────────
+   Ensures muted labels (e.g. oklch(0.45 0.03 260)) are boosted
+   to at least AA contrast (4.5:1) on dark surfaces.
+   Use oklch(0.60 0.04 260) or above for body text on cosmos-deep.
+*/
+.text-muted-accessible {
+  color: oklch(0.6 0.04 260);
+}
+
+/* ── Reduce motion: honor OS preference ────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Keep scroll smooth off for reduced-motion users */
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ── High-contrast mode support ────────────────────────────── */
+@media (forced-colors: active) {
+  .btn-gold,
+  .cosmos-card,
+  .card-item {
+    border: 2px solid ButtonText;
+  }
+
+  .skip-to-content {
+    background: ButtonFace;
+    color: ButtonText;
+    border: 2px solid ButtonText;
+  }
+}
+
+/* ── Screen-reader only utility ─────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── Focusable sr-only (skip links that appear on focus) ──── */
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── ARIA live region for dynamic announcements ─────────────── */
+[aria-live="polite"],
+[aria-live="assertive"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+[aria-live="polite"]:not(:empty),
+[aria-live="assertive"]:not(:empty) {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ── Responsive text: prevent font-size below 16px on mobile
+   (avoids auto-zoom on iOS Safari) ──────────────────────────── */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* ── Keyboard navigation indicator on interactive cards ─────── */
+.cosmos-card:focus-within,
+.card-item:focus-within {
+  outline: none;
+  box-shadow: 0 0 0 1px oklch(var(--cosmos-deep)), 0 0 0 3px
+    oklch(var(--teal) / 0.4), 0 12px 32px oklch(0 0 0 / 0.35);
+}
+
+/* ── Filter pill rows: role listbox keyboard pattern ─────────── */
+.filter-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ── Responsive: sheet max-width on small screens ────────────── */
+@media (max-width: 640px) {
+  /* Radix Sheet right/left variants */
+  [data-state] > [role="dialog"] {
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   INPUT FIELD VISIBILITY — Deep Cosmos Dark Theme Fix
+   Ensures all form inputs, textareas, and selects are clearly
+   visible against the dark navy backgrounds across all pages.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Base: visible background, border, and text ────────────── */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+    [type="color"]
+  ),
+textarea,
+select {
+  background-color: oklch(0.18 0.04 260) !important;
+  border: 1px solid oklch(0.32 0.05 260) !important;
+  color: oklch(0.95 0.01 95) !important;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* ── Placeholder: muted but legible ────────────────────────── */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+    [type="color"]
+  )::placeholder,
+textarea::placeholder {
+  color: oklch(0.55 0.04 260) !important;
+  opacity: 1;
+}
+
+/* ── Focus: gold border + subtle glow ──────────────────────── */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+    [type="color"]
+  ):focus,
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+    [type="color"]
+  ):focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none !important;
+  border-color: oklch(0.72 0.16 75) !important;
+  box-shadow: 0 0 0 2px oklch(0.72 0.16 75 / 0.25) !important;
+}
+
+/* ── Select: fix native dropdown arrow visibility ───────────── */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='oklch(0.72 0.16 75)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.25rem;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* ── Command palette search input ──────────────────────────── */
+[cmdk-input],
+input[type="search"] {
+  background-color: oklch(0.18 0.04 260) !important;
+  border: 1px solid oklch(0.32 0.05 260) !important;
+  color: oklch(0.95 0.01 95) !important;
+}
+
+[cmdk-input]::placeholder,
+input[type="search"]::placeholder {
+  color: oklch(0.55 0.04 260) !important;
+  opacity: 1;
+}
+
+[cmdk-input]:focus,
+[cmdk-input]:focus-visible,
+input[type="search"]:focus,
+input[type="search"]:focus-visible {
+  outline: none !important;
+  border-color: oklch(0.72 0.16 75) !important;
+  box-shadow: 0 0 0 2px oklch(0.72 0.16 75 / 0.25) !important;
+}
+
+/* ── Disabled state: visually dimmed but still readable ────── */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: oklch(0.14 0.03 260) !important;
+  border-color: oklch(0.22 0.04 260) !important;
+  color: oklch(0.55 0.04 260) !important;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* ── Print styles ─────────────────────────────────────────── */
+@media print {
+  .nav-glass,
+  .skip-to-content,
+  [data-ocid="nav.mobile_menu.button"] {
+    display: none !important;
+  }
+
+  main {
+    padding-top: 0 !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Step 9 — Micro-Interactions & Motion
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Button press: subtle scale-down on click ──────────────── */
+button:not([disabled]):active,
+[role="button"]:not([disabled]):active,
+.btn-gold:not([disabled]):active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
+
+/* Ensure disabled buttons never show press state */
+button[disabled]:active,
+[role="button"][disabled]:active {
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* ── Hover-lift utility for interactive cards ───────────────── */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px -6px oklch(0 0 0 / 0.35);
+}
+
+/* ── Standardised stagger animation CSS variables ──────────── */
+:root {
+  --stagger-delay-base: 0.05s;
+  --stagger-duration: 0.4s;
+}
+
+/* ── Sheet / Dialog slide transitions (verify presence) ──────
+   shadcn already emits data-[state=open]:animate-in etc. via
+   tailwindcss-animate; this block ensures custom Sheet overrides
+   inherit the correct timing. */
+[data-radix-dialog-content],
+[data-radix-sheet-content] {
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ── Motion override: honour prefers-reduced-motion ─────────
+   (Step 8 rule is still active; this just guarantees the new
+   press-state transform is also suppressed.)  */
+@media (prefers-reduced-motion: reduce) {
+  button:not([disabled]):active,
+  [role="button"]:not([disabled]):active,
+  .btn-gold:not([disabled]):active,
+  .hover-lift:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    transition: none !important;
+  }
+}
