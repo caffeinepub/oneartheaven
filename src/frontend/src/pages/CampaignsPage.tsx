@@ -61,6 +61,7 @@ interface Campaign {
   gradient: string;
   accentColor: string;
   Icon: React.ElementType;
+  image?: string;
 }
 
 // ─── Campaign Data ────────────────────────────────────────────────────────────
@@ -88,6 +89,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-indigo-900 via-purple-900 to-slate-900",
     accentColor: "#818cf8",
     Icon: Layers,
+    image: "/assets/generated/campaign-governance-newwaysnow.dim_1200x675.jpg",
   },
   {
     id: "c2",
@@ -111,6 +113,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-amber-900 via-yellow-900 to-orange-900",
     accentColor: "#fbbf24",
     Icon: Wallet,
+    image: "/assets/generated/campaign-finance-finfracfran.dim_1200x675.jpg",
   },
   {
     id: "c3",
@@ -134,6 +137,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-emerald-900 via-teal-900 to-cyan-900",
     accentColor: "#34d399",
     Icon: GraduationCap,
+    image: "/assets/generated/campaign-education-academy.dim_1200x675.jpg",
   },
   {
     id: "c4",
@@ -158,6 +162,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-green-900 via-emerald-900 to-lime-900",
     accentColor: "#4ade80",
     Icon: Leaf,
+    image: "/assets/generated/campaign-climate-action.dim_1200x675.jpg",
   },
   {
     id: "c5",
@@ -181,6 +186,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-rose-900 via-pink-900 to-fuchsia-900",
     accentColor: "#f472b6",
     Icon: Heart,
+    image: "/assets/generated/campaign-community-first.dim_1200x675.jpg",
   },
   {
     id: "c6",
@@ -204,6 +210,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-sky-900 via-blue-900 to-indigo-900",
     accentColor: "#38bdf8",
     Icon: Shield,
+    image: "/assets/generated/campaign-transparency-wins.dim_1200x675.jpg",
   },
   {
     id: "c7",
@@ -227,6 +234,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-violet-900 via-purple-900 to-indigo-900",
     accentColor: "#a78bfa",
     Icon: Zap,
+    image: "/assets/generated/campaign-solutions-exchange.dim_1200x675.jpg",
   },
   {
     id: "c8",
@@ -250,6 +258,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-teal-900 via-cyan-900 to-sky-900",
     accentColor: "#22d3ee",
     Icon: Heart,
+    image: "/assets/generated/campaign-health-wellness.dim_1200x675.jpg",
   },
   {
     id: "c9",
@@ -273,6 +282,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-slate-900 via-gray-900 to-zinc-900",
     accentColor: "#94a3b8",
     Icon: Users,
+    image: "/assets/generated/campaign-governance-delegate.dim_1200x675.jpg",
   },
   {
     id: "c10",
@@ -296,6 +306,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-blue-900 via-indigo-900 to-violet-900",
     accentColor: "#60a5fa",
     Icon: Cpu,
+    image: "/assets/generated/campaign-tech-paas.dim_1200x675.jpg",
   },
   {
     id: "c11",
@@ -320,6 +331,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-orange-900 via-amber-900 to-yellow-900",
     accentColor: "#fb923c",
     Icon: Wallet,
+    image: "/assets/generated/campaign-finance-franchise.dim_1200x675.jpg",
   },
   {
     id: "c12",
@@ -344,6 +356,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-purple-900 via-violet-900 to-indigo-900",
     accentColor: "#c084fc",
     Icon: Building2,
+    image: "/assets/generated/campaign-governance-councils.dim_1200x675.jpg",
   },
   {
     id: "c13",
@@ -368,6 +381,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-fuchsia-900 via-pink-900 to-rose-900",
     accentColor: "#e879f9",
     Icon: Star,
+    image: "/assets/generated/campaign-empowerment-bestlife.dim_1200x675.jpg",
   },
   {
     id: "c14",
@@ -392,6 +406,7 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-cyan-900 via-sky-900 to-blue-900",
     accentColor: "#67e8f9",
     Icon: Network,
+    image: "/assets/generated/campaign-tech-integration.dim_1200x675.jpg",
   },
   {
     id: "c15",
@@ -417,6 +432,8 @@ const CAMPAIGNS: Campaign[] = [
     gradient: "from-yellow-900 via-amber-900 to-orange-900",
     accentColor: "#fcd34d",
     Icon: Globe,
+    image:
+      "/assets/generated/campaign-empowerment-newwaysnow-flagship.dim_1200x675.jpg",
   },
 ];
 
@@ -492,6 +509,7 @@ function CampaignCard({
 }: { campaign: Campaign; index: number }) {
   const { Icon } = campaign;
   const [isHovered, setIsHovered] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   function handleCopy() {
     const text = `${campaign.headline}\n\n${campaign.bodyText}\n\n${campaign.hashtags.join(" ")}`;
@@ -503,7 +521,10 @@ function CampaignCard({
     });
   }
 
-  // Map gradient class to a CSS-variable-based style since Tailwind JIT can't always resolve dynamic bg classes
+  // Resolve whether to show the photo header or gradient fallback
+  const showImage = !!campaign.image && !imgError;
+
+  // Map gradient class to CSS for fallback
   const gradientMap: Record<string, string> = {
     "from-indigo-900 via-purple-900 to-slate-900":
       "linear-gradient(135deg, #1e1b4b, #3b0764, #0f172a)",
@@ -564,45 +585,65 @@ function CampaignCard({
       }}
       data-ocid={`campaigns.item.${index + 1}`}
     >
-      {/* Gradient banner header — Fix 1: taller h-28, bigger icon, stacked badge+pills */}
-      <div
-        className="relative h-28 flex items-center justify-between px-4"
-        style={{ background: bgStyle }}
-      >
-        <div className="flex items-center gap-3">
+      {/* ── Card header: photo (with dark overlay) or gradient fallback ── */}
+      <div className="relative h-48 overflow-hidden">
+        {showImage ? (
+          <>
+            <img
+              src={campaign.image}
+              alt={campaign.title}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              onError={() => setImgError(true)}
+            />
+            {/* Dark gradient overlay so badges remain readable */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 100%)",
+              }}
+            />
+          </>
+        ) : (
+          <div className="w-full h-full" style={{ background: bgStyle }} />
+        )}
+
+        {/* Overlaid content: icon left, category + platforms right */}
+        <div className="absolute inset-0 flex items-center justify-between px-4">
           <div
             className="flex items-center justify-center w-11 h-11 rounded-xl"
             style={{
-              background: `${campaign.accentColor}25`,
-              border: `1px solid ${campaign.accentColor}50`,
+              background: `${campaign.accentColor}30`,
+              border: `1px solid ${campaign.accentColor}60`,
+              backdropFilter: "blur(4px)",
             }}
           >
             <Icon className="w-5 h-5" style={{ color: campaign.accentColor }} />
           </div>
-        </div>
-        {/* Fix 1: category badge on top, platform pills below — stacked */}
-        <div className="flex flex-col items-end gap-1.5">
-          <Badge
-            className="text-xs font-semibold tracking-wide"
-            style={{
-              background: `${campaign.accentColor}22`,
-              border: `1px solid ${campaign.accentColor}55`,
-              color: campaign.accentColor,
-            }}
-          >
-            {campaign.category}
-          </Badge>
-          <div className="flex items-center gap-1 flex-wrap justify-end max-w-[160px]">
-            {campaign.platforms.map((p) => (
-              <PlatformPill key={p} platform={p} />
-            ))}
+
+          <div className="flex flex-col items-end gap-1.5">
+            <Badge
+              className="text-xs font-semibold tracking-wide"
+              style={{
+                background: `${campaign.accentColor}25`,
+                border: `1px solid ${campaign.accentColor}60`,
+                color: campaign.accentColor,
+                backdropFilter: "blur(4px)",
+              }}
+            >
+              {campaign.category}
+            </Badge>
+            <div className="flex items-center gap-1 flex-wrap justify-end max-w-[160px]">
+              {campaign.platforms.map((p) => (
+                <PlatformPill key={p} platform={p} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Card body */}
       <div className="flex-1 flex flex-col p-5 gap-4">
-        {/* Fix 2: Title text-lg font-bold, tagline brighter color */}
         <div>
           <h3
             className="font-display text-lg font-bold leading-snug mb-1"
@@ -615,7 +656,6 @@ function CampaignCard({
           </p>
         </div>
 
-        {/* Fix 2: Headline text-base font-semibold italic, subline brighter */}
         <div
           className="rounded-xl px-4 py-3"
           style={{
@@ -637,7 +677,6 @@ function CampaignCard({
           </p>
         </div>
 
-        {/* Fix 2: Body text-sm, brighter color */}
         <p
           className="text-sm leading-relaxed flex-grow"
           style={{ color: "oklch(0.62 0.04 260)" }}
@@ -812,7 +851,7 @@ export function CampaignsPage() {
               { label: "10 Life Areas", icon: Globe },
               { label: "6 Platforms", icon: Network },
               { label: "1 Shared Vision", icon: Sparkles },
-            ].map(({ label, icon: Icon }) => (
+            ].map(({ label, icon: StatIcon }) => (
               <div
                 key={label}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
@@ -822,7 +861,7 @@ export function CampaignsPage() {
                   color: "oklch(0.88 0.08 75)",
                 }}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <StatIcon className="w-3.5 h-3.5" />
                 <span className="text-xs font-semibold">{label}</span>
               </div>
             ))}
