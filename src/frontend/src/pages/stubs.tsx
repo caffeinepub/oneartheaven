@@ -427,6 +427,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     accentColorRaw: "0.68 0.22 290",
   },
   {
+    icon: Globe,
+    title: "Multi-Language & Localization",
+    description:
+      "10-language support with RTL layout, locale-aware formatting, and a Navbar language switcher. Inclusive global reach for all users.",
+    link: "/governance",
+    phaseLabel: "Phase 13 · i18n",
+    phaseNum: "13",
+    isAvailable: true,
+    accentColor: "oklch(0.65 0.20 160)",
+    accentColorRaw: "0.65 0.20 160",
+  },
+  {
     icon: Megaphone,
     title: "Campaign Hub",
     description:
