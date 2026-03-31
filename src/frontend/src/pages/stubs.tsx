@@ -415,6 +415,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     accentColorRaw: "0.88 0.025 95",
   },
   {
+    icon: Bot,
+    title: "AI Governance Intelligence",
+    description:
+      "AI-powered policy analysis, resolution drafting, impact forecasting, and conflict detection with real-time governance scoring.",
+    link: "/policy-advisor",
+    phaseLabel: "Phase 13 · AI",
+    phaseNum: "13",
+    isAvailable: true,
+    accentColor: "oklch(0.68 0.22 290)",
+    accentColorRaw: "0.68 0.22 290",
+  },
+  {
     icon: Megaphone,
     title: "Campaign Hub",
     description:

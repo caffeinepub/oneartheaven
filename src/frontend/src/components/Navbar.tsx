@@ -7,13 +7,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useLanguage } from "@/context/LanguageContext";
 import { useTenantContext } from "@/context/TenantContext";
 import { ROLE_CONFIG } from "@/data/authTypes";
 import { getAllOrgs } from "@/data/orgData";
 import { useAuth } from "@/hooks/useAuth";
 import { useInternetIdentity } from "@/hooks/useInternetIdentity";
-import { useGetSupportedLanguages } from "@/hooks/useQueries";
+import { useLocale } from "@/hooks/useLocale";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   BarChart3,
@@ -39,20 +38,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-const LANGUAGE_FLAGS: Record<string, string> = {
-  en: "\uD83C\uDDEC\uD83C\uDDE7",
-  es: "\uD83C\uDDEA\uD83C\uDDF8",
-  fr: "\uD83C\uDDEB\uD83C\uDDF7",
-  ar: "\uD83C\uDDF8\uD83C\uDDE6",
-  zh: "\uD83C\uDDE8\uD83C\uDDF3",
-  pt: "\uD83C\uDDE7\uD83C\uDDF7",
-  hi: "\uD83C\uDDEE\uD83C\uDDF3",
-  sw: "\uD83C\uDDF0\uD83C\uDDE6",
-  ru: "\uD83C\uDDF7\uD83C\uDDFA",
-  de: "\uD83C\uDDE9\uD83C\uDDEA",
-};
-
-const NAV_LINKS = [
+const NAV_LINKS: { label: string; path: string; badge?: string }[] = [
   { label: "Home", path: "/" as const },
   { label: "About", path: "/about" as const },
   { label: "Members", path: "/members" as const },
@@ -68,6 +54,7 @@ const NAV_LINKS = [
   { label: "Docs", path: "/docs" as const },
   { label: "Launch Plan", path: "/launch" as const },
   { label: "Campaigns", path: "/campaigns" as const },
+  { label: "Policy Advisor", path: "/policy-advisor" as const, badge: "AI" },
 ];
 
 const ADMIN_ROLES = ["SuperAdmin", "OrgAdmin"] as const;
@@ -166,14 +153,12 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
     isLoginSuccess,
   } = useInternetIdentity();
   const { userProfile, role, logout: authLogout } = useAuth();
-  const { data: languages } = useGetSupportedLanguages();
-  const { selectedLanguage, setSelectedLanguage } = useLanguage();
+  const { locale, setLocale, flag, nativeName, supportedLocales } = useLocale();
   const { activeOrg, activeWhiteLabel } = useTenantContext();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isConnected = isLoginSuccess && !!identity;
   const principal = identity?.getPrincipal().toString() ?? "";
-  const selectedLang = languages?.find((l) => l.code === selectedLanguage);
   const currentPath = location.pathname;
 
   const roleConfig = ROLE_CONFIG[role];
@@ -244,7 +229,14 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
                     : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
                 }`}
               >
-                {link.label}
+                <span className="flex items-center gap-1">
+                  {link.label}
+                  {link.badge && (
+                    <span className="inline-flex items-center px-1 py-0 rounded text-[9px] font-bold bg-[oklch(0.55_0.22_290/0.25)] text-[oklch(0.78_0.18_290)] border border-[oklch(0.68_0.22_290/0.4)] leading-4">
+                      {link.badge}
+                    </span>
+                  )}
+                </span>
                 {active && (
                   <motion.span
                     layoutId="nav-active-indicator"
@@ -369,8 +361,7 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
               >
                 <Globe className="h-4 w-4" />
                 <span className="text-sm">
-                  {LANGUAGE_FLAGS[selectedLanguage] ?? "\uD83C\uDF10"}{" "}
-                  {selectedLang?.code.toUpperCase() ?? "EN"}
+                  {flag} {locale.toUpperCase()}
                 </span>
                 <ChevronDown className="h-3 w-3 opacity-60" />
               </Button>
@@ -380,16 +371,16 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
               className="bg-[oklch(var(--cosmos-mid))] border-[oklch(var(--gold)/0.2)] w-48"
               data-ocid="nav.language.dropdown_menu"
             >
-              {(languages ?? []).map((lang) => (
+              {supportedLocales.map((lc) => (
                 <DropdownMenuItem
-                  key={lang.code}
-                  onClick={() => setSelectedLanguage(lang.code)}
-                  className={`cursor-pointer text-sm ${selectedLanguage === lang.code ? "text-[oklch(var(--gold))]" : "text-[oklch(0.8_0.02_260)]"}`}
+                  key={lc.locale}
+                  onClick={() => setLocale(lc.locale)}
+                  className={`cursor-pointer text-sm ${locale === lc.locale ? "text-[oklch(var(--gold))]" : "text-[oklch(0.8_0.02_260)]"}`}
+                  data-ocid={`nav.language.item.${lc.locale}`}
                 >
-                  {LANGUAGE_FLAGS[lang.code] ?? "\uD83C\uDF10"}{" "}
-                  {lang.nativeName}
+                  {lc.flag} {lc.nativeName}
                   <span className="ml-auto text-xs opacity-50">
-                    {lang.code.toUpperCase()}
+                    {lc.locale.toUpperCase()}
                   </span>
                 </DropdownMenuItem>
               ))}
@@ -727,7 +718,14 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
                             />
                           )}
                           {!active && <span className="w-1 shrink-0" />}
-                          {link.label}
+                          <span className="flex items-center gap-1.5">
+                            {link.label}
+                            {link.badge && (
+                              <span className="inline-flex items-center px-1 py-0 rounded text-[9px] font-bold bg-[oklch(0.55_0.22_290/0.25)] text-[oklch(0.78_0.18_290)] border border-[oklch(0.68_0.22_290/0.4)] leading-4">
+                                {link.badge}
+                              </span>
+                            )}
+                          </span>
                         </Link>
                       </motion.div>
                     );
@@ -849,8 +847,7 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
                       data-ocid="nav.mobile.language.select"
                     >
                       <Globe className="h-4 w-4" />
-                      {LANGUAGE_FLAGS[selectedLanguage] ?? "\uD83C\uDF10"}{" "}
-                      {selectedLang?.nativeName ?? "English"}
+                      {flag} {nativeName}
                       <ChevronDown className="h-3 w-3 ml-auto opacity-60" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -858,14 +855,14 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
                     align="start"
                     className="bg-[oklch(var(--cosmos-mid))] border-[oklch(var(--gold)/0.2)] w-52"
                   >
-                    {(languages ?? []).map((lang) => (
+                    {supportedLocales.map((lc) => (
                       <DropdownMenuItem
-                        key={lang.code}
-                        onClick={() => setSelectedLanguage(lang.code)}
-                        className="cursor-pointer text-sm text-[oklch(0.8_0.02_260)] min-h-[40px]"
+                        key={lc.locale}
+                        onClick={() => setLocale(lc.locale)}
+                        className={`cursor-pointer text-sm min-h-[40px] ${locale === lc.locale ? "text-[oklch(var(--gold))]" : "text-[oklch(0.8_0.02_260)]"}`}
+                        data-ocid={`nav.mobile.language.item.${lc.locale}`}
                       >
-                        {LANGUAGE_FLAGS[lang.code] ?? "\uD83C\uDF10"}{" "}
-                        {lang.nativeName}
+                        {lc.flag} {lc.nativeName}
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
