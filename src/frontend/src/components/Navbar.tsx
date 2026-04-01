@@ -43,6 +43,7 @@ const NAV_LINKS: { label: string; path: string; badge?: string }[] = [
   { label: "About", path: "/about" as const },
   { label: "Members", path: "/members" as const },
   { label: "Governance", path: "/governance" as const },
+  { label: "Sessions", path: "/sessions" as const, badge: "Live" },
   { label: "Solutions", path: "/solutions" as const },
   { label: "Community", path: "/community" as const },
   { label: "Academy", path: "/academy" as const },

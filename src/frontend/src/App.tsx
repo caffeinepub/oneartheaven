@@ -27,6 +27,7 @@ import { FinancePage } from "@/pages/Finance";
 import { Home } from "@/pages/Home";
 import { IntegrationsPage } from "@/pages/Integrations";
 import { LaunchPlanPage } from "@/pages/LaunchPlan";
+import { LiveSessionRoomPage } from "@/pages/LiveSessionRoom";
 import { MembersPage } from "@/pages/Members";
 import { PolicyAdvisorPage } from "@/pages/PolicyAdvisor";
 import { PortalDetailPage } from "@/pages/PortalDetail";
@@ -34,6 +35,7 @@ import { PortalsPage } from "@/pages/Portals";
 import { PricingPage } from "@/pages/Pricing";
 import { RegisterPage } from "@/pages/Register";
 import { ResolutionsPage } from "@/pages/ResolutionsPage";
+import { SessionsHubPage } from "@/pages/SessionsHub";
 import { SolutionsPage } from "@/pages/Solutions";
 import { SustainabilityPage } from "@/pages/Sustainability";
 import { TransparencyPage } from "@/pages/TransparencyPage";
@@ -262,6 +264,16 @@ const launchRoute = createRoute({
   component: LaunchPlanPage,
 });
 
+const sessionsHubRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/sessions",
+  component: SessionsHubPage,
+});
+const sessionRoomRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/sessions/$sessionId",
+  component: LiveSessionRoomPage,
+});
 const routeTree = rootRoute.addChildren([
   indexRoute,
   aboutRoute,
@@ -296,6 +308,8 @@ const routeTree = rootRoute.addChildren([
   vendorDashboardRoute,
   launchRoute,
   campaignsRoute,
+  sessionsHubRoute,
+  sessionRoomRoute,
 ]);
 
 const router = createRouter({ routeTree });

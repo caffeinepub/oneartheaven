@@ -22,6 +22,7 @@ import {
   Megaphone,
   Network,
   Paintbrush,
+  Radio,
   ScrollText,
   Shield,
   Sparkles,
@@ -135,7 +136,8 @@ type AvailableRoute =
   | "/admin/analytics"
   | "/docs"
   | "/launch"
-  | "/campaigns";
+  | "/campaigns"
+  | "/sessions";
 
 interface GovernancePortalCard {
   icon: React.ElementType;
@@ -449,6 +451,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     isAvailable: true,
     accentColor: "oklch(0.82 0.14 75)",
     accentColorRaw: "0.82 0.14 75",
+  },
+  {
+    icon: Radio,
+    title: "Live Sessions",
+    description:
+      "Join live council deliberations, cast votes on active polls, and track real-time outcomes across all councils and working groups.",
+    link: "/sessions",
+    phaseLabel: "Phase 13 · Real-Time",
+    phaseNum: "13",
+    isAvailable: true,
+    accentColor: "oklch(0.72 0.19 148)",
+    accentColorRaw: "0.72 0.19 148",
   },
 ];
 
