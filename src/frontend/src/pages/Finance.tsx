@@ -54,6 +54,7 @@ import {
   useInvestmentRounds,
   useWallets,
 } from "@/hooks/useFinance";
+import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   Award,
@@ -2932,6 +2933,7 @@ export function FinancePage() {
       <InvestmentRoundsSection />
       <WalletsSection />
       <FinFracFranFinanceSection />
+      <MarketplaceQuickLink />
     </main>
   );
 }
@@ -3676,6 +3678,58 @@ function FinFracFranFinanceSection() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </section>
+  );
+}
+
+function MarketplaceQuickLink() {
+  return (
+    <section
+      className="mx-auto max-w-5xl px-4 pb-12"
+      data-ocid="finance.marketplace.section"
+    >
+      <div
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl p-6"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.14 0.06 75 / 0.30), oklch(0.12 0.04 260))",
+          border: "1px solid oklch(0.72 0.16 75 / 0.25)",
+        }}
+      >
+        <div>
+          <div
+            className="text-xs font-semibold uppercase tracking-wider mb-1"
+            style={{ color: "oklch(0.72 0.16 75)" }}
+          >
+            Phase 13 · Marketplace
+          </div>
+          <h3
+            className="text-xl font-bold mb-1"
+            style={{ color: "oklch(0.92 0.02 260)" }}
+          >
+            FinFracFran™ Marketplace
+          </h3>
+          <p className="text-sm" style={{ color: "oklch(0.62 0.04 260)" }}>
+            Explore franchise, fractional, and license opportunities. Invest in
+            scalable solutions worldwide and apply to operate proven models in
+            your region.
+          </p>
+        </div>
+        <Link to="/marketplace">
+          <button
+            type="button"
+            data-ocid="finance.marketplace.button"
+            className="shrink-0 px-5 py-2.5 rounded-xl font-bold text-sm transition-all hover:opacity-90"
+            style={{
+              background:
+                "linear-gradient(135deg, oklch(0.72 0.16 75), oklch(0.68 0.18 55))",
+              color: "oklch(0.08 0.03 260)",
+            }}
+          >
+            Browse Marketplace →
+          </button>
+        </Link>
+      </div>
     </section>
   );
 }

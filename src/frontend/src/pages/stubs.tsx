@@ -25,6 +25,7 @@ import {
   Radio,
   ScrollText,
   Shield,
+  ShoppingCart,
   Sparkles,
   Target,
   Users,
@@ -139,7 +140,8 @@ type AvailableRoute =
   | "/launch"
   | "/campaigns"
   | "/sessions"
-  | "/impact";
+  | "/impact"
+  | "/marketplace";
 
 interface GovernancePortalCard {
   icon: React.ElementType;
@@ -477,6 +479,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     isAvailable: true,
     accentColor: "oklch(0.65 0.20 160)",
     accentColorRaw: "0.65 0.20 160",
+  },
+  {
+    icon: ShoppingCart,
+    title: "FinFracFran™ Marketplace",
+    description:
+      "Discover franchise, fractional, and license opportunities. Invest in scalable solutions and apply to operate proven models in your region.",
+    link: "/marketplace",
+    phaseLabel: "Phase 13 · Marketplace",
+    phaseNum: "13",
+    isAvailable: true,
+    accentColor: "oklch(0.72 0.16 75)",
+    accentColorRaw: "0.72 0.16 75",
   },
 ];
 

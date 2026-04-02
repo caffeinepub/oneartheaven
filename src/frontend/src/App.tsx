@@ -29,6 +29,7 @@ import { ImpactDashboardPage } from "@/pages/ImpactDashboard";
 import { IntegrationsPage } from "@/pages/Integrations";
 import { LaunchPlanPage } from "@/pages/LaunchPlan";
 import { LiveSessionRoomPage } from "@/pages/LiveSessionRoom";
+import { MarketplacePage } from "@/pages/Marketplace";
 import { MembersPage } from "@/pages/Members";
 import { PolicyAdvisorPage } from "@/pages/PolicyAdvisor";
 import { PortalDetailPage } from "@/pages/PortalDetail";
@@ -280,6 +281,11 @@ const impactRoute = createRoute({
   path: "/impact",
   component: ImpactDashboardPage,
 });
+const marketplaceRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/marketplace",
+  component: MarketplacePage,
+});
 const routeTree = rootRoute.addChildren([
   indexRoute,
   aboutRoute,
@@ -317,6 +323,7 @@ const routeTree = rootRoute.addChildren([
   sessionsHubRoute,
   sessionRoomRoute,
   impactRoute,
+  marketplaceRoute,
 ]);
 
 const router = createRouter({ routeTree });

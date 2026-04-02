@@ -43,6 +43,12 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { getListingsByVendor } from "@/data/marketplaceData";
+import {
+  LISTING_STATUS_CONFIG,
+  LISTING_TIER_CONFIG,
+  LISTING_TYPE_CONFIG,
+} from "@/data/marketplaceTypes";
 import type {
   VendorCategory,
   VendorListing,
@@ -64,6 +70,7 @@ import {
   useVendorStats,
   useVendorTierProgress,
 } from "@/hooks/useVendor";
+import { Link } from "@tanstack/react-router";
 import {
   Building2,
   ChevronRight,
@@ -782,6 +789,8 @@ function VendorDashboardInner() {
         </section>
 
         {/* ── Revenue & FF™ Attribution ─────────────────────────────── */}
+        {/* u2500u2500 Marketplace Listings u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500u2500 */}
+        <VendorMarketplaceSection vendorId={VENDOR_ID} />
         <section id="revenue">
           <h2 className="font-display font-bold text-xl text-white mb-6">
             Revenue & FinFracFran™ Attribution
@@ -1353,3 +1362,141 @@ function AddEditListingForm({ form, onChange }: AddEditListingFormProps) {
 }
 
 // Unused import guard
+
+function VendorMarketplaceSection({ vendorId }: { vendorId: string }) {
+  const listings = getListingsByVendor(vendorId);
+  return (
+    <section
+      id="marketplace"
+      className="rounded-xl p-6"
+      style={{
+        background: "oklch(0.12 0.03 260)",
+        border: "1px solid oklch(0.22 0.03 260)",
+      }}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="font-bold text-xl text-white">
+            My Marketplace Listings
+          </h2>
+          <p className="text-sm text-slate-400 mt-0.5">
+            FinFracFran™ franchise, fractional, and license opportunities you
+            have listed.
+          </p>
+        </div>
+        <Link to="/marketplace">
+          <button
+            type="button"
+            data-ocid="vendor.marketplace.button"
+            className="text-sm px-4 py-1.5 rounded-lg font-medium"
+            style={{
+              background: "oklch(0.72 0.16 75 / 0.15)",
+              color: "oklch(0.72 0.16 75)",
+              border: "1px solid oklch(0.72 0.16 75 / 0.30)",
+            }}
+          >
+            Browse All Listings →
+          </button>
+        </Link>
+      </div>
+      {listings.length === 0 ? (
+        <p
+          className="text-sm py-8 text-center"
+          style={{ color: "oklch(0.50 0.03 260)" }}
+          data-ocid="vendor.marketplace.empty_state"
+        >
+          No marketplace listings yet.
+        </p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table
+            className="w-full text-sm"
+            data-ocid="vendor.marketplace.table"
+          >
+            <thead>
+              <tr style={{ borderBottom: "1px solid oklch(0.22 0.03 260)" }}>
+                {[
+                  "Title",
+                  "Type",
+                  "Tier",
+                  "Status",
+                  "Min. Inv.",
+                  "Applications",
+                ].map((h) => (
+                  <th
+                    key={h}
+                    className="text-left px-3 py-2 text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "oklch(0.50 0.03 260)" }}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {listings.map((l, i) => (
+                <tr
+                  key={l.id}
+                  data-ocid={`vendor.marketplace.row.${i + 1}`}
+                  style={{ borderBottom: "1px solid oklch(0.18 0.03 260)" }}
+                >
+                  <td
+                    className="px-3 py-3 font-medium"
+                    style={{ color: "oklch(0.85 0.02 260)" }}
+                  >
+                    {l.title}
+                  </td>
+                  <td className="px-3 py-3">
+                    <span
+                      className="text-xs px-2 py-0.5 rounded-full font-medium"
+                      style={{
+                        background: LISTING_TYPE_CONFIG[l.type].bgColor,
+                        color: LISTING_TYPE_CONFIG[l.type].color,
+                      }}
+                    >
+                      {LISTING_TYPE_CONFIG[l.type].label}
+                    </span>
+                  </td>
+                  <td className="px-3 py-3">
+                    <span
+                      className="text-xs px-2 py-0.5 rounded-full"
+                      style={{
+                        background: `${LISTING_TIER_CONFIG[l.tier].color}22`,
+                        color: LISTING_TIER_CONFIG[l.tier].color,
+                      }}
+                    >
+                      {LISTING_TIER_CONFIG[l.tier].label}
+                    </span>
+                  </td>
+                  <td className="px-3 py-3">
+                    <span
+                      className="text-xs px-2 py-0.5 rounded-full"
+                      style={{
+                        background: `${LISTING_STATUS_CONFIG[l.status].color}22`,
+                        color: LISTING_STATUS_CONFIG[l.status].color,
+                      }}
+                    >
+                      {LISTING_STATUS_CONFIG[l.status].label}
+                    </span>
+                  </td>
+                  <td
+                    className="px-3 py-3 font-medium"
+                    style={{ color: "oklch(0.72 0.16 75)" }}
+                  >
+                    ${l.financials.minInvestment.toLocaleString()}
+                  </td>
+                  <td
+                    className="px-3 py-3"
+                    style={{ color: "oklch(0.68 0.03 260)" }}
+                  >
+                    {l.applicationsCount}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
