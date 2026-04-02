@@ -56,6 +56,7 @@ const NAV_LINKS: { label: string; path: string; badge?: string }[] = [
   { label: "Launch Plan", path: "/launch" as const },
   { label: "Campaigns", path: "/campaigns" as const },
   { label: "Policy Advisor", path: "/policy-advisor" as const, badge: "AI" },
+  { label: "Impact", path: "/impact" as const, badge: "New" },
 ];
 
 const ADMIN_ROLES = ["SuperAdmin", "OrgAdmin"] as const;

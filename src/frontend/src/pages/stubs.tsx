@@ -26,6 +26,7 @@ import {
   ScrollText,
   Shield,
   Sparkles,
+  Target,
   Users,
   Zap,
 } from "lucide-react";
@@ -137,7 +138,8 @@ type AvailableRoute =
   | "/docs"
   | "/launch"
   | "/campaigns"
-  | "/sessions";
+  | "/sessions"
+  | "/impact";
 
 interface GovernancePortalCard {
   icon: React.ElementType;
@@ -463,6 +465,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     isAvailable: true,
     accentColor: "oklch(0.72 0.19 148)",
     accentColorRaw: "0.72 0.19 148",
+  },
+  {
+    icon: Target,
+    title: "Impact & SDGs",
+    description:
+      "Track collective impact across 17 UN Sustainable Development Goals — metrics, verified reports, and organisation contributions.",
+    link: "/impact",
+    phaseLabel: "Phase 13 · Impact",
+    phaseNum: "13",
+    isAvailable: true,
+    accentColor: "oklch(0.65 0.20 160)",
+    accentColorRaw: "0.65 0.20 160",
   },
 ];
 

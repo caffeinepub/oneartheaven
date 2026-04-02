@@ -25,6 +25,7 @@ import { DelegatesPage } from "@/pages/Delegates";
 import { DocsPortalPage } from "@/pages/DocsPortal";
 import { FinancePage } from "@/pages/Finance";
 import { Home } from "@/pages/Home";
+import { ImpactDashboardPage } from "@/pages/ImpactDashboard";
 import { IntegrationsPage } from "@/pages/Integrations";
 import { LaunchPlanPage } from "@/pages/LaunchPlan";
 import { LiveSessionRoomPage } from "@/pages/LiveSessionRoom";
@@ -274,6 +275,11 @@ const sessionRoomRoute = createRoute({
   path: "/sessions/$sessionId",
   component: LiveSessionRoomPage,
 });
+const impactRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/impact",
+  component: ImpactDashboardPage,
+});
 const routeTree = rootRoute.addChildren([
   indexRoute,
   aboutRoute,
@@ -310,6 +316,7 @@ const routeTree = rootRoute.addChildren([
   campaignsRoute,
   sessionsHubRoute,
   sessionRoomRoute,
+  impactRoute,
 ]);
 
 const router = createRouter({ routeTree });
