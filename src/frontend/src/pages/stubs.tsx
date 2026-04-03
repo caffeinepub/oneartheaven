@@ -20,6 +20,7 @@ import {
   Layers,
   Leaf,
   Megaphone,
+  MessageSquare,
   Network,
   Paintbrush,
   Radio,
@@ -141,7 +142,8 @@ type AvailableRoute =
   | "/campaigns"
   | "/sessions"
   | "/impact"
-  | "/marketplace";
+  | "/marketplace"
+  | "/messages";
 
 interface GovernancePortalCard {
   icon: React.ElementType;
@@ -491,6 +493,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     isAvailable: true,
     accentColor: "oklch(0.72 0.16 75)",
     accentColorRaw: "0.72 0.16 75",
+  },
+  {
+    icon: MessageSquare,
+    title: "Messages & Notifications",
+    description:
+      "Direct messaging, thread management, and real-time notification center with 14 notification types across all platform areas.",
+    link: "/messages",
+    phaseLabel: "Phase 13 · Comms",
+    phaseNum: "13",
+    isAvailable: true,
+    accentColor: "oklch(0.72 0.16 200)",
+    accentColorRaw: "0.72 0.16 200",
   },
 ];
 

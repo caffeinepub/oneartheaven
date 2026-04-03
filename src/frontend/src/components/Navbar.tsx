@@ -371,7 +371,7 @@ function NotificationPanel({ onClose }: { onClose: () => void }) {
         style={{ borderTop: "1px solid oklch(var(--gold) / 0.1)" }}
       >
         <Link
-          to="/governance"
+          to="/messages"
           onClick={onClose}
           className="flex items-center gap-2 text-xs transition-colors hover:opacity-80"
           style={{ color: "oklch(var(--gold) / 0.8)" }}
@@ -414,6 +414,8 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
 
   // Notification badge (lightweight, no org filter — shows platform-wide count)
   const { unreadCount: notifCount, hasUrgent } = useNotificationBadge();
+  // Messages badge count for desktop icon and mobile link
+  const { totalUnreadThreads } = useMessages();
 
   const isConnected = isLoginSuccess && !!identity;
   const principal = identity?.getPrincipal().toString() ?? "";
@@ -656,6 +658,23 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
               )}
             </AnimatePresence>
           </div>
+          {/* Desktop Messages icon button */}
+          <Link
+            to="/messages"
+            className="relative hidden sm:flex items-center justify-center w-8 h-8 rounded-lg transition-colors text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+            aria-label="Messages"
+            data-ocid="nav.messages.link"
+          >
+            <MessageSquare className="h-4 w-4" />
+            {totalUnreadThreads > 0 && (
+              <span
+                className="absolute top-0 right-0 flex items-center justify-center min-w-[14px] h-[14px] px-0.5 rounded-full text-[9px] font-bold text-white"
+                style={{ background: "oklch(0.55 0.22 200)" }}
+              >
+                {totalUnreadThreads > 9 ? "9+" : totalUnreadThreads}
+              </span>
+            )}
+          </Link>
 
           {/* Language picker */}
           <DropdownMenu>
@@ -1021,6 +1040,30 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
                       </span>
                     )}
                   </button>
+
+                  {/* Mobile Messages row */}
+                  <Link
+                    to="/messages"
+                    onClick={() => setMobileOpen(false)}
+                    data-ocid="nav.mobile.messages.link"
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 min-h-[48px] ${
+                      currentPath === "/messages"
+                        ? "text-[oklch(var(--gold))] bg-[oklch(var(--gold)/0.1)]"
+                        : "text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)]"
+                    }`}
+                  >
+                    <span className="w-1 shrink-0" />
+                    <MessageSquare className="w-4 h-4" />
+                    <span className="flex-1">Messages</span>
+                    {totalUnreadThreads > 0 && (
+                      <span
+                        className="inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full text-[10px] font-bold text-white"
+                        style={{ background: "oklch(0.55 0.22 200)" }}
+                      >
+                        {totalUnreadThreads > 9 ? "9+" : totalUnreadThreads}
+                      </span>
+                    )}
+                  </Link>
 
                   {NAV_LINKS.map((link, i) => {
                     const active = currentPath === link.path;

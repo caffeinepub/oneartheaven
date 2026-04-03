@@ -31,6 +31,7 @@ import { LaunchPlanPage } from "@/pages/LaunchPlan";
 import { LiveSessionRoomPage } from "@/pages/LiveSessionRoom";
 import { MarketplacePage } from "@/pages/Marketplace";
 import { MembersPage } from "@/pages/Members";
+import { MessagesPage } from "@/pages/Messages";
 import { PolicyAdvisorPage } from "@/pages/PolicyAdvisor";
 import { PortalDetailPage } from "@/pages/PortalDetail";
 import { PortalsPage } from "@/pages/Portals";
@@ -286,6 +287,12 @@ const marketplaceRoute = createRoute({
   path: "/marketplace",
   component: MarketplacePage,
 });
+const messagesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/messages",
+  component: MessagesPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   aboutRoute,
@@ -324,6 +331,7 @@ const routeTree = rootRoute.addChildren([
   sessionRoomRoute,
   impactRoute,
   marketplaceRoute,
+  messagesRoute,
 ]);
 
 const router = createRouter({ routeTree });
