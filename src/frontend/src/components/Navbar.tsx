@@ -9,13 +9,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTenantContext } from "@/context/TenantContext";
 import { ROLE_CONFIG } from "@/data/authTypes";
+import { NOTIFICATION_TYPE_CONFIG } from "@/data/notificationTypes";
 import { getAllOrgs } from "@/data/orgData";
 import { useAuth } from "@/hooks/useAuth";
 import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import { useLocale } from "@/hooks/useLocale";
-import { Link, useRouterState } from "@tanstack/react-router";
+import {
+  useMessages,
+  useNotificationBadge,
+  useNotifications,
+} from "@/hooks/useNotifications";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   BarChart3,
+  Bell,
   Building2,
   CheckCircle2,
   ChevronDown,
@@ -25,6 +32,7 @@ import {
   Globe,
   LogOut,
   Menu,
+  MessageSquare,
   Paintbrush,
   PlayCircle,
   ShieldCheck,
@@ -143,12 +151,255 @@ function OrgSwitcherDropdown() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// NotificationPanel — the dropdown notification center
+// ---------------------------------------------------------------------------
+function NotificationPanel({ onClose }: { onClose: () => void }) {
+  const navigate = useNavigate();
+  const {
+    notifications,
+    unreadCount,
+    filter,
+    updateFilter,
+    markRead,
+    markAllRead,
+    dismiss,
+    loadMore,
+    hasMore,
+  } = useNotifications();
+
+  const { totalUnreadThreads } = useMessages();
+
+  const activeTab = filter.status === "unread" ? "unread" : "all";
+
+  function handleNotifClick(id: string, actionRoute?: string) {
+    markRead(id);
+    onClose();
+    if (actionRoute) {
+      navigate({ to: actionRoute });
+    }
+  }
+
+  return (
+    <div
+      className="absolute top-full right-0 mt-2 z-[60] w-80 max-h-[480px] flex flex-col rounded-xl shadow-2xl overflow-hidden"
+      style={{
+        background: "oklch(var(--cosmos-mid))",
+        border: "1px solid oklch(var(--gold) / 0.2)",
+      }}
+      data-ocid="nav.notifications.popover"
+    >
+      {/* Header */}
+      <div
+        className="flex items-center justify-between px-4 py-3 shrink-0"
+        style={{ borderBottom: "1px solid oklch(var(--gold) / 0.12)" }}
+      >
+        <div className="flex items-center gap-2">
+          <span
+            className="text-sm font-semibold"
+            style={{ color: "oklch(var(--gold))" }}
+          >
+            Notifications
+          </span>
+          {unreadCount > 0 && (
+            <span
+              className="inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full text-[9px] font-bold text-white"
+              style={{ background: "oklch(0.6 0.22 27)" }}
+            >
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
+        </div>
+        {unreadCount > 0 && (
+          <button
+            type="button"
+            onClick={markAllRead}
+            className="text-xs hover:opacity-80 transition-opacity"
+            style={{ color: "oklch(var(--gold) / 0.7)" }}
+            data-ocid="nav.notifications.mark_all_read.button"
+          >
+            Mark all read
+          </button>
+        )}
+      </div>
+
+      {/* Tab pills */}
+      <div
+        className="flex items-center gap-0 px-4 py-2 shrink-0"
+        style={{ borderBottom: "1px solid oklch(var(--gold) / 0.08)" }}
+      >
+        <button
+          type="button"
+          onClick={() => updateFilter({ status: "all" })}
+          data-ocid="nav.notifications.all.tab"
+          className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+            activeTab === "all"
+              ? "text-[oklch(var(--gold))] border-b-2 border-[oklch(var(--gold))]"
+              : "text-[oklch(0.55_0.03_260)] hover:text-[oklch(0.75_0.03_260)]"
+          }`}
+        >
+          All
+        </button>
+        <button
+          type="button"
+          onClick={() => updateFilter({ status: "unread" })}
+          data-ocid="nav.notifications.unread.tab"
+          className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+            activeTab === "unread"
+              ? "text-[oklch(var(--gold))] border-b-2 border-[oklch(var(--gold))]"
+              : "text-[oklch(0.55_0.03_260)] hover:text-[oklch(0.75_0.03_260)]"
+          }`}
+        >
+          Unread
+          {unreadCount > 0 && (
+            <span className="ml-1 text-[9px] opacity-70">({unreadCount})</span>
+          )}
+        </button>
+      </div>
+
+      {/* Notification list */}
+      <div className="flex-1 overflow-y-auto">
+        {notifications.length === 0 ? (
+          <div
+            className="flex flex-col items-center justify-center py-10 gap-3"
+            data-ocid="nav.notifications.empty_state"
+          >
+            <Bell className="h-8 w-8 text-[oklch(0.4_0.02_260)]" />
+            <span className="text-xs text-[oklch(0.45_0.02_260)]">
+              No notifications
+            </span>
+          </div>
+        ) : (
+          <div className="divide-y divide-[oklch(1_0_0/0.05)]">
+            {notifications.map((n, idx) => {
+              const cfg = NOTIFICATION_TYPE_CONFIG[n.type];
+              const isUnread = n.status === "unread";
+              return (
+                <button
+                  type="button"
+                  key={n.id}
+                  className={`group relative flex w-full gap-3 px-4 py-3 text-left transition-colors hover:bg-[oklch(var(--gold)/0.04)] ${
+                    isUnread ? "border-l-2" : ""
+                  }`}
+                  style={isUnread ? { borderLeftColor: cfg.color } : undefined}
+                  onClick={() => handleNotifClick(n.id, n.actionRoute)}
+                  data-ocid={`nav.notifications.item.${idx + 1}`}
+                >
+                  {/* Type icon */}
+                  <div
+                    className="flex items-center justify-center w-7 h-7 rounded-full shrink-0 mt-0.5 text-sm"
+                    style={{ background: cfg.bgColor }}
+                  >
+                    {cfg.icon}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start gap-1.5">
+                      <span
+                        className={`text-xs font-semibold truncate flex-1 ${
+                          isUnread
+                            ? "text-[oklch(0.9_0.01_95)]"
+                            : "text-[oklch(0.55_0.02_260)]"
+                        }`}
+                      >
+                        {n.title}
+                      </span>
+                      {n.priority === "urgent" && (
+                        <span
+                          className="w-1.5 h-1.5 rounded-full shrink-0 mt-1"
+                          style={{ background: "oklch(0.6 0.22 27)" }}
+                        />
+                      )}
+                    </div>
+                    <p
+                      className="text-[11px] text-[oklch(0.5_0.02_260)] mt-0.5 overflow-hidden"
+                      style={
+                        {
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        } as React.CSSProperties
+                      }
+                    >
+                      {n.body}
+                    </p>
+                    <span className="text-[10px] text-[oklch(0.4_0.02_260)] mt-1 block">
+                      {n.relativeTime}
+                    </span>
+                  </div>
+
+                  {/* Dismiss button */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dismiss(n.id);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0 self-start mt-0.5 w-4 h-4 flex items-center justify-center rounded text-[oklch(0.45_0.02_260)] hover:text-[oklch(0.7_0.02_260)]"
+                    aria-label="Dismiss notification"
+                    data-ocid={`nav.notifications.dismiss.button.${idx + 1}`}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Load more */}
+        {hasMore && (
+          <div className="px-4 py-3">
+            <button
+              type="button"
+              onClick={loadMore}
+              className="w-full text-xs text-center hover:opacity-80 transition-opacity"
+              style={{ color: "oklch(var(--gold) / 0.7)" }}
+              data-ocid="nav.notifications.load_more.button"
+            >
+              Load more
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Footer — messages link */}
+      <div
+        className="px-4 py-2.5 shrink-0 flex items-center"
+        style={{ borderTop: "1px solid oklch(var(--gold) / 0.1)" }}
+      >
+        <Link
+          to="/governance"
+          onClick={onClose}
+          className="flex items-center gap-2 text-xs transition-colors hover:opacity-80"
+          style={{ color: "oklch(var(--gold) / 0.8)" }}
+          data-ocid="nav.notifications.view_messages.link"
+        >
+          <MessageSquare className="h-3.5 w-3.5" />
+          View Messages
+          {totalUnreadThreads > 0 && (
+            <span
+              className="inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full text-[9px] font-bold text-white"
+              style={{ background: "oklch(0.6 0.22 27)" }}
+            >
+              {totalUnreadThreads}
+            </span>
+          )}
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 interface NavbarProps {
   onStartTour?: (tourId: string) => void;
 }
 
 export function Navbar({ onStartTour }: NavbarProps = {}) {
   const { location } = useRouterState();
+  const navigate = useNavigate();
   const {
     login: iiLogin,
     identity,
@@ -159,6 +410,10 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
   const { locale, setLocale, flag, nativeName, supportedLocales } = useLocale();
   const { activeOrg, activeWhiteLabel } = useTenantContext();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+
+  // Notification badge (lightweight, no org filter — shows platform-wide count)
+  const { unreadCount: notifCount, hasUrgent } = useNotificationBadge();
 
   const isConnected = isLoginSuccess && !!identity;
   const principal = identity?.getPrincipal().toString() ?? "";
@@ -352,6 +607,55 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
             </DropdownMenuTrigger>
             <OrgSwitcherDropdown />
           </DropdownMenu>
+
+          {/* Bell notification button + dropdown */}
+          <div className="relative hidden sm:block">
+            <button
+              type="button"
+              onClick={() => setNotifOpen((o) => !o)}
+              className="relative flex items-center justify-center w-8 h-8 rounded-lg transition-colors text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.5)]"
+              aria-label="Notifications"
+              data-ocid="nav.notifications.button"
+            >
+              <Bell className="h-4 w-4" />
+              {notifCount > 0 && (
+                <span
+                  className={`absolute top-0 right-0 flex items-center justify-center min-w-[14px] h-[14px] px-0.5 rounded-full text-[9px] font-bold text-white ${
+                    hasUrgent ? "animate-pulse" : ""
+                  }`}
+                  style={{ background: "oklch(0.6 0.22 27)" }}
+                >
+                  {notifCount > 99 ? "99+" : notifCount}
+                </span>
+              )}
+            </button>
+
+            {/* Click-outside backdrop */}
+            {notifOpen && (
+              <div
+                className="fixed inset-0 z-[59]"
+                onClick={() => setNotifOpen(false)}
+                onKeyDown={() => setNotifOpen(false)}
+                role="presentation"
+                aria-hidden="true"
+              />
+            )}
+
+            {/* Notification dropdown panel */}
+            <AnimatePresence>
+              {notifOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
+                  className="absolute top-full right-0 mt-2 z-[60]"
+                >
+                  <NotificationPanel onClose={() => setNotifOpen(false)} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           {/* Language picker */}
           <DropdownMenu>
@@ -695,6 +999,29 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
 
               <div className="flex-1 overflow-y-auto py-4 px-3">
                 <div className="flex flex-col gap-0.5">
+                  {/* Mobile Notifications row */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      navigate({ to: "/governance" });
+                    }}
+                    data-ocid="nav.mobile.notifications.button"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 min-h-[48px] text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)] w-full text-left"
+                  >
+                    <span className="w-1 shrink-0" />
+                    <Bell className="w-4 h-4" />
+                    <span className="flex-1">Notifications</span>
+                    {notifCount > 0 && (
+                      <span
+                        className="inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full text-[10px] font-bold text-white"
+                        style={{ background: "oklch(0.6 0.22 27)" }}
+                      >
+                        {notifCount > 99 ? "99+" : notifCount}
+                      </span>
+                    )}
+                  </button>
+
                   {NAV_LINKS.map((link, i) => {
                     const active = currentPath === link.path;
                     return (
