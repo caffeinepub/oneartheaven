@@ -12,6 +12,7 @@ import { ROLE_CONFIG } from "@/data/authTypes";
 import { NOTIFICATION_TYPE_CONFIG } from "@/data/notificationTypes";
 import { getAllOrgs } from "@/data/orgData";
 import { useAuth } from "@/hooks/useAuth";
+import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import { useLocale } from "@/hooks/useLocale";
 import {
@@ -29,6 +30,7 @@ import {
   ChevronsUpDown,
   Copy,
   CreditCard,
+  Download,
   Globe,
   LogOut,
   Menu,
@@ -416,6 +418,9 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
   const { unreadCount: notifCount, hasUrgent } = useNotificationBadge();
   // Messages badge count for desktop icon and mobile link
   const { totalUnreadThreads } = useMessages();
+  // PWA install prompt — shows Install App button when browser supports it
+  const { canInstall: canInstallApp, triggerInstall: triggerInstallApp } =
+    useInstallPrompt();
 
   const isConnected = isLoginSuccess && !!identity;
   const principal = identity?.getPrincipal().toString() ?? "";
@@ -675,6 +680,20 @@ export function Navbar({ onStartTour }: NavbarProps = {}) {
               </span>
             )}
           </Link>
+
+          {/* Install App button — only shown when browser supports PWA install */}
+          {canInstallApp && (
+            <button
+              type="button"
+              onClick={triggerInstallApp}
+              title="Install ONEartHeaven™ app"
+              aria-label="Install app"
+              className="relative hidden sm:flex items-center justify-center w-8 h-8 rounded-lg transition-colors text-[oklch(0.65_0.03_260)] hover:text-[oklch(var(--gold))] hover:bg-[oklch(var(--gold)/0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.5)]"
+              data-ocid="nav.install_app.button"
+            >
+              <Download className="h-4 w-4" />
+            </button>
+          )}
 
           {/* Language picker */}
           <DropdownMenu>

@@ -27,6 +27,7 @@ import {
   ScrollText,
   Shield,
   ShoppingCart,
+  Smartphone,
   Sparkles,
   Target,
   Users,
@@ -505,6 +506,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     isAvailable: true,
     accentColor: "oklch(0.72 0.16 200)",
     accentColorRaw: "0.72 0.16 200",
+  },
+  {
+    icon: Smartphone,
+    title: "Mobile & PWA",
+    description:
+      "Installable Progressive Web App with offline support, mobile bottom navigation, swipe gestures, haptic feedback, and full home-screen experience.",
+    link: "/",
+    phaseLabel: "Phase 13 · PWA",
+    phaseNum: "13",
+    isAvailable: true,
+    accentColor: "oklch(0.72 0.16 150)",
+    accentColorRaw: "0.72 0.16 150",
   },
 ];
 
