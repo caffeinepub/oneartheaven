@@ -1,6 +1,7 @@
 import { AnnouncementsBar } from "@/components/AnnouncementsBar";
 import { Footer } from "@/components/Footer";
 import { HelpCenter } from "@/components/HelpCenter";
+import { InstallBanner } from "@/components/InstallBanner";
 import { Navbar } from "@/components/Navbar";
 import { OnboardingTourOverlay } from "@/components/OnboardingTourOverlay";
 import { Toaster } from "@/components/ui/sonner";
@@ -82,6 +83,7 @@ function Layout() {
             </div>
             <Footer />
             <Toaster richColors position="top-right" />
+            <InstallBanner />
             <HelpCenter onStartTour={setActiveTourId} />
             {activeTourId && (
               <OnboardingTourOverlay
