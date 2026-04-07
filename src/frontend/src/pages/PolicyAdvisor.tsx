@@ -52,6 +52,13 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
+// ─── Shared motion presets ─────────────────────────────────────────────────────
+const FADE_UP = {
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.4, ease: "easeOut" },
+} as const;
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function scoreColor(score: number): string {
@@ -102,6 +109,31 @@ function RecommendationBadge({ rec }: { rec: RecommendationType }) {
   );
 }
 
+// ─── Animated Confidence Bar ──────────────────────────────────────────────────
+
+function ConfidenceBar({ score }: { score: number }) {
+  const color = scoreColor(score);
+  return (
+    <div
+      className="relative h-2 rounded-full overflow-hidden"
+      style={{ background: "oklch(0.18 0.03 260)" }}
+      role="progressbar"
+      aria-valuenow={score}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      tabIndex={-1}
+    >
+      <motion.div
+        className="h-full rounded-full"
+        style={{ background: color }}
+        initial={{ width: "0%" }}
+        animate={{ width: `${score}%` }}
+        transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+      />
+    </div>
+  );
+}
+
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 
 function StatCard({
@@ -117,9 +149,9 @@ function StatCard({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
+      transition={{ duration: 0.4, ease: "easeOut", delay }}
       className="flex flex-col items-center"
     >
       <span
@@ -149,18 +181,20 @@ function AnalysisCard({
   index: number;
   onOpen: (id: string) => void;
 }) {
-  // recommendation config used via RecommendationBadge component
   const topRisks = analysis.riskFlags.slice(0, 2);
 
   return (
     <motion.article
       data-ocid={`policy-advisor.analysis.item.${index + 1}`}
-      initial={{ opacity: 0, y: 22 }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-30px" }}
-      transition={{ duration: 0.45, delay: index * 0.07 }}
-      whileHover={{ y: -3 }}
-      className="group relative rounded-2xl p-5 cursor-pointer transition-all duration-250 flex flex-col"
+      transition={{ duration: 0.4, ease: "easeOut", delay: index * 0.06 }}
+      whileHover={{
+        y: -3,
+        transition: { type: "spring", damping: 30, stiffness: 300 },
+      }}
+      className="group relative rounded-2xl p-5 cursor-pointer flex flex-col"
       style={{
         background: "oklch(0.11 0.025 260)",
         border: "1px solid oklch(0.18 0.03 260)",
@@ -171,6 +205,7 @@ function AnalysisCard({
       {/* Hover glow */}
       <div
         className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+        aria-hidden="true"
         style={{
           background: `radial-gradient(ellipse 80% 60% at 50% 0%, ${analysis.councilColor.replace("oklch(", "oklch(").replace(")", " / 0.05)")} 0%, transparent 70%)`,
         }}
@@ -243,7 +278,7 @@ function AnalysisCard({
                     border: `1px solid ${rCfg.border}`,
                   }}
                 >
-                  <AlertTriangle className="h-2.5 w-2.5" />
+                  <AlertTriangle className="h-2.5 w-2.5" aria-hidden="true" />
                   {rCfg.label}
                 </span>
                 <span
@@ -282,7 +317,7 @@ function AnalysisCard({
         <Button
           data-ocid={`policy-advisor.view_analysis.button.${index + 1}`}
           size="sm"
-          className="ml-auto gap-1.5 text-xs h-7 px-3"
+          className="ml-auto gap-1.5 text-xs h-7 px-3 transition-colors duration-200"
           style={{
             background: "oklch(var(--gold) / 0.1)",
             color: "oklch(var(--gold))",
@@ -294,7 +329,7 @@ function AnalysisCard({
           }}
         >
           View Full Analysis
-          <ChevronRight className="h-3 w-3" />
+          <ChevronRight className="h-3 w-3" aria-hidden="true" />
         </Button>
       </div>
     </motion.article>
@@ -359,14 +394,14 @@ function AnalysisDetailSheet({
                       className="text-xs flex items-center gap-1"
                       style={{ color: "oklch(0.48 0.04 260)" }}
                     >
-                      <Bot className="h-3 w-3" />
+                      <Bot className="h-3 w-3" aria-hidden="true" />
                       {analysis.analyzerVersion}
                     </span>
                     <span
                       className="text-xs flex items-center gap-1"
                       style={{ color: "oklch(0.48 0.04 260)" }}
                     >
-                      <Clock className="h-3 w-3" />
+                      <Clock className="h-3 w-3" aria-hidden="true" />
                       {new Date(analysis.analyzedAt).toLocaleDateString(
                         "en-GB",
                         {
@@ -393,10 +428,11 @@ function AnalysisDetailSheet({
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                className="absolute top-4 right-4 h-8 w-8"
+                aria-label="Close analysis detail"
+                className="absolute top-4 right-4 h-8 w-8 focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.4)] focus-visible:outline-none"
                 style={{ color: "oklch(0.5 0.04 260)" }}
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4" aria-hidden="true" />
               </Button>
             </SheetHeader>
 
@@ -405,13 +441,32 @@ function AnalysisDetailSheet({
               style={{ background: "oklch(0.18 0.03 260)" }}
             />
 
+            {/* Alignment score bar */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-2">
+                <span
+                  className="text-xs font-semibold"
+                  style={{ color: "oklch(0.62 0.04 260)" }}
+                >
+                  Charter Alignment Score
+                </span>
+                <span
+                  className="text-xs font-bold"
+                  style={{ color: scoreColor(analysis.alignmentScore) }}
+                >
+                  {analysis.alignmentScore}/100
+                </span>
+              </div>
+              <ConfidenceBar score={analysis.alignmentScore} />
+            </div>
+
             {/* Recommendation Rationale */}
             <section className="mb-8">
               <h4
                 className="font-display font-semibold text-sm uppercase tracking-widest mb-3 flex items-center gap-2"
                 style={{ color: recCfg.color }}
               >
-                <Sparkles className="h-4 w-4" />
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
                 Recommendation Rationale
               </h4>
               <blockquote
@@ -432,7 +487,7 @@ function AnalysisDetailSheet({
                 className="font-display font-semibold text-sm uppercase tracking-widest mb-4 flex items-center gap-2"
                 style={{ color: "oklch(var(--gold))" }}
               >
-                <Shield className="h-4 w-4" />
+                <Shield className="h-4 w-4" aria-hidden="true" />
                 Charter Alignment Breakdown
               </h4>
               <div className="flex flex-col gap-3">
@@ -455,9 +510,7 @@ function AnalysisDetailSheet({
                     <Progress
                       value={art.score}
                       className="h-1.5"
-                      style={{
-                        background: "oklch(0.18 0.03 260)",
-                      }}
+                      style={{ background: "oklch(0.18 0.03 260)" }}
                     />
                     <p
                       className="text-[11px] mt-1"
@@ -476,7 +529,7 @@ function AnalysisDetailSheet({
                 className="font-display font-semibold text-sm uppercase tracking-widest mb-4 flex items-center gap-2"
                 style={{ color: "oklch(0.72 0.22 45)" }}
               >
-                <AlertTriangle className="h-4 w-4" />
+                <AlertTriangle className="h-4 w-4" aria-hidden="true" />
                 Risk Flags ({analysis.riskFlags.length})
               </h4>
               <div className="flex flex-col gap-3">
@@ -543,7 +596,7 @@ function AnalysisDetailSheet({
                 className="font-display font-semibold text-sm uppercase tracking-widest mb-4 flex items-center gap-2"
                 style={{ color: "oklch(0.65 0.1 270)" }}
               >
-                <Zap className="h-4 w-4" />
+                <Zap className="h-4 w-4" aria-hidden="true" />
                 Unintended Consequences
               </h4>
               <div className="flex flex-col gap-3">
@@ -585,6 +638,7 @@ function AnalysisDetailSheet({
                     <div className="flex items-center gap-1 mb-2 flex-wrap">
                       <MapPin
                         className="h-3 w-3"
+                        aria-hidden="true"
                         style={{ color: "oklch(0.45 0.04 260)" }}
                       />
                       {uc.affectedRegions.map((r) => (
@@ -614,7 +668,7 @@ function AnalysisDetailSheet({
                 className="font-display font-semibold text-sm uppercase tracking-widest mb-4 flex items-center gap-2"
                 style={{ color: "oklch(0.55 0.18 200)" }}
               >
-                <History className="h-4 w-4" />
+                <History className="h-4 w-4" aria-hidden="true" />
                 Historical Precedents
               </h4>
               <div className="flex flex-col gap-3">
@@ -694,7 +748,7 @@ function AnalysisDetailSheet({
                 className="font-display font-semibold text-sm uppercase tracking-widest mb-4 flex items-center gap-2"
                 style={{ color: "oklch(0.72 0.18 85)" }}
               >
-                <Globe2 className="h-4 w-4" />
+                <Globe2 className="h-4 w-4" aria-hidden="true" />
                 FinFracFran™ Assessment
               </h4>
               {analysis.finFracFran.applicable ? (
@@ -831,7 +885,7 @@ function AnalysisDetailSheet({
                     className="text-xs font-bold mb-2 flex items-center gap-1"
                     style={{ color: "oklch(0.68 0.2 145)" }}
                   >
-                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
                     Strengths
                   </p>
                   <ul className="flex flex-col gap-1.5">
@@ -858,7 +912,7 @@ function AnalysisDetailSheet({
                     className="text-xs font-bold mb-2 flex items-center gap-1"
                     style={{ color: "oklch(0.78 0.18 85)" }}
                   >
-                    <XCircle className="h-3.5 w-3.5" />
+                    <XCircle className="h-3.5 w-3.5" aria-hidden="true" />
                     Weaknesses
                   </p>
                   <ul className="flex flex-col gap-1.5">
@@ -883,7 +937,7 @@ function AnalysisDetailSheet({
                 className="font-display font-semibold text-sm uppercase tracking-widest mb-4 flex items-center gap-2"
                 style={{ color: "oklch(0.55 0.18 200)" }}
               >
-                <Tag className="h-4 w-4" />
+                <Tag className="h-4 w-4" aria-hidden="true" />
                 Suggested Amendments
               </h4>
               <ol className="flex flex-col gap-2">
@@ -928,6 +982,7 @@ function AnalysisDetailSheet({
                 <div className="flex items-center gap-1 mb-1">
                   <Globe2
                     className="h-3 w-3"
+                    aria-hidden="true"
                     style={{ color: "oklch(0.55 0.18 200)" }}
                   />
                   <span
@@ -948,6 +1003,7 @@ function AnalysisDetailSheet({
                 <div className="flex items-center gap-1 mb-1">
                   <DollarSign
                     className="h-3 w-3"
+                    aria-hidden="true"
                     style={{ color: "oklch(0.68 0.2 145)" }}
                   />
                   <span
@@ -968,6 +1024,7 @@ function AnalysisDetailSheet({
                 <div className="flex items-center gap-1 mb-1">
                   <Clock
                     className="h-3 w-3"
+                    aria-hidden="true"
                     style={{ color: "oklch(0.78 0.18 85)" }}
                   />
                   <span
@@ -988,6 +1045,7 @@ function AnalysisDetailSheet({
                 <div className="flex items-center gap-1 mb-1">
                   <Tag
                     className="h-3 w-3"
+                    aria-hidden="true"
                     style={{ color: "oklch(0.72 0.16 75)" }}
                   />
                   <span
@@ -1039,6 +1097,7 @@ export function PolicyAdvisorPage() {
         {/* Background glows */}
         <div
           className="absolute inset-0 pointer-events-none"
+          aria-hidden="true"
           style={{
             background:
               "radial-gradient(ellipse 65% 55% at 50% 35%, oklch(0.72 0.16 75 / 0.08) 0%, transparent 65%)",
@@ -1046,12 +1105,12 @@ export function PolicyAdvisorPage() {
         />
         <div
           className="absolute inset-0 pointer-events-none"
+          aria-hidden="true"
           style={{
             background:
               "radial-gradient(ellipse 40% 35% at 20% 70%, oklch(0.55 0.18 200 / 0.05) 0%, transparent 60%)",
           }}
         />
-        {/* Standardized grid texture */}
         <div
           className="absolute inset-0 pointer-events-none hero-grid-texture"
           aria-hidden="true"
@@ -1060,9 +1119,8 @@ export function PolicyAdvisorPage() {
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center">
           {/* Phase badge */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            {...FADE_UP}
+            transition={{ ...FADE_UP.transition, delay: 0.1 }}
             className="flex items-center justify-center gap-3 mb-8 flex-wrap"
           >
             <div
@@ -1074,6 +1132,7 @@ export function PolicyAdvisorPage() {
             >
               <Bot
                 className="h-3.5 w-3.5"
+                aria-hidden="true"
                 style={{ color: "oklch(var(--gold))" }}
               />
               <span
@@ -1092,6 +1151,7 @@ export function PolicyAdvisorPage() {
             >
               <Sparkles
                 className="h-3 w-3"
+                aria-hidden="true"
                 style={{ color: "oklch(0.55 0.18 200)" }}
               />
               <span
@@ -1105,9 +1165,8 @@ export function PolicyAdvisorPage() {
 
           {/* Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+            {...FADE_UP}
+            transition={{ ...FADE_UP.transition, delay: 0.2 }}
             className="text-hero-xl font-display mb-5"
           >
             <span
@@ -1124,9 +1183,8 @@ export function PolicyAdvisorPage() {
 
           {/* Sub-headline */}
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 0.35 }}
+            {...FADE_UP}
+            transition={{ ...FADE_UP.transition, delay: 0.3 }}
             className="text-base sm:text-lg max-w-2xl mx-auto mb-6 leading-relaxed"
             style={{ color: "oklch(0.68 0.04 260)" }}
           >
@@ -1143,11 +1201,10 @@ export function PolicyAdvisorPage() {
             before it reaches a vote.
           </motion.p>
 
-          {/* UN comparison note */}
+          {/* Info note */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.42 }}
+            {...FADE_UP}
+            transition={{ ...FADE_UP.transition, delay: 0.38 }}
             className="inline-flex items-start gap-3 px-5 py-3 rounded-xl mb-10 text-left max-w-2xl mx-auto"
             style={{
               background: "oklch(0.12 0.03 260)",
@@ -1156,6 +1213,7 @@ export function PolicyAdvisorPage() {
           >
             <Bot
               className="h-4 w-4 shrink-0 mt-0.5"
+              aria-hidden="true"
               style={{ color: "oklch(var(--gold))" }}
             />
             <p
@@ -1171,9 +1229,8 @@ export function PolicyAdvisorPage() {
 
           {/* Stats row */}
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.48 }}
+            {...FADE_UP}
+            transition={{ ...FADE_UP.transition, delay: 0.46 }}
             className="flex flex-wrap justify-center gap-8 sm:gap-14"
           >
             <StatCard
@@ -1207,6 +1264,7 @@ export function PolicyAdvisorPage() {
       {/* Gradient separator */}
       <div
         className="h-px mx-auto mb-12"
+        aria-hidden="true"
         style={{
           maxWidth: "240px",
           background:
@@ -1218,7 +1276,9 @@ export function PolicyAdvisorPage() {
       <section data-ocid="policy-advisor.analyses.section" className="pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           {/* Filter bar */}
-          <div
+          <motion.div
+            {...FADE_UP}
+            transition={{ ...FADE_UP.transition, delay: 0.1 }}
             className="rounded-2xl p-4 sm:p-5 mb-8"
             style={{
               background: "oklch(0.11 0.025 260)",
@@ -1228,15 +1288,18 @@ export function PolicyAdvisorPage() {
             {/* Search */}
             <div className="relative mb-4">
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none"
+                aria-hidden="true"
                 style={{ color: "oklch(0.45 0.04 260)" }}
               />
-              <Input
+              <input
                 data-ocid="policy-advisor.search_input"
+                type="search"
                 placeholder="Search analyses by proposal title, council, or keywords…"
                 value={advisor.filters.search}
                 onChange={(e) => advisor.updateFilter("search", e.target.value)}
-                className="pl-9 bg-transparent border-[oklch(0.22_0.04_260)] text-[oklch(0.85_0.02_260)] placeholder:text-[oklch(0.42_0.04_260)] focus-visible:ring-[oklch(var(--gold)/0.4)]"
+                aria-label="Search policy analyses"
+                className="w-full pl-9 pr-3 py-2 rounded-lg text-sm bg-[oklch(0.16_0.04_260)] border border-[oklch(0.28_0.03_260)] text-[oklch(0.88_0.02_260)] placeholder:text-[oklch(0.45_0.03_260)] focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.4)] focus-visible:outline-none transition-colors duration-200"
               />
             </div>
 
@@ -1254,7 +1317,7 @@ export function PolicyAdvisorPage() {
               >
                 <SelectTrigger
                   data-ocid="policy-advisor.recommendation_filter.select"
-                  className="bg-transparent border-[oklch(0.22_0.04_260)] text-[oklch(0.75_0.03_260)] text-sm"
+                  className="bg-[oklch(0.16_0.04_260)] border-[oklch(0.28_0.03_260)] text-[oklch(0.75_0.03_260)] text-sm focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.4)] focus-visible:outline-none"
                 >
                   <SelectValue placeholder="Recommendation" />
                 </SelectTrigger>
@@ -1279,7 +1342,7 @@ export function PolicyAdvisorPage() {
               >
                 <SelectTrigger
                   data-ocid="policy-advisor.council_filter.select"
-                  className="bg-transparent border-[oklch(0.22_0.04_260)] text-[oklch(0.75_0.03_260)] text-sm"
+                  className="bg-[oklch(0.16_0.04_260)] border-[oklch(0.28_0.03_260)] text-[oklch(0.75_0.03_260)] text-sm focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.4)] focus-visible:outline-none"
                 >
                   <SelectValue placeholder="Council" />
                 </SelectTrigger>
@@ -1310,7 +1373,7 @@ export function PolicyAdvisorPage() {
               >
                 <SelectTrigger
                   data-ocid="policy-advisor.sort.select"
-                  className="bg-transparent border-[oklch(0.22_0.04_260)] text-[oklch(0.75_0.03_260)] text-sm"
+                  className="bg-[oklch(0.16_0.04_260)] border-[oklch(0.28_0.03_260)] text-[oklch(0.75_0.03_260)] text-sm focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.4)] focus-visible:outline-none"
                 >
                   <SelectValue placeholder="Sort" />
                 </SelectTrigger>
@@ -1326,7 +1389,10 @@ export function PolicyAdvisorPage() {
               {/* FinFracFran toggle */}
               <div
                 className="flex items-center gap-2 px-3 rounded-lg border"
-                style={{ borderColor: "oklch(0.22 0.04 260)" }}
+                style={{
+                  borderColor: "oklch(0.28 0.03 260)",
+                  background: "oklch(0.16 0.04 260)",
+                }}
               >
                 <Switch
                   data-ocid="policy-advisor.finfracfran.toggle"
@@ -1361,16 +1427,16 @@ export function PolicyAdvisorPage() {
                   type="button"
                   data-ocid="policy-advisor.clear_filters.button"
                   onClick={advisor.clearFilters}
-                  className="text-xs flex items-center gap-1 transition-colors duration-150"
+                  className="text-xs flex items-center gap-1 transition-colors duration-200 hover:text-[oklch(0.78_0.22_25)] focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.4)] focus-visible:outline-none rounded px-1"
                   style={{ color: "oklch(0.62 0.22 25)" }}
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-3 w-3" aria-hidden="true" />
                   Clear {advisor.activeFilterCount} filter
                   {advisor.activeFilterCount > 1 ? "s" : ""}
                 </button>
               )}
             </div>
-          </div>
+          </motion.div>
 
           {/* Analysis grid */}
           <AnimatePresence mode="wait">
@@ -1381,10 +1447,12 @@ export function PolicyAdvisorPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
                 className="text-center py-20"
               >
                 <Bot
                   className="h-12 w-12 mx-auto mb-4 opacity-20"
+                  aria-hidden="true"
                   style={{ color: "oklch(var(--gold))" }}
                 />
                 <p
@@ -1396,7 +1464,7 @@ export function PolicyAdvisorPage() {
                 <button
                   type="button"
                   onClick={advisor.clearFilters}
-                  className="text-sm underline underline-offset-4"
+                  className="text-sm underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.4)] focus-visible:outline-none rounded"
                   style={{ color: "oklch(var(--gold))" }}
                 >
                   Clear all filters
@@ -1408,6 +1476,7 @@ export function PolicyAdvisorPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
               >
                 {advisor.filteredAnalyses.map((analysis, idx) => (
@@ -1429,13 +1498,13 @@ export function PolicyAdvisorPage() {
         <Link to="/governance" data-ocid="policy-advisor.governance.link">
           <Button
             variant="outline"
-            className="gap-2"
+            className="gap-2 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[oklch(var(--gold)/0.4)] focus-visible:outline-none"
             style={{
               borderColor: "oklch(var(--gold) / 0.3)",
               color: "oklch(var(--gold))",
             }}
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Governance Hub
           </Button>
         </Link>

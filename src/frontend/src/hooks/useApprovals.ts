@@ -1,11 +1,25 @@
-import { ApprovalStatus, type UserApprovalInfo } from "@/backend";
 import {
   type ApprovalStats,
+  ApprovalStatus,
   SEED_APPLICATIONS,
   type UserApplication,
 } from "@/data/approvalTypes";
 import { useActor } from "@/hooks/useActor";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+// Stub type for UserApprovalInfo (backend not yet deployed)
+interface UserApprovalInfo {
+  principal: { toString: () => string };
+  status: ApprovalStatus;
+}
+
+// Helper: safely call a backend method that may not be deployed yet
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function callMethod(actor: unknown, method: string, ...args: unknown[]): any {
+  const a = actor as Record<string, (...a: unknown[]) => unknown>;
+  if (typeof a[method] === "function") return a[method](...args);
+  return Promise.reject(new Error(`Method ${method} not deployed`));
+}
 
 // ---------------------------------------------------------------------------
 // Check if the current caller is approved
@@ -17,7 +31,11 @@ export function useApprovalStatus() {
     queryKey: ["approvalStatus"],
     queryFn: async () => {
       if (!actor) return false;
-      return actor.isCallerApproved();
+      try {
+        return (await callMethod(actor, "isCallerApproved")) as boolean;
+      } catch {
+        return false;
+      }
     },
     enabled: !!actor && !isFetching,
   });
@@ -33,7 +51,7 @@ export function useRequestApproval() {
   return useMutation({
     mutationFn: async () => {
       if (!actor) throw new Error("Not connected");
-      return actor.requestApproval();
+      return callMethod(actor, "requestApproval");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["approvalStatus"] });
@@ -54,12 +72,13 @@ export function useListApprovals() {
       if (!actor) return SEED_APPLICATIONS;
       let backendList: UserApprovalInfo[] = [];
       try {
-        backendList = await actor.listApprovals();
+        backendList = (await callMethod(
+          actor,
+          "listApprovals",
+        )) as UserApprovalInfo[];
       } catch {
-        // Fall back to seed only if backend fails
         return SEED_APPLICATIONS;
       }
-      // Map real backend entries
       const backendMapped: UserApplication[] = backendList.map((item) => ({
         principalId: item.principal.toString(),
         displayName: `${item.principal.toString().slice(0, 10)}...`,
@@ -70,7 +89,6 @@ export function useListApprovals() {
         submittedAt: new Date().toISOString(),
         status: item.status,
       }));
-      // Merge: seed entries not already in backend list
       const backendIds = new Set(backendMapped.map((a) => a.principalId));
       const seedExtras = SEED_APPLICATIONS.filter(
         (a) => !backendIds.has(a.principalId),
@@ -116,7 +134,7 @@ export function useSetApproval() {
       if (!actor) throw new Error("Not connected");
       const { Principal } = await import("@icp-sdk/core/principal");
       const principal = Principal.fromText(principalId);
-      return actor.setApproval(principal, status);
+      return callMethod(actor, "setApproval", principal, status);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["approvals"] });

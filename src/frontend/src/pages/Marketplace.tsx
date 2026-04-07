@@ -40,6 +40,15 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 
+// ---------------------------------------------------------------------------
+// Design constants
+// ---------------------------------------------------------------------------
+const BADGE_BG_ALPHA = "0.15";
+const BADGE_BORDER_ALPHA = "0.25";
+const SHADOW_DEFAULT = "0 2px 8px oklch(0 0 0 / 0.15)";
+const SHADOW_HOVER = "0 4px 16px oklch(0 0 0 / 0.25)";
+const SPRING = { type: "spring" as const, damping: 30, stiffness: 300 };
+
 function formatUSD(n: number): string {
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
@@ -65,23 +74,43 @@ function ListingCard({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative flex flex-col rounded-xl border overflow-hidden transition-all duration-200 hover:shadow-lg"
+      whileHover={{ scale: 1.02, transition: SPRING }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="relative flex flex-col rounded-xl border overflow-hidden transition-shadow duration-300"
       style={{
         borderColor: "oklch(0.28 0.03 260)",
         background: "oklch(0.12 0.03 260)",
         borderTopColor: typeConf.color,
         borderTopWidth: "3px",
+        boxShadow: SHADOW_DEFAULT,
+      }}
+      onHoverStart={(e) => {
+        (e.target as HTMLElement).style.boxShadow = SHADOW_HOVER;
+      }}
+      onHoverEnd={(e) => {
+        (e.target as HTMLElement).style.boxShadow = SHADOW_DEFAULT;
       }}
     >
       <div className="flex items-start justify-between gap-2 px-4 pt-4">
         <span
           className="text-xs font-semibold px-2 py-0.5 rounded-full"
-          style={{ background: typeConf.bgColor, color: typeConf.color }}
+          style={{
+            background: `${typeConf.color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`,
+            color: typeConf.color,
+            border: `1px solid ${typeConf.color.replace(")", ` / ${BADGE_BORDER_ALPHA})`)}`,
+          }}
         >
           {typeConf.icon} {typeConf.label}
         </span>
         {listing.status === "featured" && (
-          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">
+          <span
+            className="text-xs font-bold px-2 py-0.5 rounded-full"
+            style={{
+              background: "oklch(0.55 0.22 290 / 0.15)",
+              color: "oklch(0.75 0.18 290)",
+              border: "1px solid oklch(0.55 0.22 290 / 0.25)",
+            }}
+          >
             ★ Featured
           </span>
         )}
@@ -160,10 +189,11 @@ function ListingCard({
           {listing.sdgIds.slice(0, 3).map((id) => (
             <span
               key={id}
-              className="text-xs px-1.5 py-0.5 rounded"
+              className="text-xs px-1.5 py-0.5 rounded-full font-medium"
               style={{
-                background: "oklch(0.72 0.16 75 / 0.15)",
+                background: `oklch(0.72 0.16 75 / ${BADGE_BG_ALPHA})`,
                 color: "oklch(0.72 0.16 75)",
+                border: `1px solid oklch(0.72 0.16 75 / ${BADGE_BORDER_ALPHA})`,
               }}
             >
               SDG {id}
@@ -178,11 +208,11 @@ function ListingCard({
         <Button
           data-ocid="marketplace.listing.button"
           variant="outline"
-          className="w-full mt-auto"
+          className="w-full mt-auto font-semibold"
           style={{
-            borderColor: typeConf.color,
+            borderColor: `${typeConf.color.replace(")", ` / ${BADGE_BORDER_ALPHA})`)}`,
             color: typeConf.color,
-            background: typeConf.bgColor,
+            background: `${typeConf.color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`,
           }}
           onClick={onView}
         >
@@ -228,33 +258,39 @@ function DetailSheet({
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed right-0 top-0 bottom-0 z-50 flex flex-col overflow-y-auto w-full max-w-lg"
+        transition={SPRING}
+        className="fixed right-0 top-0 bottom-0 z-50 flex flex-col overflow-hidden w-full max-w-lg"
         data-ocid="marketplace.listing.panel"
         style={{
           background: "oklch(0.10 0.03 260)",
           borderLeft: "1px solid oklch(0.24 0.03 260)",
         }}
       >
+        {/* Sticky header */}
         <div
-          className="sticky top-0 z-10 flex items-center justify-between px-5 py-4"
+          className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 shrink-0"
           style={{
             background: "oklch(0.10 0.03 260)",
-            borderBottom: "1px solid oklch(0.20 0.03 260)",
+            borderBottom: `2px solid ${typeConf.color.replace(")", " / 0.30)")}`,
           }}
         >
           <div className="flex items-center gap-2">
             <span
               className="text-xs font-semibold px-2 py-0.5 rounded-full"
-              style={{ background: typeConf.bgColor, color: typeConf.color }}
+              style={{
+                background: `${typeConf.color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`,
+                color: typeConf.color,
+                border: `1px solid ${typeConf.color.replace(")", ` / ${BADGE_BORDER_ALPHA})`)}`,
+              }}
             >
               {typeConf.icon} {typeConf.label}
             </span>
             <span
               className="text-xs font-semibold px-2 py-0.5 rounded-full"
               style={{
-                background: `${statusConf.color}22`,
+                background: `${statusConf.color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`,
                 color: statusConf.color,
+                border: `1px solid ${statusConf.color.replace(")", ` / ${BADGE_BORDER_ALPHA})`)}`,
               }}
             >
               {statusConf.label}
@@ -264,19 +300,23 @@ function DetailSheet({
             type="button"
             onClick={onClose}
             data-ocid="marketplace.listing.close_button"
+            className="rounded-lg p-1 transition-colors duration-200"
+            style={{ color: "oklch(0.55 0.03 260)" }}
           >
-            <X className="h-5 w-5" style={{ color: "oklch(0.55 0.03 260)" }} />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex flex-col gap-5 p-5">
+        {/* Scrollable content */}
+        <div className="flex flex-col gap-5 p-5 overflow-y-auto flex-1">
           <div>
             <div className="flex gap-2 mb-1">
               <span
-                className="text-xs px-2 py-0.5 rounded-full font-medium"
+                className="text-xs px-2 py-0.5 rounded-full font-semibold"
                 style={{
-                  background: `${tierConf.color}22`,
+                  background: `${tierConf.color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`,
                   color: tierConf.color,
+                  border: `1px solid ${tierConf.color.replace(")", ` / ${BADGE_BORDER_ALPHA})`)}`,
                 }}
               >
                 {tierConf.label}
@@ -427,8 +467,9 @@ function DetailSheet({
                   key={id}
                   className="text-xs px-2 py-1 rounded-full font-medium"
                   style={{
-                    background: "oklch(0.72 0.16 75 / 0.15)",
+                    background: `oklch(0.72 0.16 75 / ${BADGE_BG_ALPHA})`,
                     color: "oklch(0.72 0.16 75)",
+                    border: `1px solid oklch(0.72 0.16 75 / ${BADGE_BORDER_ALPHA})`,
                   }}
                 >
                   SDG {id}
@@ -486,10 +527,11 @@ function DetailSheet({
                       </p>
                     </div>
                     <span
-                      className="text-xs px-2 py-0.5 rounded-full"
+                      className="text-xs px-2 py-0.5 rounded-full font-medium"
                       style={{
-                        background: LISTING_TYPE_CONFIG[s.type].bgColor,
+                        background: `${LISTING_TYPE_CONFIG[s.type].color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`,
                         color: LISTING_TYPE_CONFIG[s.type].color,
+                        border: `1px solid ${LISTING_TYPE_CONFIG[s.type].color.replace(")", ` / ${BADGE_BORDER_ALPHA})`)}`,
                       }}
                     >
                       {LISTING_TYPE_CONFIG[s.type].label}
@@ -546,17 +588,20 @@ function ApplicationModal({
         aria-label="Close modal"
       />
       <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, scale: 0.96, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         className="relative w-full max-w-lg rounded-2xl flex flex-col max-h-[90vh] overflow-hidden"
         data-ocid="marketplace.application.modal"
         style={{
           background: "oklch(0.11 0.03 260)",
           border: "1px solid oklch(0.26 0.03 260)",
+          boxShadow: SHADOW_HOVER,
         }}
       >
         <div
-          className="flex items-center justify-between px-5 py-4"
+          className="flex items-center justify-between px-5 py-4 shrink-0"
           style={{ borderBottom: "1px solid oklch(0.20 0.03 260)" }}
         >
           <div>
@@ -576,58 +621,82 @@ function ApplicationModal({
           <button
             type="button"
             onClick={onClose}
+            className="rounded-lg p-1 transition-colors duration-200"
+            style={{ color: "oklch(0.55 0.03 260)" }}
             data-ocid="marketplace.application.close_button"
           >
-            <X className="h-5 w-5" style={{ color: "oklch(0.55 0.03 260)" }} />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
+        {/* Step progress indicator with connecting line */}
         {!app.isSuccess && (
           <div
-            className="flex items-center gap-2 px-5 py-3"
+            className="px-5 py-3 shrink-0"
             style={{ borderBottom: "1px solid oklch(0.18 0.03 260)" }}
           >
-            {APPLICATION_STEPS.map((label, i) => {
-              const n = i + 1;
-              const active = app.step === n;
-              const done = app.step > n;
-              return (
-                <div key={label} className="flex items-center gap-1.5 flex-1">
+            <div className="flex items-center">
+              {APPLICATION_STEPS.map((label, i) => {
+                const n = i + 1;
+                const active = app.step === n;
+                const done = app.step > n;
+                const isLast = i === APPLICATION_STEPS.length - 1;
+                return (
                   <div
-                    className="flex items-center justify-center rounded-full text-xs font-bold w-6 h-6 shrink-0"
-                    style={{
-                      background: done
-                        ? "oklch(0.70 0.18 140)"
-                        : active
-                          ? "oklch(0.72 0.16 75)"
-                          : "oklch(0.22 0.03 260)",
-                      color:
-                        done || active
-                          ? "oklch(0.08 0.03 260)"
-                          : "oklch(0.52 0.03 260)",
-                    }}
+                    key={label}
+                    className="flex items-center flex-1 last:flex-none"
                   >
-                    {done ? "✓" : n}
+                    {/* Step circle */}
+                    <div className="flex flex-col items-center gap-1">
+                      <div
+                        className="flex items-center justify-center rounded-full text-xs font-bold w-7 h-7 shrink-0 transition-all duration-300"
+                        style={{
+                          background: done
+                            ? "oklch(0.70 0.18 140)"
+                            : active
+                              ? "oklch(0.72 0.16 75)"
+                              : "oklch(0.22 0.03 260)",
+                          color:
+                            done || active
+                              ? "oklch(0.08 0.03 260)"
+                              : "oklch(0.52 0.03 260)",
+                          border: active
+                            ? "2px solid oklch(0.72 0.16 75 / 0.40)"
+                            : "none",
+                          boxShadow: active
+                            ? "0 0 8px oklch(0.72 0.16 75 / 0.30)"
+                            : "none",
+                        }}
+                      >
+                        {done ? "✓" : n}
+                      </div>
+                      <span
+                        className="text-xs hidden sm:block whitespace-nowrap"
+                        style={{
+                          color: active
+                            ? "oklch(0.82 0.02 260)"
+                            : "oklch(0.48 0.03 260)",
+                          fontWeight: active ? 600 : 400,
+                        }}
+                      >
+                        {label}
+                      </span>
+                    </div>
+                    {/* Connecting line */}
+                    {!isLast && (
+                      <div
+                        className="flex-1 h-0.5 mx-2 mb-4 rounded-full transition-all duration-300"
+                        style={{
+                          background: done
+                            ? "oklch(0.70 0.18 140 / 0.60)"
+                            : "oklch(0.24 0.03 260)",
+                        }}
+                      />
+                    )}
                   </div>
-                  <span
-                    className="text-xs hidden sm:block"
-                    style={{
-                      color: active
-                        ? "oklch(0.82 0.02 260)"
-                        : "oklch(0.48 0.03 260)",
-                    }}
-                  >
-                    {label}
-                  </span>
-                  {i < APPLICATION_STEPS.length - 1 && (
-                    <div
-                      className="flex-1 h-px"
-                      style={{ background: "oklch(0.24 0.03 260)" }}
-                    />
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -636,6 +705,7 @@ function ApplicationModal({
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
               className="flex flex-col items-center gap-4 py-8 text-center"
               data-ocid="marketplace.application.success_state"
             >
@@ -801,7 +871,7 @@ function ApplicationModal({
                       <SelectItem
                         key={m}
                         value={m}
-                        className="text-slate-200 focus:bg-slate-700"
+                        style={{ color: "oklch(0.82 0.02 260)" }}
                       >
                         {m} months
                       </SelectItem>
@@ -831,18 +901,21 @@ function ApplicationModal({
                   {Array.from({ length: 17 }, (_, i) => i + 1).map((id) => {
                     const sel = app.form.sdgFocus.includes(id);
                     return (
-                      <button
+                      <motion.button
                         key={id}
                         type="button"
                         onClick={() => app.toggleSDG(id)}
+                        whileHover={{ scale: 1.06 }}
+                        whileTap={{ scale: 0.94 }}
+                        transition={SPRING}
                         data-ocid="marketplace.application.checkbox"
-                        className="flex items-center justify-center rounded text-sm font-bold h-9 transition-all"
+                        className="flex items-center justify-center rounded text-sm font-bold h-9"
                         style={{
                           background: sel
-                            ? "oklch(0.72 0.16 75 / 0.20)"
+                            ? `oklch(0.72 0.16 75 / ${BADGE_BG_ALPHA})`
                             : "oklch(0.18 0.03 260)",
                           border: sel
-                            ? "2px solid oklch(0.72 0.16 75)"
+                            ? `2px solid oklch(0.72 0.16 75 / ${BADGE_BORDER_ALPHA})`
                             : "1px solid oklch(0.26 0.03 260)",
                           color: sel
                             ? "oklch(0.72 0.16 75)"
@@ -850,7 +923,7 @@ function ApplicationModal({
                         }}
                       >
                         {id}
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>
@@ -861,7 +934,7 @@ function ApplicationModal({
 
         {!app.isSuccess && (
           <div
-            className="flex items-center justify-between px-5 py-4"
+            className="flex items-center justify-between px-5 py-4 shrink-0"
             style={{ borderTop: "1px solid oklch(0.20 0.03 260)" }}
           >
             <Button
@@ -970,13 +1043,18 @@ export function MarketplacePage() {
         }}
         data-ocid="marketplace.section"
       >
-        <div className="max-w-3xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="max-w-3xl mx-auto"
+        >
           <Badge
             className="mb-4 font-semibold"
             style={{
-              background: "oklch(0.72 0.16 75 / 0.15)",
+              background: `oklch(0.72 0.16 75 / ${BADGE_BG_ALPHA})`,
               color: "oklch(0.72 0.16 75)",
-              border: "1px solid oklch(0.72 0.16 75 / 0.30)",
+              border: `1px solid oklch(0.72 0.16 75 / ${BADGE_BORDER_ALPHA})`,
             }}
           >
             <ShoppingCart className="h-3 w-3 mr-1" />
@@ -1022,7 +1100,7 @@ export function MarketplacePage() {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Filter bar */}
@@ -1036,7 +1114,8 @@ export function MarketplacePage() {
         data-ocid="marketplace.filter.panel"
       >
         <div className="max-w-7xl mx-auto flex flex-col gap-3">
-          <div className="flex items-center gap-1 flex-wrap">
+          {/* Type tab pills — matching platform style */}
+          <div className="flex items-center gap-1.5 flex-wrap">
             {(
               [
                 "all",
@@ -1050,17 +1129,20 @@ export function MarketplacePage() {
               const conf = t === "all" ? null : LISTING_TYPE_CONFIG[t];
               const active = market.filters.type === t;
               return (
-                <button
+                <motion.button
                   key={t}
                   type="button"
                   data-ocid="marketplace.filter.tab"
                   onClick={() => market.updateFilter("type", t)}
-                  className="px-3 py-1.5 rounded-full text-sm font-medium transition-all"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={SPRING}
+                  className="px-3 py-1.5 rounded-full text-xs font-semibold"
                   style={{
                     background: active
                       ? conf
-                        ? conf.bgColor
-                        : "oklch(0.72 0.16 75 / 0.15)"
+                        ? `${conf.color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`
+                        : `oklch(0.72 0.16 75 / ${BADGE_BG_ALPHA})`
                       : "oklch(0.16 0.03 260)",
                     color: active
                       ? conf
@@ -1068,12 +1150,12 @@ export function MarketplacePage() {
                         : "oklch(0.72 0.16 75)"
                       : "oklch(0.55 0.03 260)",
                     border: active
-                      ? `1px solid ${conf ? conf.color : "oklch(0.72 0.16 75)"}`
+                      ? `1px solid ${conf ? conf.color.replace(")", ` / ${BADGE_BORDER_ALPHA})`) : `oklch(0.72 0.16 75 / ${BADGE_BORDER_ALPHA})`}`
                       : "1px solid oklch(0.24 0.03 260)",
                   }}
                 >
                   {conf ? `${conf.icon} ${conf.label}` : "All"}
-                </button>
+                </motion.button>
               );
             })}
           </div>
@@ -1115,7 +1197,7 @@ export function MarketplacePage() {
               >
                 <SelectItem
                   value="all"
-                  className="text-slate-200 focus:bg-slate-700"
+                  style={{ color: "oklch(0.82 0.02 260)" }}
                 >
                   All Tiers
                 </SelectItem>
@@ -1124,7 +1206,7 @@ export function MarketplacePage() {
                     <SelectItem
                       key={t}
                       value={t}
-                      className="text-slate-200 focus:bg-slate-700"
+                      style={{ color: "oklch(0.82 0.02 260)" }}
                     >
                       {LISTING_TIER_CONFIG[t].label}
                     </SelectItem>
@@ -1157,7 +1239,7 @@ export function MarketplacePage() {
               >
                 <SelectItem
                   value="all"
-                  className="text-slate-200 focus:bg-slate-700"
+                  style={{ color: "oklch(0.82 0.02 260)" }}
                 >
                   All Regions
                 </SelectItem>
@@ -1165,7 +1247,7 @@ export function MarketplacePage() {
                   <SelectItem
                     key={g}
                     value={g}
-                    className="text-slate-200 focus:bg-slate-700"
+                    style={{ color: "oklch(0.82 0.02 260)" }}
                   >
                     {GEOGRAPHY_CONFIG[g].flag} {GEOGRAPHY_CONFIG[g].label}
                   </SelectItem>
@@ -1205,7 +1287,7 @@ export function MarketplacePage() {
                   <SelectItem
                     key={v}
                     value={v}
-                    className="text-slate-200 focus:bg-slate-700"
+                    style={{ color: "oklch(0.82 0.02 260)" }}
                   >
                     {label}
                   </SelectItem>

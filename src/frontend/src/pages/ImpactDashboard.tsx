@@ -1,6 +1,7 @@
 // ---------------------------------------------------------------------------
 // Impact Dashboard — /impact
 // Phase 13 · Area 4 — Impact Measurement & SDG Alignment
+// Polish Pass: badge alpha standardisation, card hover shadows, motion alignment
 // ---------------------------------------------------------------------------
 
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +33,17 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 
 // ---------------------------------------------------------------------------
+// Spring transition constant for interactive hover states
+// ---------------------------------------------------------------------------
+const SPRING = { type: "spring" as const, damping: 30, stiffness: 300 };
+
+// ---------------------------------------------------------------------------
+// Design tokens (local constants for consistent alpha values)
+// ---------------------------------------------------------------------------
+const BADGE_BG_ALPHA = "0.15";
+const BADGE_BORDER_ALPHA = "0.25";
+
+// ---------------------------------------------------------------------------
 // SDG Chip helper
 // ---------------------------------------------------------------------------
 
@@ -46,9 +58,9 @@ function SdgChip({
     <span
       className={`inline-flex items-center gap-1 rounded-full font-medium ${padding}`}
       style={{
-        background: `${sdg.color.replace(")", " / 0.15)")}`,
+        background: `${sdg.color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`,
         color: sdg.color,
-        border: `1px solid ${sdg.color.replace(")", " / 0.35)")}`,
+        border: `1px solid ${sdg.color.replace(")", ` / ${BADGE_BORDER_ALPHA})`)}`,
       }}
       title={sdg.title}
     >
@@ -158,16 +170,16 @@ export function ImpactDashboardPage() {
         {/* Hero */}
         <section data-ocid="impact.section">
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
             <Badge
               className="mb-4 text-xs tracking-widest uppercase px-3 py-1 font-semibold rounded-full"
               style={{
-                background: "oklch(0.65 0.20 160 / 0.15)",
+                background: `oklch(0.65 0.20 160 / ${BADGE_BG_ALPHA})`,
                 color: "oklch(0.75 0.18 160)",
-                border: "1px solid oklch(0.65 0.20 160 / 0.35)",
+                border: `1px solid oklch(0.65 0.20 160 / ${BADGE_BORDER_ALPHA})`,
               }}
             >
               Phase 13 · Impact & SDGs
@@ -192,13 +204,23 @@ export function ImpactDashboardPage() {
             {STATS.map((stat, i) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * i, duration: 0.5 }}
-                className="rounded-2xl p-5 flex flex-col gap-2"
+                transition={{ delay: 0.1 * i, duration: 0.4, ease: "easeOut" }}
+                whileHover={{ scale: 1.02 }}
+                className="rounded-2xl p-5 flex flex-col gap-2 transition-shadow duration-300"
                 style={{
                   background: "oklch(var(--cosmos-mid))",
-                  border: `1px solid ${stat.color.replace(")", " / 0.25)")}`,
+                  border: `1px solid ${stat.color.replace(")", ` / ${BADGE_BORDER_ALPHA})`)}`,
+                  boxShadow: "0 2px 8px oklch(0 0 0 / 0.15)",
+                }}
+                onHoverStart={(e) => {
+                  (e.target as HTMLElement).style.boxShadow =
+                    "0 4px 16px oklch(0 0 0 / 0.25)";
+                }}
+                onHoverEnd={(e) => {
+                  (e.target as HTMLElement).style.boxShadow =
+                    "0 2px 8px oklch(0 0 0 / 0.15)";
                 }}
               >
                 <span className="text-2xl">{stat.icon}</span>
@@ -251,10 +273,11 @@ export function ImpactDashboardPage() {
             {activeSDG && (
               <button
                 type="button"
-                className="ml-auto text-xs px-3 py-1 rounded-full"
+                className="ml-auto text-xs px-3 py-1 rounded-full transition-all"
                 style={{
                   color: "oklch(0.55 0.04 260)",
                   background: "oklch(var(--cosmos-mid))",
+                  border: "1px solid oklch(1 0 0 / 0.08)",
                 }}
                 onClick={() => setActiveSDG(null)}
                 data-ocid="impact.sdg.button"
@@ -275,18 +298,22 @@ export function ImpactDashboardPage() {
                   type="button"
                   key={sdg.number}
                   onClick={() => setActiveSDG(isActive ? null : sdg.number)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="rounded-xl p-2 flex flex-col items-center gap-1 text-center transition-all"
+                  whileHover={{ scale: 1.06 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                  className="rounded-xl p-2 flex flex-col items-center gap-1 text-center"
                   style={{
                     background: isActive
-                      ? `${sdg.color.replace(")", " / 0.22)")}`
+                      ? `${sdg.color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`
                       : hasMetrics
                         ? `${sdg.color.replace(")", " / 0.08)")}`
                         : "oklch(var(--cosmos-mid))",
                     border: isActive
                       ? `2px solid ${sdg.color}`
-                      : `1px solid ${sdg.color.replace(")", " / 0.25)")}`,
+                      : `1px solid ${sdg.color.replace(")", " / 0.20)")}`,
+                    boxShadow: isActive
+                      ? `0 0 12px ${sdg.color.replace(")", " / 0.30)")}`
+                      : "none",
                     opacity: hasMetrics ? 1 : 0.45,
                   }}
                   data-ocid="impact.sdg.button"
@@ -334,6 +361,7 @@ export function ImpactDashboardPage() {
             title="Impact Metrics"
           />
 
+          {/* Dimension filter pills */}
           <div className="flex flex-wrap gap-2 mb-6">
             {(
               [
@@ -348,26 +376,33 @@ export function ImpactDashboardPage() {
               const cfg = d !== "all" ? IMPACT_DIMENSION_CONFIG[d] : null;
               const isActive = activeDimension === d;
               return (
-                <button
+                <motion.button
                   type="button"
                   key={d}
                   onClick={() => setActiveDimension(d)}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                  className="px-3 py-1.5 rounded-full text-xs font-semibold"
                   style={{
                     background: isActive
-                      ? (cfg?.color ?? "oklch(var(--gold))")
+                      ? cfg
+                        ? `${cfg.color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`
+                        : `oklch(0.82 0.14 75 / ${BADGE_BG_ALPHA})`
                       : "oklch(var(--cosmos-mid))",
                     color: isActive
-                      ? "oklch(0.12 0.02 260)"
+                      ? cfg
+                        ? cfg.color
+                        : "oklch(0.82 0.14 75)"
                       : "oklch(0.60 0.04 260)",
                     border: isActive
-                      ? `1px solid ${cfg?.color ?? "oklch(var(--gold))"}`
-                      : "1px solid oklch(1 0 0 / 0.08)",
+                      ? `1px solid ${cfg ? cfg.color.replace(")", ` / ${BADGE_BORDER_ALPHA})`) : `oklch(0.82 0.14 75 / ${BADGE_BORDER_ALPHA})`}`
+                      : "1px solid oklch(1 0 0 / 0.10)",
                   }}
                   data-ocid="impact.dimension.tab"
                 >
                   {cfg ? `${cfg.icon} ${cfg.label}` : "All Dimensions"}
-                </button>
+                </motion.button>
               );
             })}
           </div>
@@ -384,12 +419,26 @@ export function ImpactDashboardPage() {
                     key={metric.id}
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ delay: i * 0.03, duration: 0.4 }}
-                    className="rounded-xl p-4"
+                    exit={{ opacity: 0, scale: 0.97 }}
+                    whileHover={{ scale: 1.02, transition: SPRING }}
+                    transition={{
+                      delay: i * 0.03,
+                      duration: 0.4,
+                      ease: "easeOut",
+                    }}
+                    className="rounded-xl p-4 transition-shadow duration-300"
                     style={{
                       background: "oklch(var(--cosmos-mid))",
-                      border: `1px solid ${dimCfg.color.replace(")", " / 0.2)")}`,
+                      border: `1px solid ${dimCfg.color.replace(")", ` / ${BADGE_BORDER_ALPHA})`)}`,
+                      boxShadow: "0 2px 8px oklch(0 0 0 / 0.15)",
+                    }}
+                    onHoverStart={(e) => {
+                      (e.target as HTMLElement).style.boxShadow =
+                        "0 4px 16px oklch(0 0 0 / 0.25)";
+                    }}
+                    onHoverEnd={(e) => {
+                      (e.target as HTMLElement).style.boxShadow =
+                        "0 2px 8px oklch(0 0 0 / 0.15)";
                     }}
                     data-ocid={`impact.metric.item.${i + 1}`}
                   >
@@ -409,10 +458,11 @@ export function ImpactDashboardPage() {
                         </h3>
                       </div>
                       <span
-                        className="text-xs px-1.5 py-0.5 rounded-full shrink-0"
+                        className="text-xs px-2 py-0.5 rounded-full shrink-0 font-medium"
                         style={{
-                          background: `${trendCfg.color.replace(")", " / 0.15)")}`,
+                          background: `${trendCfg.color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`,
                           color: trendCfg.color,
+                          border: `1px solid ${trendCfg.color.replace(")", ` / ${BADGE_BORDER_ALPHA})`)}`,
                         }}
                       >
                         {trendCfg.arrow} {trendCfg.label}
@@ -460,9 +510,9 @@ export function ImpactDashboardPage() {
                         </span>
                       )}
                       <span
-                        className="ml-auto text-xs px-1.5 py-0.5 rounded-full"
+                        className="ml-auto text-xs px-1.5 py-0.5 rounded-full font-medium"
                         style={{
-                          background: "oklch(1 0 0 / 0.05)",
+                          background: `${levelCfg.color.replace(")", ` / ${BADGE_BG_ALPHA})`)}`,
                           color: levelCfg.color,
                         }}
                       >
@@ -478,7 +528,10 @@ export function ImpactDashboardPage() {
           {filteredMetrics.length === 0 && (
             <div
               className="text-center py-12 rounded-xl"
-              style={{ background: "oklch(var(--cosmos-mid))" }}
+              style={{
+                background: "oklch(var(--cosmos-mid))",
+                boxShadow: "0 2px 8px oklch(0 0 0 / 0.15)",
+              }}
               data-ocid="impact.metrics.empty_state"
             >
               <p style={{ color: "oklch(0.55 0.03 260)" }}>
@@ -515,13 +568,27 @@ export function ImpactDashboardPage() {
               return (
                 <motion.div
                   key={org.orgId}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * i, duration: 0.5 }}
-                  className="rounded-xl p-5"
+                  whileHover={{ scale: 1.02, transition: SPRING }}
+                  transition={{
+                    delay: 0.1 * i,
+                    duration: 0.4,
+                    ease: "easeOut",
+                  }}
+                  className="rounded-xl p-5 transition-shadow duration-300"
                   style={{
                     background: "oklch(var(--cosmos-mid))",
-                    border: `1px solid ${color.replace(")", " / 0.3)")}`,
+                    border: `1px solid ${color.replace(")", ` / ${BADGE_BORDER_ALPHA})`)}`,
+                    boxShadow: "0 2px 8px oklch(0 0 0 / 0.15)",
+                  }}
+                  onHoverStart={(e) => {
+                    (e.target as HTMLElement).style.boxShadow =
+                      "0 4px 16px oklch(0 0 0 / 0.25)";
+                  }}
+                  onHoverEnd={(e) => {
+                    (e.target as HTMLElement).style.boxShadow =
+                      "0 2px 8px oklch(0 0 0 / 0.15)";
                   }}
                   data-ocid={`impact.leaderboard.item.${i + 1}`}
                 >
@@ -595,18 +662,32 @@ export function ImpactDashboardPage() {
                 key={report.id}
                 initial={{ opacity: 0, x: -16 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.07, duration: 0.4 }}
-                className="rounded-xl p-4 flex items-start gap-4"
+                whileHover={{ scale: 1.01, transition: SPRING }}
+                transition={{
+                  delay: i * 0.07,
+                  duration: 0.4,
+                  ease: "easeOut",
+                }}
+                className="rounded-xl p-4 flex items-start gap-4 transition-shadow duration-300"
                 style={{
                   background: "oklch(var(--cosmos-mid))",
-                  border: "1px solid oklch(1 0 0 / 0.07)",
+                  border: "1px solid oklch(1 0 0 / 0.08)",
+                  boxShadow: "0 2px 8px oklch(0 0 0 / 0.15)",
+                }}
+                onHoverStart={(e) => {
+                  (e.target as HTMLElement).style.boxShadow =
+                    "0 4px 16px oklch(0 0 0 / 0.25)";
+                }}
+                onHoverEnd={(e) => {
+                  (e.target as HTMLElement).style.boxShadow =
+                    "0 2px 8px oklch(0 0 0 / 0.15)";
                 }}
                 data-ocid={`impact.reports.item.${i + 1}`}
               >
                 <div
                   className="rounded-xl w-14 h-14 flex items-center justify-center text-2xl font-bold shrink-0"
                   style={{
-                    background: "oklch(0.65 0.20 160 / 0.12)",
+                    background: `oklch(0.65 0.20 160 / ${BADGE_BG_ALPHA})`,
                     color: "oklch(0.65 0.20 160)",
                   }}
                 >
@@ -621,10 +702,11 @@ export function ImpactDashboardPage() {
                       {report.title}
                     </span>
                     <span
-                      className="text-xs px-2 py-0.5 rounded-full shrink-0"
+                      className="text-xs px-2 py-0.5 rounded-full shrink-0 font-medium"
                       style={{
-                        background: "oklch(0.65 0.20 160 / 0.12)",
+                        background: `oklch(0.65 0.20 160 / ${BADGE_BG_ALPHA})`,
                         color: "oklch(0.65 0.20 160)",
+                        border: `1px solid oklch(0.65 0.20 160 / ${BADGE_BORDER_ALPHA})`,
                       }}
                     >
                       Published
@@ -664,11 +746,15 @@ export function ImpactDashboardPage() {
           />
 
           {canSubmit ? (
-            <div
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
               className="rounded-2xl p-6 max-w-2xl"
               style={{
                 background: "oklch(var(--cosmos-mid))",
-                border: "1px solid oklch(0.82 0.14 75 / 0.25)",
+                border: `1px solid oklch(0.82 0.14 75 / ${BADGE_BORDER_ALPHA})`,
+                boxShadow: "0 2px 8px oklch(0 0 0 / 0.15)",
               }}
               data-ocid="impact.submit.panel"
             >
@@ -676,6 +762,7 @@ export function ImpactDashboardPage() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
                   className="text-center py-8"
                   data-ocid="impact.submit.success_state"
                 >
@@ -889,13 +976,17 @@ export function ImpactDashboardPage() {
                   </Button>
                 </div>
               )}
-            </div>
+            </motion.div>
           ) : (
-            <div
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
               className="rounded-2xl p-8 text-center max-w-md"
               style={{
                 background: "oklch(var(--cosmos-mid))",
-                border: "1px solid oklch(1 0 0 / 0.07)",
+                border: "1px solid oklch(1 0 0 / 0.08)",
+                boxShadow: "0 2px 8px oklch(0 0 0 / 0.15)",
               }}
               data-ocid="impact.submit.panel"
             >
@@ -924,7 +1015,7 @@ export function ImpactDashboardPage() {
                   Register Your Organisation
                 </Button>
               </Link>
-            </div>
+            </motion.div>
           )}
         </section>
       </div>

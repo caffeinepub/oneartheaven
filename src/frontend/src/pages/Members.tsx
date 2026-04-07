@@ -1,5 +1,3 @@
-import { MemberRegion, MemberStatus, MemberType } from "@/backend.d";
-import type { MemberEntity } from "@/backend.d";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,6 +24,12 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  type MemberEntity,
+  MemberRegion,
+  MemberStatus,
+  MemberType,
+} from "@/hooks/useBackend";
 import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import {
   useApplyForMembership,
@@ -70,6 +74,7 @@ const MEMBER_TYPE_LABELS: Record<MemberType, string> = {
   [MemberType.corporate]: "Corporate",
   [MemberType.cooperative]: "Cooperative",
   [MemberType.individual]: "Individual",
+  [MemberType.business]: "Business",
 };
 
 const MEMBER_TYPE_COLORS: Record<
@@ -111,6 +116,11 @@ const MEMBER_TYPE_COLORS: Record<
     text: "oklch(0.75 0.2 340)",
     border: "oklch(0.6 0.18 340 / 0.35)",
   },
+  [MemberType.business]: {
+    bg: "oklch(0.6 0.18 40 / 0.15)",
+    text: "oklch(0.75 0.2 38)",
+    border: "oklch(0.6 0.18 40 / 0.35)",
+  },
 };
 
 const STATUS_COLORS: Record<
@@ -137,25 +147,39 @@ const STATUS_COLORS: Record<
     text: "oklch(0.68 0.22 27)",
     dot: "oklch(0.68 0.22 27)",
   },
+  [MemberStatus.pending]: {
+    bg: "oklch(0.65 0.16 75 / 0.12)",
+    text: "oklch(0.78 0.18 72)",
+    dot: "oklch(0.78 0.18 72)",
+  },
+  [MemberStatus.archived]: {
+    bg: "oklch(0.4 0.04 260 / 0.3)",
+    text: "oklch(0.55 0.04 260)",
+    dot: "oklch(0.45 0.04 260)",
+  },
 };
 
 const REGION_LABELS: Record<MemberRegion, string> = {
   [MemberRegion.africa]: "Africa",
   [MemberRegion.asiaPacific]: "Asia-Pacific",
+  [MemberRegion.asia]: "Asia",
   [MemberRegion.europe]: "Europe",
   [MemberRegion.latinAmerica]: "Latin America",
   [MemberRegion.middleEast]: "Middle East",
   [MemberRegion.northAmerica]: "North America",
+  [MemberRegion.oceania]: "Oceania",
   [MemberRegion.global]: "Global",
 };
 
 const REGION_EMOJIS: Record<MemberRegion, string> = {
   [MemberRegion.africa]: "🌍",
   [MemberRegion.asiaPacific]: "🌏",
+  [MemberRegion.asia]: "🌏",
   [MemberRegion.europe]: "🇪🇺",
   [MemberRegion.latinAmerica]: "🌎",
   [MemberRegion.middleEast]: "🌙",
   [MemberRegion.northAmerica]: "🦅",
+  [MemberRegion.oceania]: "🦘",
   [MemberRegion.global]: "🌐",
 };
 

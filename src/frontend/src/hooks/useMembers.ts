@@ -1,7 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MemberRegion, MemberStatus, MemberType } from "../backend.d";
-import type { MemberEntity } from "../backend.d";
+import {
+  type MemberEntity,
+  MemberRegion,
+  MemberStatus,
+  MemberType,
+} from "../hooks/useBackend";
 import { useActor } from "./useActor";
+
+// Helper: safely call a backend method that may not be deployed yet
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function callMethod(actor: unknown, method: string, ...args: unknown[]): any {
+  const a = actor as Record<string, (...a: unknown[]) => unknown>;
+  if (typeof a[method] === "function") return a[method](...args);
+  return Promise.reject(new Error(`Method ${method} not deployed`));
+}
 
 // ─── Seed Data ────────────────────────────────────────────────────────────────
 
@@ -184,8 +196,15 @@ export function useGetMembers() {
     queryKey: ["members"],
     queryFn: async () => {
       if (!actor) return SEED_MEMBERS;
-      const result = await actor.getMembers();
-      return result.length > 0 ? result : SEED_MEMBERS;
+      try {
+        const result = (await callMethod(
+          actor,
+          "getMembers",
+        )) as MemberEntity[];
+        return result.length > 0 ? result : SEED_MEMBERS;
+      } catch {
+        return SEED_MEMBERS;
+      }
     },
     enabled: !isFetching,
     staleTime: 30_000,
@@ -198,7 +217,15 @@ export function useGetMember(id: bigint) {
     queryKey: ["member", id.toString()],
     queryFn: async () => {
       if (!actor) return SEED_MEMBERS.find((m) => m.id === id) ?? null;
-      return actor.getMember(id);
+      try {
+        return (await callMethod(
+          actor,
+          "getMember",
+          id,
+        )) as MemberEntity | null;
+      } catch {
+        return null;
+      }
     },
     enabled: !isFetching,
     staleTime: 30_000,
@@ -220,7 +247,9 @@ export function useApplyForMembership() {
       contactEmail: string;
     }) => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.applyForMembership(
+      return callMethod(
+        actor,
+        "applyForMembership",
         params.name,
         params.memberType,
         params.region,
@@ -249,7 +278,7 @@ export function useUpdateMemberStatus() {
       status: MemberStatus;
     }) => {
       if (!actor) throw new Error("Actor not available");
-      return actor.updateMemberStatus(id, status);
+      return callMethod(actor, "updateMemberStatus", id, status);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["members"] });
@@ -263,7 +292,7 @@ export function useRemoveMember() {
   return useMutation({
     mutationFn: async (id: bigint) => {
       if (!actor) throw new Error("Actor not available");
-      return actor.removeMember(id);
+      return callMethod(actor, "removeMember", id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["members"] });

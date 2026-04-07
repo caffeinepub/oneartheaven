@@ -102,7 +102,7 @@ export interface backendInterface {
     getStats(): Promise<PlatformStats>;
     getSupportedLanguages(): Promise<Array<Language>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
-    isCallerAdmin(): Promise<boolean>;
+    initializeCallerAsAdmin(): Promise<void>;
     isCallerApproved(): Promise<boolean>;
     listApprovals(): Promise<Array<UserApprovalInfo>>;
     removeAnnouncement(id: bigint): Promise<void>;

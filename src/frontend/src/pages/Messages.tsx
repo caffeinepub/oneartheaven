@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Messages Page — Phase 13, Area 6 (A6-5)
+// Messages Page — Phase 13, Area 6 (A6-5) — Polish Pass
 // /messages — Two-panel messaging interface
 // ---------------------------------------------------------------------------
 
@@ -11,7 +11,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
@@ -68,62 +67,59 @@ const SAMPLE_CONTACTS = [
 ];
 
 // ---------------------------------------------------------------------------
-// Thread type label + color
+// Thread type badge — standardized .15/.25 alpha
 // ---------------------------------------------------------------------------
 function ThreadTypeBadge({ type }: { type: MessageThread["type"] }) {
-  if (type === "direct")
-    return (
-      <span
-        className="text-[9px] font-medium px-1 py-0.5 rounded"
-        style={{
-          background: "oklch(0.72 0.16 200 / 0.15)",
-          color: "oklch(0.72 0.16 200)",
-        }}
-      >
-        DM
-      </span>
-    );
-  if (type === "group")
-    return (
-      <span
-        className="text-[9px] font-medium px-1 py-0.5 rounded"
-        style={{
-          background: "oklch(0.72 0.16 240 / 0.15)",
-          color: "oklch(0.72 0.16 240)",
-        }}
-      >
-        Group
-      </span>
-    );
+  const configs = {
+    direct: {
+      label: "DM",
+      color: "oklch(0.72 0.16 200)",
+      bg: "oklch(0.72 0.16 200 / 0.15)",
+      border: "oklch(0.72 0.16 200 / 0.25)",
+    },
+    group: {
+      label: "Group",
+      color: "oklch(0.72 0.16 240)",
+      bg: "oklch(0.72 0.16 240 / 0.15)",
+      border: "oklch(0.72 0.16 240 / 0.25)",
+    },
+    announcement: {
+      label: "Announce",
+      color: "oklch(0.78 0.18 75)",
+      bg: "oklch(0.78 0.18 75 / 0.15)",
+      border: "oklch(0.78 0.18 75 / 0.25)",
+    },
+  };
+  const cfg = configs[type];
   return (
     <span
-      className="text-[9px] font-medium px-1 py-0.5 rounded"
+      className="inline-block text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-none"
       style={{
-        background: "oklch(0.78 0.18 75 / 0.15)",
-        color: "oklch(0.78 0.18 75)",
+        background: cfg.bg,
+        border: `1px solid ${cfg.border}`,
+        color: cfg.color,
       }}
     >
-      Announce
+      {cfg.label}
     </span>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Avatar letter circle
+// Avatar letter circle — consistent w-10 h-10
 // ---------------------------------------------------------------------------
 function AvatarCircle({
   name,
   size = "md",
 }: { name: string; size?: "sm" | "md" }) {
   const letter = name.charAt(0).toUpperCase();
-  // Generate a stable hue from the name
   let hue = 0;
   for (let i = 0; i < name.length; i++)
     hue = (hue + name.charCodeAt(i) * 37) % 360;
-  const sz = size === "sm" ? "w-7 h-7 text-xs" : "w-9 h-9 text-sm";
+  const sz = size === "sm" ? "w-8 h-8 text-xs" : "w-10 h-10 text-sm";
   return (
     <div
-      className={`${sz} rounded-full flex items-center justify-center font-bold text-white shrink-0`}
+      className={`${sz} rounded-full flex items-center justify-center font-semibold text-white shrink-0`}
       style={{ background: `oklch(0.55 0.18 ${hue})` }}
       aria-hidden="true"
     >
@@ -153,110 +149,140 @@ function threadDisplayName(
 }
 
 // ---------------------------------------------------------------------------
-// New Message Modal
+// New Message Modal — platform modal pattern (scale 0.96→1, cosmos bg, rounded-2xl)
 // ---------------------------------------------------------------------------
 function NewMessageModal({
+  open,
   onSelect,
   onClose,
-}: { onSelect: (threadId: string) => void; onClose: () => void }) {
+}: {
+  open: boolean;
+  onSelect: (threadId: string) => void;
+  onClose: () => void;
+}) {
   const [contactSearch, setContactSearch] = useState("");
   const filtered = SAMPLE_CONTACTS.filter(
     (c) =>
       c.name.toLowerCase().includes(contactSearch.toLowerCase()) ||
       c.org.toLowerCase().includes(contactSearch.toLowerCase()),
   );
+
   return (
-    <DialogContent
-      className="max-w-sm"
-      style={{
-        background: "oklch(var(--cosmos-mid))",
-        border: "1px solid oklch(var(--gold) / 0.2)",
-        color: "oklch(0.9 0.015 260)",
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) onClose();
       }}
-      data-ocid="messages.dialog"
     >
-      <DialogHeader>
-        <DialogTitle style={{ color: "oklch(var(--gold))" }}>
-          New Conversation
-        </DialogTitle>
-      </DialogHeader>
-      <div className="mt-2">
-        <div className="relative mb-3">
-          <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5"
-            style={{ color: "oklch(0.55 0.03 260)" }}
-          />
-          <input
-            type="text"
-            placeholder="Search contacts..."
-            value={contactSearch}
-            onChange={(e) => setContactSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 rounded-lg text-sm outline-none"
+      <AnimatePresence>
+        {open && (
+          <DialogContent
+            className="max-w-sm rounded-2xl p-0 overflow-hidden"
             style={{
-              background: "oklch(var(--cosmos-deep))",
-              border: "1px solid oklch(var(--gold) / 0.15)",
+              background: "oklch(var(--cosmos-mid))",
+              border: "1px solid oklch(var(--gold) / 0.2)",
               color: "oklch(0.9 0.015 260)",
             }}
-            data-ocid="messages.search_input"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          {filtered.map((contact) => (
-            <button
-              key={contact.id}
-              type="button"
-              onClick={() => {
-                onSelect(contact.threadId);
-                onClose();
-              }}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-[oklch(var(--gold)/0.08)] w-full"
-              data-ocid="messages.contact.button"
+            data-ocid="messages.dialog"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
             >
-              <AvatarCircle name={contact.name} size="sm" />
-              <div className="flex-1 min-w-0">
-                <p
-                  className="text-sm font-medium truncate"
-                  style={{ color: "oklch(0.9 0.015 260)" }}
-                >
-                  {contact.name}
-                </p>
-                <p
-                  className="text-xs truncate"
-                  style={{ color: "oklch(0.55 0.03 260)" }}
-                >
-                  {contact.org}
-                </p>
+              <DialogHeader className="px-5 pt-5 pb-3">
+                <DialogTitle style={{ color: "oklch(var(--gold))" }}>
+                  New Conversation
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="px-5 pb-2">
+                <div className="relative mb-3">
+                  <Search
+                    className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5"
+                    style={{ color: "oklch(0.55 0.03 260)" }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search contacts..."
+                    value={contactSearch}
+                    onChange={(e) => setContactSearch(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 rounded-xl text-sm outline-none transition-all"
+                    style={{
+                      background: "oklch(var(--cosmos-deep))",
+                      border: "1px solid oklch(var(--gold) / 0.15)",
+                      color: "oklch(0.9 0.015 260)",
+                    }}
+                    data-ocid="messages.search_input"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-0.5">
+                  {filtered.map((contact) => (
+                    <button
+                      key={contact.id}
+                      type="button"
+                      onClick={() => {
+                        onSelect(contact.threadId);
+                        onClose();
+                      }}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-left w-full transition-all duration-150 hover:bg-[oklch(var(--gold)/0.08)]"
+                      data-ocid="messages.contact.button"
+                    >
+                      <AvatarCircle name={contact.name} size="sm" />
+                      <div className="flex-1 min-w-0">
+                        <p
+                          className="text-sm font-medium truncate"
+                          style={{ color: "oklch(0.9 0.015 260)" }}
+                        >
+                          {contact.name}
+                        </p>
+                        <p
+                          className="text-xs truncate"
+                          style={{ color: "oklch(0.55 0.03 260)" }}
+                        >
+                          {contact.org}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                  {filtered.length === 0 && (
+                    <p
+                      className="text-sm text-center py-4"
+                      style={{ color: "oklch(0.55 0.03 260)" }}
+                    >
+                      No contacts found
+                    </p>
+                  )}
+                </div>
               </div>
-            </button>
-          ))}
-          {filtered.length === 0 && (
-            <p
-              className="text-sm text-center py-4"
-              style={{ color: "oklch(0.55 0.03 260)" }}
-            >
-              No contacts found
-            </p>
-          )}
-        </div>
-      </div>
-      <DialogFooter>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onClose}
-          className="text-xs"
-          style={{ color: "oklch(0.65 0.03 260)" }}
-          data-ocid="messages.cancel_button"
-        >
-          Cancel
-        </Button>
-      </DialogFooter>
-    </DialogContent>
+
+              <DialogFooter
+                className="px-5 py-3 border-t"
+                style={{ borderColor: "oklch(var(--gold) / 0.1)" }}
+              >
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onClose}
+                  className="text-xs"
+                  style={{ color: "oklch(0.65 0.03 260)" }}
+                  data-ocid="messages.cancel_button"
+                >
+                  Cancel
+                </Button>
+              </DialogFooter>
+            </motion.div>
+          </DialogContent>
+        )}
+      </AnimatePresence>
+    </Dialog>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Message Bubble
+// Message Bubble — gold/.15 bg for own, cosmos-mid for others, asymmetric corners
 // ---------------------------------------------------------------------------
 function MessageBubble({
   message,
@@ -282,37 +308,32 @@ function MessageBubble({
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className={`flex gap-2 mb-3 ${
-        message.isMine ? "flex-row-reverse" : "flex-row"
-      }`}
+      className={`flex gap-2 mb-3 ${message.isMine ? "flex-row-reverse" : "flex-row"}`}
       data-ocid="messages.row"
     >
       {!message.isMine && <AvatarCircle name={message.fromName} size="sm" />}
       <div
-        className={`max-w-[70%] flex flex-col ${
-          message.isMine ? "items-end" : "items-start"
-        }`}
+        className={`max-w-[70%] flex flex-col ${message.isMine ? "items-end" : "items-start"}`}
       >
         {!message.isMine && (
           <span
-            className="text-xs mb-1"
+            className="text-xs mb-1 font-medium"
             style={{ color: "oklch(0.55 0.03 260)" }}
           >
             {message.fromName}
           </span>
         )}
         <div
-          className="px-3 py-2 rounded-2xl text-sm leading-relaxed"
+          className="px-4 py-2.5 text-sm leading-relaxed"
           style={{
             background: message.isMine
-              ? "oklch(0.78 0.18 75 / 0.25)"
+              ? "oklch(var(--gold) / 0.15)"
               : "oklch(var(--cosmos-mid))",
-            border: message.isMine
-              ? "1px solid oklch(0.78 0.18 75 / 0.35)"
-              : "1px solid oklch(1 0 0 / 0.08)",
+            border: `1px solid ${message.isMine ? "oklch(var(--gold) / 0.20)" : "oklch(1 0 0 / 0.08)"}`,
             color: "oklch(0.88 0.015 260)",
-            borderTopRightRadius: message.isMine ? 4 : undefined,
-            borderTopLeftRadius: message.isMine ? undefined : 4,
+            borderRadius: "1rem",
+            borderTopRightRadius: message.isMine ? "4px" : "1rem",
+            borderTopLeftRadius: message.isMine ? "1rem" : "4px",
           }}
         >
           {message.body}
@@ -386,30 +407,31 @@ function ThreadListPanel({
             Messages
           </h2>
           {totalUnread > 0 && (
-            <Badge
-              className="text-[10px] px-1.5 py-0 font-bold rounded-full"
-              style={{
-                background: "oklch(0.65 0.22 27)",
-                color: "white",
-                border: "none",
+            <motion.span
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{
+                duration: 0.6,
+                repeat: Number.POSITIVE_INFINITY,
+                repeatDelay: 3,
               }}
+              className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-[10px] font-bold text-white"
+              style={{ background: "oklch(0.65 0.22 27)" }}
               data-ocid="messages.unread_count.button"
             >
               {totalUnread}
-            </Badge>
+            </motion.span>
           )}
         </div>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-7 w-7 p-0 rounded-lg"
+        <button
+          type="button"
+          className="w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-150 hover:bg-[oklch(var(--gold)/0.1)]"
           style={{ color: "oklch(0.65 0.03 260)" }}
           onClick={onNewMessage}
           aria-label="New message"
           data-ocid="messages.open_modal_button"
         >
           <Plus className="h-4 w-4" />
-        </Button>
+        </button>
       </div>
 
       {/* Search */}
@@ -424,7 +446,7 @@ function ThreadListPanel({
             placeholder="Search threads..."
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 rounded-lg text-xs outline-none"
+            className="w-full pl-8 pr-3 py-1.5 rounded-xl text-xs outline-none transition-all"
             style={{
               background: "oklch(var(--cosmos-deep))",
               border: "1px solid oklch(var(--gold) / 0.12)",
@@ -457,7 +479,7 @@ function ThreadListPanel({
             const isActive = thread.id === activeThreadId;
             const lastBody = thread.lastMessage?.body ?? "";
             const preview =
-              lastBody.length > 45 ? `${lastBody.slice(0, 45)}…` : lastBody;
+              lastBody.length > 40 ? `${lastBody.slice(0, 40)}…` : lastBody;
             const time = thread.lastMessage
               ? (() => {
                   const diff =
@@ -479,21 +501,26 @@ function ThreadListPanel({
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.03 }}
                 onClick={() => onSelect(thread.id)}
-                className="w-full flex items-start gap-2.5 px-2 py-2.5 rounded-xl text-left transition-all duration-150 group relative mb-0.5"
+                className="w-full flex items-start gap-3 py-3 px-3 rounded-xl text-left group relative mb-0.5 transition-all duration-150"
                 style={{
                   background: isActive
                     ? "oklch(var(--gold) / 0.08)"
                     : "transparent",
                   borderLeft: isActive
-                    ? "2px solid oklch(var(--gold))"
-                    : "2px solid transparent",
+                    ? "4px solid oklch(var(--gold))"
+                    : "4px solid transparent",
                 }}
+                whileHover={
+                  !isActive
+                    ? { backgroundColor: "oklch(var(--gold) / 0.06)" }
+                    : {}
+                }
                 data-ocid={`messages.item.${idx + 1}`}
                 aria-label={`Open conversation: ${name}`}
               >
                 <AvatarCircle name={name} />
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1 mb-0.5">
+                  <div className="flex items-center gap-1.5 mb-0.5">
                     <span
                       className="text-sm font-medium truncate flex-1"
                       style={{
@@ -517,7 +544,7 @@ function ThreadListPanel({
                       {time}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <ThreadTypeBadge type={thread.type} />
                     <span
                       className="text-xs truncate flex-1"
@@ -526,12 +553,18 @@ function ThreadListPanel({
                       {preview}
                     </span>
                     {thread.unreadCount > 0 && (
-                      <span
+                      <motion.span
+                        animate={{ scale: [1, 1.15, 1] }}
+                        transition={{
+                          duration: 0.5,
+                          repeat: Number.POSITIVE_INFINITY,
+                          repeatDelay: 4,
+                        }}
                         className="inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full text-[9px] font-bold text-white shrink-0"
                         style={{ background: "oklch(0.65 0.22 27)" }}
                       >
                         {thread.unreadCount}
-                      </span>
+                      </motion.span>
                     )}
                   </div>
                 </div>
@@ -602,42 +635,43 @@ function ChatViewPanel({
     }
   }
 
+  // Empty state — no thread selected
   if (!thread) {
     return (
       <div
-        className="flex-1 flex flex-col items-center justify-center gap-4"
+        className="flex-1 flex flex-col items-center justify-center gap-4 p-8"
         data-ocid="messages.empty_state"
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="flex flex-col items-center gap-3"
+          className="flex flex-col items-center gap-4 max-w-xs text-center"
         >
           <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center"
+            className="w-20 h-20 rounded-2xl flex items-center justify-center"
             style={{
-              background: "oklch(0.72 0.16 200 / 0.1)",
-              border: "1px solid oklch(0.72 0.16 200 / 0.2)",
+              background: "oklch(0.72 0.16 200 / 0.08)",
+              border: "1px solid oklch(0.72 0.16 200 / 0.18)",
             }}
           >
             <MessageSquare
-              className="h-8 w-8"
-              style={{ color: "oklch(0.72 0.16 200)" }}
+              className="h-9 w-9"
+              style={{ color: "oklch(0.72 0.16 200 / 0.6)" }}
             />
           </div>
-          <div className="text-center">
+          <div>
             <h3
-              className="text-base font-semibold"
-              style={{ color: "oklch(0.75 0.015 260)" }}
+              className="text-base font-semibold mb-1"
+              style={{ color: "oklch(0.72 0.015 260)" }}
             >
               Select a conversation
             </h3>
             <p
-              className="text-sm mt-1"
+              className="text-sm leading-relaxed"
               style={{ color: "oklch(0.5 0.02 260)" }}
             >
-              Choose a thread from the list to start messaging
+              Select a conversation to start messaging
             </p>
           </div>
         </motion.div>
@@ -661,11 +695,10 @@ function ChatViewPanel({
         className="flex items-center gap-3 px-4 py-3 shrink-0"
         style={{ borderBottom: "1px solid oklch(var(--gold) / 0.1)" }}
       >
-        {/* Mobile back */}
         <button
           type="button"
           onClick={onBack}
-          className="md:hidden flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-[oklch(var(--gold)/0.08)]"
+          className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg transition-colors hover:bg-[oklch(var(--gold)/0.08)]"
           style={{ color: "oklch(0.65 0.03 260)" }}
           aria-label="Back to thread list"
           data-ocid="messages.secondary_button"
@@ -700,12 +733,11 @@ function ChatViewPanel({
           )}
         </div>
 
-        {/* Action buttons */}
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => onPin(thread.id)}
-            className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-[oklch(var(--gold)/0.08)]"
+            className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors hover:bg-[oklch(var(--gold)/0.08)]"
             style={{
               color: thread.isPinned
                 ? "oklch(0.72 0.16 200)"
@@ -723,7 +755,7 @@ function ChatViewPanel({
           <button
             type="button"
             onClick={() => onArchive(thread.id)}
-            className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-[oklch(0.65_0.22_27/0.12)]"
+            className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors hover:bg-[oklch(0.65_0.22_27/0.12)]"
             style={{ color: "oklch(0.5 0.03 260)" }}
             aria-label="Archive conversation"
             data-ocid="messages.delete_button"
@@ -757,18 +789,18 @@ function ChatViewPanel({
         <div ref={bottomRef} />
       </div>
 
-      {/* Send input */}
+      {/* Send input — clear border-top separator */}
       <div
-        className="px-4 py-3 flex items-end gap-2 shrink-0"
-        style={{ borderTop: "1px solid oklch(var(--gold) / 0.1)" }}
+        className="px-4 py-3 flex items-end gap-2.5 shrink-0"
+        style={{ borderTop: "1px solid oklch(var(--gold) / 0.12)" }}
       >
         <Textarea
           value={newBody}
           onChange={(e) => onBodyChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Write a message... (Enter to send, Shift+Enter for newline)"
+          placeholder="Write a message… (Enter to send, Shift+Enter for newline)"
           rows={1}
-          className="flex-1 resize-none text-sm rounded-xl py-2 px-3 min-h-[38px] max-h-32"
+          className="flex-1 resize-none text-sm rounded-xl py-2.5 px-3 min-h-[42px] max-h-32 transition-all"
           style={{
             background: "oklch(var(--cosmos-deep))",
             border: "1px solid oklch(var(--gold) / 0.2)",
@@ -782,7 +814,7 @@ function ChatViewPanel({
           size="sm"
           onClick={onSend}
           disabled={!newBody.trim() || isSending}
-          className="h-9 w-9 p-0 rounded-xl shrink-0"
+          className="h-10 w-10 p-0 rounded-xl shrink-0 transition-all"
           style={{
             background:
               newBody.trim() && !isSending
@@ -829,7 +861,6 @@ export function MessagesPage() {
 
   const [search, setSearch] = useState("");
   const [newMsgModalOpen, setNewMsgModalOpen] = useState(false);
-  // On mobile, show chat view when a thread is selected
   const [mobileShowChat, setMobileShowChat] = useState(false);
 
   function handleSearchChange(v: string) {
@@ -842,19 +873,15 @@ export function MessagesPage() {
     setMobileShowChat(true);
   }
 
-  function handleBack() {
-    setMobileShowChat(false);
+  function handleNewMessageSelect(threadId: string) {
+    handleSelectThread(threadId);
+    setNewMsgModalOpen(false);
   }
 
   function handleSend() {
     if (activeThread && newMessageBody.trim()) {
       sendMessage(activeThread.id, newMessageBody);
     }
-  }
-
-  function handleNewMessageSelect(threadId: string) {
-    handleSelectThread(threadId);
-    setNewMsgModalOpen(false);
   }
 
   return (
@@ -880,7 +907,7 @@ export function MessagesPage() {
               Communication Hub
             </h1>
             <span
-              className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+              className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
               style={{
                 background: "oklch(0.72 0.16 200 / 0.15)",
                 color: "oklch(0.72 0.16 200)",
@@ -896,26 +923,19 @@ export function MessagesPage() {
             Direct messages, group threads, and platform announcements
           </p>
         </div>
-        <Dialog open={newMsgModalOpen} onOpenChange={setNewMsgModalOpen}>
-          <DialogTrigger asChild>
-            <Button
-              size="sm"
-              className="hidden sm:flex items-center gap-1.5 text-xs"
-              style={{
-                background: "oklch(var(--gold))",
-                color: "oklch(0.15 0.02 260)",
-              }}
-              data-ocid="messages.open_modal_button"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              New Message
-            </Button>
-          </DialogTrigger>
-          <NewMessageModal
-            onSelect={handleNewMessageSelect}
-            onClose={() => setNewMsgModalOpen(false)}
-          />
-        </Dialog>
+        <Button
+          size="sm"
+          className="hidden sm:flex items-center gap-1.5 text-xs"
+          style={{
+            background: "oklch(var(--gold))",
+            color: "oklch(0.15 0.02 260)",
+          }}
+          onClick={() => setNewMsgModalOpen(true)}
+          data-ocid="messages.open_modal_button"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          New Message
+        </Button>
       </div>
 
       {/* Two-panel layout */}
@@ -923,35 +943,25 @@ export function MessagesPage() {
         className="flex flex-1 min-h-0"
         style={{ height: "calc(100vh - 9rem)" }}
       >
-        {/* Thread list — hidden on mobile when chat is active */}
+        {/* Thread list */}
         <div
-          className={`w-full md:w-80 shrink-0 flex flex-col ${
-            mobileShowChat ? "hidden md:flex" : "flex"
-          }`}
+          className={`w-full md:w-80 shrink-0 flex flex-col ${mobileShowChat ? "hidden md:flex" : "flex"}`}
         >
-          <Dialog open={newMsgModalOpen} onOpenChange={setNewMsgModalOpen}>
-            <ThreadListPanel
-              threads={threads}
-              activeThreadId={activeThread?.id ?? null}
-              onSelect={handleSelectThread}
-              totalUnread={totalUnreadThreads}
-              searchValue={search}
-              onSearchChange={handleSearchChange}
-              onPin={pinThread}
-              onNewMessage={() => setNewMsgModalOpen(true)}
-            />
-            <NewMessageModal
-              onSelect={handleNewMessageSelect}
-              onClose={() => setNewMsgModalOpen(false)}
-            />
-          </Dialog>
+          <ThreadListPanel
+            threads={threads}
+            activeThreadId={activeThread?.id ?? null}
+            onSelect={handleSelectThread}
+            totalUnread={totalUnreadThreads}
+            searchValue={search}
+            onSearchChange={handleSearchChange}
+            onPin={pinThread}
+            onNewMessage={() => setNewMsgModalOpen(true)}
+          />
         </div>
 
-        {/* Chat view — full width on mobile when active */}
+        {/* Chat view */}
         <div
-          className={`flex-1 flex flex-col min-w-0 ${
-            !mobileShowChat ? "hidden md:flex" : "flex"
-          }`}
+          className={`flex-1 flex flex-col min-w-0 ${!mobileShowChat ? "hidden md:flex" : "flex"}`}
         >
           <ChatViewPanel
             thread={activeThread}
@@ -962,10 +972,17 @@ export function MessagesPage() {
             isSending={isSending}
             onArchive={archiveThread}
             onPin={pinThread}
-            onBack={handleBack}
+            onBack={() => setMobileShowChat(false)}
           />
         </div>
       </div>
+
+      {/* New message modal */}
+      <NewMessageModal
+        open={newMsgModalOpen}
+        onSelect={handleNewMessageSelect}
+        onClose={() => setNewMsgModalOpen(false)}
+      />
     </main>
   );
 }

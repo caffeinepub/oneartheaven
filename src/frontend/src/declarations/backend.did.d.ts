@@ -79,7 +79,6 @@ export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
 export interface _SERVICE {
-  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'addAnnouncement' : ActorMethod<[string, string, string, string], bigint>,
   'addMember' : ActorMethod<
     [
@@ -118,7 +117,7 @@ export interface _SERVICE {
   'getStats' : ActorMethod<[], PlatformStats>,
   'getSupportedLanguages' : ActorMethod<[], Array<Language>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
-  'isCallerAdmin' : ActorMethod<[], boolean>,
+  'initializeCallerAsAdmin' : ActorMethod<[], undefined>,
   'isCallerApproved' : ActorMethod<[], boolean>,
   'listApprovals' : ActorMethod<[], Array<UserApprovalInfo>>,
   'removeAnnouncement' : ActorMethod<[bigint], undefined>,

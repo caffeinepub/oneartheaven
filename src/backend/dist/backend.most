@@ -1,0 +1,91 @@
+// Version: 1.0.0
+type Announcement__674333181 =
+  {body : Text; date : Text; id : Nat; priority : Text; title : Text};
+type ApprovalStatus__846528560 = {#approved; #pending; #rejected};
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Language__38428764 = {code : Text; name : Text; nativeName : Text};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
+type MemberEntity__646290524 =
+  {
+    contactEmail : Text;
+    country : Text;
+    description : Text;
+    id : Nat;
+    joinedDate : Text;
+    languages : [Text];
+    memberType : MemberType__125161885;
+    name : Text;
+    region : MemberRegion__462834760;
+    status : MemberStatus__90479065;
+    website : Text
+  };
+type MemberRegion__462834760 =
+  {
+    #africa;
+    #asiaPacific;
+    #europe;
+    #global;
+    #latinAmerica;
+    #middleEast;
+    #northAmerica
+  };
+type MemberStatus__90479065 = {#active; #applicant; #observer; #suspended};
+type MemberType__125161885 =
+  {#city; #community; #cooperative; #corporate; #individual; #nation; #ngo};
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type UserProfile__491224006 = {name : Text};
+type UserRole__377253588 = {#admin; #guest; #user};
+actor {
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__605269027<Principal, UserRole__377253588>
+    };
+  stable announcements :
+    {
+      var root : Node__46230540<Nat, Announcement__674333181>;
+      var size : Nat__490723111
+    };
+  stable approvalState :
+    {
+      var approvalStatus :
+        Map__605269027<Principal, ApprovalStatus__846528560>
+    };
+  stable var globalStats :
+    {
+      communities : Nat;
+      members : Nat;
+      nations : Nat;
+      projects : Nat;
+      solutions : Nat;
+      volunteers : Nat
+    };
+  stable memberEntities :
+    {
+      var root : Node__46230540<Nat, MemberEntity__646290524>;
+      var size : Nat__490723111
+    };
+  stable var nextAnnouncementId : Nat;
+  stable var nextMemberId : Nat;
+  stable supportedLanguages :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Language__38428764]];
+      var elementIndex : Nat__490723111
+    };
+  stable userProfiles :
+    {
+      var root : Node__46230540<Principal, UserProfile__491224006>;
+      var size : Nat__490723111
+    }
+};

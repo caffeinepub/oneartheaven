@@ -2,6 +2,7 @@ import { AnnouncementsBar } from "@/components/AnnouncementsBar";
 import { Footer } from "@/components/Footer";
 import { HelpCenter } from "@/components/HelpCenter";
 import { InstallBanner } from "@/components/InstallBanner";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Navbar } from "@/components/Navbar";
 import { OnboardingTourOverlay } from "@/components/OnboardingTourOverlay";
 import { Toaster } from "@/components/ui/sonner";
@@ -33,6 +34,7 @@ import { LiveSessionRoomPage } from "@/pages/LiveSessionRoom";
 import { MarketplacePage } from "@/pages/Marketplace";
 import { MembersPage } from "@/pages/Members";
 import { MessagesPage } from "@/pages/Messages";
+import { PartnersPage } from "@/pages/Partners";
 import { PolicyAdvisorPage } from "@/pages/PolicyAdvisor";
 import { PortalDetailPage } from "@/pages/PortalDetail";
 import { PortalsPage } from "@/pages/Portals";
@@ -84,6 +86,7 @@ function Layout() {
             <Footer />
             <Toaster richColors position="top-right" />
             <InstallBanner />
+            <MobileBottomNav />
             <HelpCenter onStartTour={setActiveTourId} />
             {activeTourId && (
               <OnboardingTourOverlay
@@ -294,6 +297,11 @@ const messagesRoute = createRoute({
   path: "/messages",
   component: MessagesPage,
 });
+const partnersRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/partners",
+  component: PartnersPage,
+});
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -334,6 +342,7 @@ const routeTree = rootRoute.addChildren([
   impactRoute,
   marketplaceRoute,
   messagesRoute,
+  partnersRoute,
 ]);
 
 const router = createRouter({ routeTree });

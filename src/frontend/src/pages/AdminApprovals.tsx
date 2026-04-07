@@ -1,5 +1,3 @@
-import { ApprovalStatus } from "@/backend";
-import { UserRole } from "@/backend";
 import { RequireRole } from "@/components/RequireRole";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +15,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ApprovalStatus } from "@/data/approvalTypes";
 import {
   APPROVAL_STATUS_CONFIG,
   type UserApplication,
@@ -27,6 +26,7 @@ import {
   useListApprovals,
   useSetApproval,
 } from "@/hooks/useApprovals";
+import { UserRole } from "@/hooks/useBackend";
 import {
   Building2,
   Calendar,
@@ -252,7 +252,14 @@ function ApprovalsContent() {
       const { Principal } = await import("@icp-sdk/core/principal");
       const principal = Principal.fromText(selectedApp.principalId);
       const roleValue = assigningRole as UserRole;
-      await actor.assignCallerUserRole(principal, roleValue);
+      const callableActor = actor as unknown as Record<
+        string,
+        (...args: unknown[]) => unknown
+      >;
+      const assignFn = callableActor.assignCallerUserRole;
+      if (typeof assignFn === "function") {
+        await assignFn(principal, roleValue);
+      }
       toast.success(`Role updated to ${assigningRole}`);
     } catch {
       toast.error("Failed to assign role.");

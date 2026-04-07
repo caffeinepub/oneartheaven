@@ -16,6 +16,7 @@ import {
   Globe,
   Globe2,
   GraduationCap,
+  Handshake,
   HelpCircle,
   Layers,
   Leaf,
@@ -144,7 +145,8 @@ type AvailableRoute =
   | "/sessions"
   | "/impact"
   | "/marketplace"
-  | "/messages";
+  | "/messages"
+  | "/partners";
 
 interface GovernancePortalCard {
   icon: React.ElementType;
@@ -518,6 +520,18 @@ const GOVERNANCE_PORTALS: GovernancePortalCard[] = [
     isAvailable: true,
     accentColor: "oklch(0.72 0.16 150)",
     accentColorRaw: "0.72 0.16 150",
+  },
+  {
+    icon: Handshake,
+    title: "Partnership Hub",
+    description:
+      "12 active partner organisations across 7 regions, 8 live agreements, and a 3-step application to join the ONEartHeaven™ ecosystem.",
+    link: "/partners",
+    phaseLabel: "Phase 13 · Partnerships",
+    phaseNum: "13",
+    isAvailable: true,
+    accentColor: "oklch(0.68 0.18 40)",
+    accentColorRaw: "0.68 0.18 40",
   },
 ];
 

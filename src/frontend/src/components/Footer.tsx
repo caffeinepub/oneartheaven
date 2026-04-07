@@ -8,8 +8,8 @@ import {
 import { useLanguage } from "@/context/LanguageContext";
 import { useGetSupportedLanguages } from "@/hooks/useQueries";
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, Globe } from "lucide-react";
-import { SiGithub, SiLinkedin, SiX } from "react-icons/si";
+import { ChevronDown, Globe, Linkedin } from "lucide-react";
+import { SiGithub, SiX } from "react-icons/si";
 
 const LANGUAGE_FLAGS: Record<string, string> = {
   en: "🇬🇧",
@@ -155,7 +155,7 @@ export function Footer() {
                 aria-label="LinkedIn"
                 data-ocid="footer.linkedin.link"
               >
-                <SiLinkedin className="h-4 w-4" />
+                <Linkedin className="h-4 w-4" />
               </a>
             </div>
           </div>

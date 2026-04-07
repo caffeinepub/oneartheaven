@@ -6,16 +6,30 @@ import Nat "mo:core/Nat";
 import Array "mo:core/Array";
 import Principal "mo:core/Principal";
 import Iter "mo:core/Iter";
-import UserApproval "user-approval/approval";
-import MixinAuthorization "authorization/MixinAuthorization";
-import AccessControl "authorization/access-control";
+import AccessControl "lib/AccessControl";
+import UserApproval "lib/UserApproval";
 
 
 
 actor {
   // Initialize the access control system state
   let accessControlState = AccessControl.initState();
-  include MixinAuthorization(accessControlState);
+
+  // MixinAuthorization endpoints — inlined from the authorization extension
+  public shared ({ caller }) func initializeCallerAsAdmin() : async () {
+    AccessControl.ensureFirstAdmin(accessControlState, caller);
+  };
+
+  public query ({ caller }) func getCallerUserRole() : async AccessControl.UserRole {
+    AccessControl.getUserRole(accessControlState, caller);
+  };
+
+  public shared ({ caller }) func assignCallerUserRole(user : Principal, role : AccessControl.UserRole) : async () {
+    if (not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Only admins can assign roles");
+    };
+    AccessControl.assignRole(accessControlState, caller, user, role);
+  };
 
   // User Approval System
   let approvalState = UserApproval.initState(accessControlState);
@@ -117,7 +131,7 @@ actor {
     };
   };
 
-  public query ({ caller }) func getStats() : async PlatformStats {
+  public query func getStats() : async PlatformStats {
     let memberCount = memberEntities.size();
     let nationCount = memberEntities.values().toArray().filter(func(member) { member.memberType == #nation }).size();
     let communityCount = memberEntities.values().toArray().filter(func(member) { member.memberType == #community }).size();
@@ -166,7 +180,7 @@ actor {
     };
   };
 
-  public query ({ caller }) func getAllAnnouncements() : async [Announcement] {
+  public query func getAllAnnouncements() : async [Announcement] {
     announcements.values().toArray();
   };
 
@@ -190,7 +204,7 @@ actor {
     { code = "de"; name = "German"; nativeName = "Deutsch" },
   ]);
 
-  public query ({ caller }) func getSupportedLanguages() : async [Language] {
+  public query func getSupportedLanguages() : async [Language] {
     supportedLanguages.toArray();
   };
 
@@ -433,11 +447,11 @@ actor {
 
   var nextMemberId = 13;
 
-  public query ({ caller }) func getMembers() : async [MemberEntity] {
+  public query func getMembers() : async [MemberEntity] {
     memberEntities.values().toArray();
   };
 
-  public query ({ caller }) func getMember(id : Nat) : async ?MemberEntity {
+  public query func getMember(id : Nat) : async ?MemberEntity {
     memberEntities.get(id);
   };
 
@@ -538,4 +552,3 @@ actor {
     id;
   };
 };
-

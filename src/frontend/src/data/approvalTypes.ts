@@ -1,6 +1,9 @@
-import { ApprovalStatus } from "@/backend";
-
-export type { ApprovalStatus };
+// ApprovalStatus — defined locally since backend binding is not yet deployed
+export enum ApprovalStatus {
+  pending = "pending",
+  approved = "approved",
+  rejected = "rejected",
+}
 
 export interface UserApplication {
   principalId: string;

@@ -172,7 +172,6 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     addAnnouncement(title: string, body: string, date: string, priority: string): Promise<bigint>;
     addMember(name: string, memberType: MemberType, region: MemberRegion, country: string, description: string, joinedDate: string, status: MemberStatus, languages: Array<string>, website: string, contactEmail: string): Promise<bigint>;
     applyForMembership(name: string, memberType: MemberType, region: MemberRegion, country: string, description: string, languages: Array<string>, website: string, contactEmail: string): Promise<bigint>;
@@ -185,7 +184,7 @@ export interface backendInterface {
     getStats(): Promise<PlatformStats>;
     getSupportedLanguages(): Promise<Array<Language>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
-    isCallerAdmin(): Promise<boolean>;
+    initializeCallerAsAdmin(): Promise<void>;
     isCallerApproved(): Promise<boolean>;
     listApprovals(): Promise<Array<UserApprovalInfo>>;
     removeAnnouncement(id: bigint): Promise<void>;
@@ -199,20 +198,6 @@ export interface backendInterface {
 import type { ApprovalStatus as _ApprovalStatus, MemberEntity as _MemberEntity, MemberRegion as _MemberRegion, MemberStatus as _MemberStatus, MemberType as _MemberType, StatType as _StatType, UserApprovalInfo as _UserApprovalInfo, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor._initializeAccessControlWithSecret(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor._initializeAccessControlWithSecret(arg0);
-            return result;
-        }
-    }
     async addAnnouncement(arg0: string, arg1: string, arg2: string, arg3: string): Promise<bigint> {
         if (this.processError) {
             try {
@@ -381,17 +366,17 @@ export class Backend implements backendInterface {
             return from_candid_opt_n9(this._uploadFile, this._downloadFile, result);
         }
     }
-    async isCallerAdmin(): Promise<boolean> {
+    async initializeCallerAsAdmin(): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.isCallerAdmin();
+                const result = await this.actor.initializeCallerAsAdmin();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.isCallerAdmin();
+            const result = await this.actor.initializeCallerAsAdmin();
             return result;
         }
     }

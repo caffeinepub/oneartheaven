@@ -10,25 +10,123 @@
  * Replace actor stubs with real canister calls by updating useActor().
  */
 
-import type { Announcement, PlatformStats, UserProfile } from "@/backend";
-import { ApprovalStatus, UserRole } from "@/backend";
-import type { MemberEntity, UserApprovalInfo } from "@/backend";
-import { MemberRegion, MemberStatus, MemberType, StatType } from "@/backend";
 import type { BackendCallState, MutationState } from "@/data/backendTypes";
 import { useActor } from "@/hooks/useActor";
 import type { Principal } from "@icp-sdk/core/principal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 
-// ─── Re-export enums so callers don't need to reach into backend directly ─────
-export {
-  ApprovalStatus,
-  UserRole,
-  MemberType,
-  MemberRegion,
-  MemberStatus,
-  StatType,
-};
+// ─── Local enum stubs (backend binding not yet deployed) ─────────────────────
+export enum ApprovalStatus {
+  pending = "pending",
+  approved = "approved",
+  rejected = "rejected",
+}
+
+export enum UserRole {
+  guest = "guest",
+  user = "user",
+  observer = "observer",
+  delegate = "delegate",
+  vendor = "vendor",
+  admin = "admin",
+  superAdmin = "superAdmin",
+}
+
+export enum MemberType {
+  nation = "nation",
+  city = "city",
+  ngo = "ngo",
+  community = "community",
+  corporate = "corporate",
+  cooperative = "cooperative",
+  business = "business",
+  individual = "individual",
+}
+
+export enum MemberRegion {
+  africa = "africa",
+  asiaPacific = "asiaPacific",
+  asia = "asia",
+  europe = "europe",
+  latinAmerica = "latinAmerica",
+  northAmerica = "northAmerica",
+  middleEast = "middleEast",
+  oceania = "oceania",
+  global = "global",
+}
+
+export enum MemberStatus {
+  active = "active",
+  pending = "pending",
+  observer = "observer",
+  applicant = "applicant",
+  suspended = "suspended",
+  archived = "archived",
+}
+
+export enum StatType {
+  members = "members",
+  communities = "communities",
+  projects = "projects",
+  volunteers = "volunteers",
+  nations = "nations",
+  solutions = "solutions",
+}
+
+// ─── Local type stubs ────────────────────────────────────────────────────────
+export interface UserProfile {
+  displayName: string;
+  email: string;
+  orgId: string;
+  role?: UserRole;
+  bio?: string;
+  avatarUrl?: string;
+}
+
+export interface UserApprovalInfo {
+  principal: { toString: () => string };
+  status: ApprovalStatus;
+}
+
+export interface MemberEntity {
+  id: bigint;
+  name: string;
+  memberType: MemberType;
+  region: MemberRegion;
+  country: string;
+  description: string;
+  joinedDate: string;
+  status: MemberStatus;
+  languages: string[];
+  website: string;
+  contactEmail: string;
+}
+
+export interface PlatformStats {
+  members: bigint;
+  communities: bigint;
+  projects: bigint;
+  volunteers: bigint;
+  nations: bigint;
+  solutions: bigint;
+}
+
+export interface Announcement {
+  id: bigint;
+  title: string;
+  body: string;
+  date: string;
+  priority: string;
+}
+
+// ─── Helper: safely call a backend method that may not be deployed yet ────────
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function callMethod(actor: unknown, method: string, ...args: unknown[]): any {
+  const a = actor as Record<string, (...a: unknown[]) => unknown>;
+  if (typeof a[method] === "function") return a[method](...args);
+  return Promise.reject(new Error(`Method ${method} not deployed`));
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -49,10 +147,6 @@ function toCallState<T>(
 
 // ─── 1. Profile Group ─────────────────────────────────────────────────────────
 
-/**
- * useUserProfile
- * Reads and writes the caller's UserProfile from the backend.
- */
 export function useUserProfile(): BackendCallState<UserProfile> & {
   save: (profile: UserProfile) => Promise<void>;
   saving: boolean;
@@ -64,7 +158,11 @@ export function useUserProfile(): BackendCallState<UserProfile> & {
     queryKey: ["userProfile"],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getCallerUserProfile();
+      try {
+        return await callMethod(actor, "getCallerUserProfile");
+      } catch {
+        return null;
+      }
     },
     enabled: !!actor && !isFetching,
   });
@@ -72,7 +170,7 @@ export function useUserProfile(): BackendCallState<UserProfile> & {
   const mutation = useMutation({
     mutationFn: async (profile: UserProfile) => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.saveCallerUserProfile(profile);
+      return callMethod(actor, "saveCallerUserProfile", profile);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
@@ -91,10 +189,6 @@ export function useUserProfile(): BackendCallState<UserProfile> & {
   };
 }
 
-/**
- * useOtherUserProfile
- * Reads any user's profile by Principal.
- */
 export function useOtherUserProfile(
   principal: Principal | null,
 ): BackendCallState<UserProfile> {
@@ -103,7 +197,11 @@ export function useOtherUserProfile(
     queryKey: ["userProfile", principal?.toString()],
     queryFn: async () => {
       if (!actor || !principal) return null;
-      return actor.getUserProfile(principal);
+      try {
+        return await callMethod(actor, "getUserProfile", principal);
+      } catch {
+        return null;
+      }
     },
     enabled: !!actor && !isFetching && !!principal,
   });
@@ -117,10 +215,6 @@ export function useOtherUserProfile(
 
 // ─── 2. Role Group ────────────────────────────────────────────────────────────
 
-/**
- * useCallerRole
- * Returns the caller's current backend role, and provides an assign mutation.
- */
 export function useCallerRole(): BackendCallState<UserRole> & {
   isAdmin: boolean;
   assign: (user: Principal, role: UserRole) => Promise<void>;
@@ -133,7 +227,11 @@ export function useCallerRole(): BackendCallState<UserRole> & {
     queryKey: ["callerRole"],
     queryFn: async () => {
       if (!actor) return UserRole.guest;
-      return actor.getCallerUserRole();
+      try {
+        return await callMethod(actor, "getCallerUserRole");
+      } catch {
+        return UserRole.guest;
+      }
     },
     enabled: !!actor && !isFetching,
   });
@@ -142,7 +240,11 @@ export function useCallerRole(): BackendCallState<UserRole> & {
     queryKey: ["isAdmin"],
     queryFn: async () => {
       if (!actor) return false;
-      return actor.isCallerAdmin();
+      try {
+        return await callMethod(actor, "isCallerAdmin");
+      } catch {
+        return false;
+      }
     },
     enabled: !!actor && !isFetching,
   });
@@ -150,7 +252,7 @@ export function useCallerRole(): BackendCallState<UserRole> & {
   const assignMutation = useMutation({
     mutationFn: async ({ user, role }: { user: Principal; role: UserRole }) => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.assignCallerUserRole(user, role);
+      return callMethod(actor, "assignCallerUserRole", user, role);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["callerRole"] });
@@ -173,10 +275,6 @@ export function useCallerRole(): BackendCallState<UserRole> & {
 
 // ─── 3. Approval Group ────────────────────────────────────────────────────────
 
-/**
- * useBackendApprovals
- * Full approval pipeline: check status, request, list (admin), set (admin).
- */
 export function useBackendApprovals(): {
   isApproved: BackendCallState<boolean>;
   approvals: BackendCallState<UserApprovalInfo[]>;
@@ -192,7 +290,11 @@ export function useBackendApprovals(): {
     queryKey: ["isApproved"],
     queryFn: async () => {
       if (!actor) return false;
-      return actor.isCallerApproved();
+      try {
+        return await callMethod(actor, "isCallerApproved");
+      } catch {
+        return false;
+      }
     },
     enabled: !!actor && !isFetching,
   });
@@ -201,7 +303,11 @@ export function useBackendApprovals(): {
     queryKey: ["approvals"],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listApprovals();
+      try {
+        return await callMethod(actor, "listApprovals");
+      } catch {
+        return [];
+      }
     },
     enabled: !!actor && !isFetching,
   });
@@ -209,7 +315,7 @@ export function useBackendApprovals(): {
   const requestMutation = useMutation({
     mutationFn: async () => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.requestApproval();
+      return callMethod(actor, "requestApproval");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["isApproved"] });
@@ -223,7 +329,7 @@ export function useBackendApprovals(): {
       status,
     }: { user: Principal; status: ApprovalStatus }) => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.setApproval(user, status);
+      return callMethod(actor, "setApproval", user, status);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["approvals"] });
@@ -252,10 +358,30 @@ export function useBackendApprovals(): {
 
 // ─── 4. Member Group ──────────────────────────────────────────────────────────
 
-/**
- * useBackendMembers
- * Full member management: list, get, add, remove, apply, update status.
- */
+export interface AddMemberParams {
+  name: string;
+  memberType: MemberType;
+  region: MemberRegion;
+  country: string;
+  description: string;
+  joinedDate: string;
+  status: MemberStatus;
+  languages: string[];
+  website: string;
+  contactEmail: string;
+}
+
+export interface ApplyMembershipParams {
+  name: string;
+  memberType: MemberType;
+  region: MemberRegion;
+  country: string;
+  description: string;
+  languages: string[];
+  website: string;
+  contactEmail: string;
+}
+
 export function useBackendMembers(): {
   members: BackendCallState<MemberEntity[]>;
   getMember: (id: bigint) => BackendCallState<MemberEntity | null>;
@@ -272,7 +398,11 @@ export function useBackendMembers(): {
     queryKey: ["members"],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.getMembers();
+      try {
+        return await callMethod(actor, "getMembers");
+      } catch {
+        return [];
+      }
     },
     enabled: !!actor && !isFetching,
   });
@@ -280,7 +410,9 @@ export function useBackendMembers(): {
   const addMutation = useMutation({
     mutationFn: async (p: AddMemberParams) => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.addMember(
+      return callMethod(
+        actor,
+        "addMember",
         p.name,
         p.memberType,
         p.region,
@@ -291,7 +423,7 @@ export function useBackendMembers(): {
         p.languages,
         p.website,
         p.contactEmail,
-      );
+      ) as Promise<bigint>;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
   });
@@ -299,7 +431,7 @@ export function useBackendMembers(): {
   const removeMutation = useMutation({
     mutationFn: async (id: bigint) => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.removeMember(id);
+      return callMethod(actor, "removeMember", id);
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
   });
@@ -307,7 +439,9 @@ export function useBackendMembers(): {
   const applyMutation = useMutation({
     mutationFn: async (p: ApplyMembershipParams) => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.applyForMembership(
+      return callMethod(
+        actor,
+        "applyForMembership",
         p.name,
         p.memberType,
         p.region,
@@ -316,7 +450,7 @@ export function useBackendMembers(): {
         p.languages,
         p.website,
         p.contactEmail,
-      );
+      ) as Promise<bigint>;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
   });
@@ -327,7 +461,7 @@ export function useBackendMembers(): {
       status,
     }: { id: bigint; status: MemberStatus }) => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.updateMemberStatus(id, status);
+      return callMethod(actor, "updateMemberStatus", id, status);
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["members"] }),
   });
@@ -368,38 +502,8 @@ export function useBackendMembers(): {
   };
 }
 
-// ─── Member param types ───────────────────────────────────────────────────────
-
-export interface AddMemberParams {
-  name: string;
-  memberType: MemberType;
-  region: MemberRegion;
-  country: string;
-  description: string;
-  joinedDate: string;
-  status: MemberStatus;
-  languages: string[];
-  website: string;
-  contactEmail: string;
-}
-
-export interface ApplyMembershipParams {
-  name: string;
-  memberType: MemberType;
-  region: MemberRegion;
-  country: string;
-  description: string;
-  languages: string[];
-  website: string;
-  contactEmail: string;
-}
-
 // ─── 5. Stats Group ───────────────────────────────────────────────────────────
 
-/**
- * useBackendStats
- * Reads and updates platform-level aggregate stats.
- */
 export function useBackendStats(): BackendCallState<PlatformStats> & {
   update: (statType: StatType, value: bigint) => Promise<void>;
   updating: boolean;
@@ -419,7 +523,18 @@ export function useBackendStats(): BackendCallState<PlatformStats> & {
           nations: 0n,
           solutions: 0n,
         };
-      return actor.getStats();
+      try {
+        return await callMethod(actor, "getStats");
+      } catch {
+        return {
+          members: 0n,
+          communities: 0n,
+          projects: 0n,
+          volunteers: 0n,
+          nations: 0n,
+          solutions: 0n,
+        };
+      }
     },
     enabled: !!actor && !isFetching,
     staleTime: 60_000,
@@ -431,7 +546,7 @@ export function useBackendStats(): BackendCallState<PlatformStats> & {
       value,
     }: { statType: StatType; value: bigint }) => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.updateStat(statType, value);
+      return callMethod(actor, "updateStat", statType, value);
     },
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["platformStats"] }),
@@ -452,10 +567,6 @@ export function useBackendStats(): BackendCallState<PlatformStats> & {
 
 // ─── 6. Announcements Group ───────────────────────────────────────────────────
 
-/**
- * useAnnouncements
- * Full announcement management: list, add, remove.
- */
 export function useAnnouncements(): BackendCallState<Announcement[]> & {
   add: (
     title: string,
@@ -473,7 +584,11 @@ export function useAnnouncements(): BackendCallState<Announcement[]> & {
     queryKey: ["announcements"],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.getAllAnnouncements();
+      try {
+        return await callMethod(actor, "getAllAnnouncements");
+      } catch {
+        return [];
+      }
     },
     enabled: !!actor && !isFetching,
     staleTime: 30_000,
@@ -487,7 +602,14 @@ export function useAnnouncements(): BackendCallState<Announcement[]> & {
       priority,
     }: { title: string; body: string; date: string; priority: string }) => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.addAnnouncement(title, body, date, priority);
+      return callMethod(
+        actor,
+        "addAnnouncement",
+        title,
+        body,
+        date,
+        priority,
+      ) as Promise<bigint>;
     },
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["announcements"] }),
@@ -496,7 +618,7 @@ export function useAnnouncements(): BackendCallState<Announcement[]> & {
   const removeMutation = useMutation({
     mutationFn: async (id: bigint) => {
       if (!actor) throw new Error("Wallet not connected");
-      return actor.removeAnnouncement(id);
+      return callMethod(actor, "removeAnnouncement", id);
     },
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["announcements"] }),

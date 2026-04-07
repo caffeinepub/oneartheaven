@@ -1,0 +1,120 @@
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UserProfile = record {name: text;};
+type UserApprovalInfo = 
+ record {
+   "principal": principal;
+   status: ApprovalStatus;
+ };
+type StatType = 
+ variant {
+   communities;
+   members;
+   nations;
+   projects;
+   solutions;
+   volunteers;
+ };
+type PlatformStats = 
+ record {
+   communities: nat;
+   members: nat;
+   nations: nat;
+   projects: nat;
+   solutions: nat;
+   volunteers: nat;
+ };
+type MemberType = 
+ variant {
+   city;
+   community;
+   cooperative;
+   corporate;
+   individual;
+   nation;
+   ngo;
+ };
+type MemberStatus = 
+ variant {
+   active;
+   applicant;
+   observer;
+   suspended;
+ };
+type MemberRegion = 
+ variant {
+   africa;
+   asiaPacific;
+   europe;
+   global;
+   latinAmerica;
+   middleEast;
+   northAmerica;
+ };
+type MemberEntity = 
+ record {
+   contactEmail: text;
+   country: text;
+   description: text;
+   id: nat;
+   joinedDate: text;
+   languages: vec text;
+   memberType: MemberType;
+   name: text;
+   region: MemberRegion;
+   status: MemberStatus;
+   website: text;
+ };
+type Language = 
+ record {
+   code: text;
+   name: text;
+   nativeName: text;
+ };
+type ApprovalStatus = 
+ variant {
+   approved;
+   pending;
+   rejected;
+ };
+type Announcement = 
+ record {
+   body: text;
+   date: text;
+   id: nat;
+   priority: text;
+   title: text;
+ };
+service : {
+  addAnnouncement: (title: text, body: text, date: text, priority: text) ->
+   (nat);
+  addMember: (name: text, memberType: MemberType, region: MemberRegion,
+   country: text, description: text, joinedDate: text, status: MemberStatus,
+   languages: vec text, website: text, contactEmail: text) -> (nat);
+  applyForMembership: (name: text, memberType: MemberType, region:
+   MemberRegion, country: text, description: text, languages: vec text,
+   website: text, contactEmail: text) -> (nat);
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  getAllAnnouncements: () -> (vec Announcement) query;
+  getCallerUserProfile: () -> (opt UserProfile) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getMember: (id: nat) -> (opt MemberEntity) query;
+  getMembers: () -> (vec MemberEntity) query;
+  getStats: () -> (PlatformStats) query;
+  getSupportedLanguages: () -> (vec Language) query;
+  getUserProfile: (user: principal) -> (opt UserProfile) query;
+  initializeCallerAsAdmin: () -> ();
+  isCallerApproved: () -> (bool) query;
+  listApprovals: () -> (vec UserApprovalInfo) query;
+  removeAnnouncement: (id: nat) -> ();
+  removeMember: (id: nat) -> ();
+  requestApproval: () -> ();
+  saveCallerUserProfile: (profile: UserProfile) -> ();
+  setApproval: (user: principal, status: ApprovalStatus) -> ();
+  updateMemberStatus: (id: nat, status: MemberStatus) -> ();
+  updateStat: (statType: StatType, value: nat) -> ();
+}
