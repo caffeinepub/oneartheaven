@@ -3,10 +3,10 @@
 // /partners — Partnership & Ecosystem Hub
 // ---------------------------------------------------------------------------
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { PARTNER_PROFILES } from "@/data/partnerData";
 import {
   AGREEMENT_TYPE_CONFIG,
   APPLICATION_STEPS,
@@ -48,6 +48,344 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+
+// ---------------------------------------------------------------------------
+// Mercator coordinate conversion (viewBox 0 0 1000 500)
+// ---------------------------------------------------------------------------
+function latLngToSvg(lat: number, lng: number): { x: number; y: number } {
+  const x = (lng + 180) * (1000 / 360);
+  const y = (90 - lat) * (500 / 180);
+  return { x, y };
+}
+
+// Tier dot colors for the map
+const TIER_DOT_COLORS: Record<string, string> = {
+  platinum: "#D4A843",
+  gold: "#60a5fa",
+  silver: "#a3a3a3",
+  bronze: "#f97316",
+};
+
+// ---------------------------------------------------------------------------
+// WorldMap SVG — simplified land masses + partner dots
+// ---------------------------------------------------------------------------
+function WorldMap({
+  activePartnerId,
+  onDotClick,
+}: {
+  activePartnerId: string | null;
+  onDotClick: (id: string) => void;
+}) {
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  // Simplified continent paths (Mercator, viewBox 1000x500)
+  const CONTINENTS = [
+    // North America
+    {
+      id: "na",
+      d: "M 80 60 L 130 55 L 200 50 L 235 60 L 245 85 L 260 95 L 255 120 L 240 140 L 220 155 L 200 160 L 185 175 L 175 195 L 160 205 L 145 215 L 130 220 L 120 210 L 108 200 L 100 185 L 90 170 L 75 155 L 68 130 L 65 105 L 70 80 Z",
+    },
+    // Greenland
+    {
+      id: "gl",
+      d: "M 210 18 L 240 15 L 265 20 L 270 35 L 255 45 L 235 48 L 215 42 L 205 30 Z",
+    },
+    // Central America / Caribbean
+    {
+      id: "ca",
+      d: "M 175 215 L 185 230 L 180 242 L 170 245 L 162 238 L 160 225 Z",
+    },
+    // South America
+    {
+      id: "sa",
+      d: "M 185 235 L 210 225 L 240 230 L 260 245 L 270 265 L 275 295 L 270 330 L 255 360 L 240 385 L 220 400 L 210 410 L 200 405 L 195 385 L 190 360 L 180 330 L 172 305 L 168 280 L 170 255 L 178 240 Z",
+    },
+    // Europe
+    {
+      id: "eu",
+      d: "M 440 50 L 470 45 L 500 50 L 510 60 L 505 75 L 515 85 L 510 95 L 495 100 L 480 105 L 465 110 L 450 105 L 438 95 L 432 80 L 435 65 Z",
+    },
+    // Scandinavia
+    {
+      id: "sc",
+      d: "M 460 28 L 480 25 L 492 35 L 488 52 L 470 55 L 455 50 L 452 38 Z",
+    },
+    // UK + Ireland
+    {
+      id: "uk",
+      d: "M 428 52 L 438 50 L 442 62 L 434 68 L 424 62 Z",
+    },
+    // Africa
+    {
+      id: "af",
+      d: "M 450 120 L 485 115 L 515 118 L 540 130 L 548 150 L 545 175 L 540 205 L 530 235 L 515 265 L 500 290 L 490 310 L 480 325 L 470 330 L 460 325 L 450 310 L 442 290 L 438 265 L 435 240 L 432 210 L 432 180 L 435 155 L 440 135 Z",
+    },
+    // Madagascar
+    {
+      id: "mg",
+      d: "M 528 265 L 535 260 L 542 270 L 540 290 L 530 295 L 524 282 Z",
+    },
+    // Middle East
+    {
+      id: "me",
+      d: "M 530 115 L 570 110 L 590 115 L 595 130 L 585 145 L 565 150 L 545 148 L 533 138 Z",
+    },
+    // Russia / Central Asia
+    {
+      id: "ru",
+      d: "M 510 30 L 600 22 L 700 18 L 780 22 L 800 35 L 790 50 L 760 55 L 730 58 L 700 60 L 670 65 L 640 68 L 615 72 L 590 75 L 568 80 L 550 78 L 535 70 L 520 58 L 510 45 Z",
+    },
+    // South Asia / India
+    {
+      id: "sa2",
+      d: "M 600 120 L 640 115 L 660 120 L 662 140 L 650 160 L 635 175 L 620 178 L 608 165 L 600 148 L 596 132 Z",
+    },
+    // Southeast Asia
+    {
+      id: "sea",
+      d: "M 680 130 L 720 125 L 740 132 L 742 148 L 730 160 L 710 165 L 695 158 L 682 145 Z",
+    },
+    // China / East Asia
+    {
+      id: "ea",
+      d: "M 660 65 L 720 60 L 768 62 L 785 72 L 788 90 L 775 108 L 752 118 L 728 122 L 700 120 L 678 115 L 662 105 L 655 88 Z",
+    },
+    // Japan
+    {
+      id: "jp",
+      d: "M 795 75 L 808 70 L 815 80 L 808 92 L 795 90 Z",
+    },
+    // Indonesia / Maritime SE Asia
+    {
+      id: "id",
+      d: "M 700 170 L 760 165 L 790 170 L 800 180 L 790 190 L 760 192 L 730 190 L 705 182 Z",
+    },
+    // Australia
+    {
+      id: "au",
+      d: "M 740 255 L 800 248 L 840 252 L 860 268 L 862 290 L 850 315 L 828 332 L 800 338 L 775 332 L 755 315 L 742 295 L 738 272 Z",
+    },
+    // New Zealand
+    {
+      id: "nz",
+      d: "M 870 320 L 878 315 L 885 325 L 880 338 L 870 340 Z",
+    },
+    // Pacific Islands area (Fiji/Oceania)
+    {
+      id: "pi",
+      d: "M 855 270 L 862 267 L 868 273 L 862 280 L 854 277 Z",
+    },
+  ];
+
+  return (
+    <div
+      className="relative w-full overflow-hidden rounded-2xl"
+      style={{ background: "#0d1117" }}
+    >
+      <svg
+        viewBox="0 0 1000 500"
+        className="w-full h-auto"
+        style={{ display: "block", maxHeight: 420 }}
+        aria-label="Global partner network map"
+        role="img"
+      >
+        {/* Ocean background */}
+        <rect width="1000" height="500" fill="#0d1117" />
+
+        {/* Grid lines */}
+        {[0, 125, 250, 375].map((y) => (
+          <line
+            key={`hl-${y}`}
+            x1="0"
+            y1={y}
+            x2="1000"
+            y2={y}
+            stroke="#1a2332"
+            strokeWidth="0.5"
+          />
+        ))}
+        {[0, 100, 200, 300, 400, 500, 600, 700, 800, 900].map((x) => (
+          <line
+            key={`vl-${x}`}
+            x1={x}
+            y1="0"
+            x2={x}
+            y2="500"
+            stroke="#1a2332"
+            strokeWidth="0.5"
+          />
+        ))}
+
+        {/* Equator line */}
+        <line
+          x1="0"
+          y1="250"
+          x2="1000"
+          y2="250"
+          stroke="#1e3a2e"
+          strokeWidth="1"
+          strokeDasharray="6,6"
+        />
+
+        {/* Continent land masses */}
+        {CONTINENTS.map((c) => (
+          <path
+            key={c.id}
+            d={c.d}
+            fill="#1e2a38"
+            stroke="#2d3f52"
+            strokeWidth="0.8"
+          />
+        ))}
+
+        {/* Partner location dots */}
+        {PARTNER_PROFILES.map((partner) => {
+          const { x, y } = latLngToSvg(
+            partner.coordinates.lat,
+            partner.coordinates.lng,
+          );
+          const dotColor = TIER_DOT_COLORS[partner.tier] ?? "#888";
+          const isActive = activePartnerId === partner.id;
+          const isHovered = hoveredId === partner.id;
+
+          return (
+            <g key={partner.id}>
+              {/* Pulsing ring for active partner */}
+              {isActive && (
+                <>
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r="14"
+                    fill="none"
+                    stroke={dotColor}
+                    strokeWidth="1.5"
+                    opacity="0.5"
+                  >
+                    <animate
+                      attributeName="r"
+                      values="10;18;10"
+                      dur="2s"
+                      repeatCount="indefinite"
+                    />
+                    <animate
+                      attributeName="opacity"
+                      values="0.5;0;0.5"
+                      dur="2s"
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r="10"
+                    fill="none"
+                    stroke={dotColor}
+                    strokeWidth="1"
+                    opacity="0.7"
+                  >
+                    <animate
+                      attributeName="r"
+                      values="6;14;6"
+                      dur="2s"
+                      repeatCount="indefinite"
+                      begin="0.5s"
+                    />
+                    <animate
+                      attributeName="opacity"
+                      values="0.7;0;0.7"
+                      dur="2s"
+                      repeatCount="indefinite"
+                      begin="0.5s"
+                    />
+                  </circle>
+                </>
+              )}
+
+              {/* Hover glow */}
+              {isHovered && !isActive && (
+                <circle cx={x} cy={y} r="10" fill={dotColor} opacity="0.2" />
+              )}
+
+              {/* Main dot */}
+              <circle
+                cx={x}
+                cy={y}
+                r={isActive || isHovered ? 6 : 5}
+                fill={dotColor}
+                stroke="white"
+                strokeWidth="1.5"
+                style={{ cursor: "pointer", transition: "r 0.15s ease" }}
+                onClick={() => onDotClick(partner.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ")
+                    onDotClick(partner.id);
+                }}
+                onMouseEnter={() => setHoveredId(partner.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                role="button"
+                tabIndex={0}
+                aria-label={`View ${partner.name}`}
+              />
+
+              {/* Tooltip on hover */}
+              {isHovered && (
+                <g>
+                  <rect
+                    x={x + 8}
+                    y={y - 20}
+                    width={partner.name.length * 5.2 + 16}
+                    height={22}
+                    rx="4"
+                    fill="#111827"
+                    stroke={dotColor}
+                    strokeWidth="0.8"
+                    opacity="0.96"
+                  />
+                  <text
+                    x={x + 16}
+                    y={y - 5}
+                    fontSize="8"
+                    fill="#e2e8f0"
+                    fontFamily="system-ui, sans-serif"
+                  >
+                    {partner.name.length > 28
+                      ? `${partner.name.slice(0, 28)}…`
+                      : partner.name}
+                  </text>
+                </g>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+
+      {/* Legend */}
+      <div
+        className="flex items-center justify-center gap-5 px-4 py-3"
+        style={{ borderTop: "1px solid #1e2a38" }}
+      >
+        {(["platinum", "gold", "silver", "bronze"] as const).map((tier) => {
+          const cfg = PARTNER_TIER_CONFIG[tier];
+          return (
+            <div key={tier} className="flex items-center gap-1.5">
+              <div
+                className="w-3 h-3 rounded-full border-[1.5px] border-white/60"
+                style={{ background: TIER_DOT_COLORS[tier] }}
+              />
+              <span
+                className="text-[10px] font-medium"
+                style={{ color: "oklch(0.58 0.03 260)" }}
+              >
+                {cfg.icon} {cfg.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Hero Stats
@@ -1545,6 +1883,54 @@ export function PartnersPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Global Partner Map ────────────────────────────────── */}
+      <section
+        className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-4"
+        data-ocid="partners.map.section"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2
+                className="text-base font-bold"
+                style={{ color: "oklch(0.88 0.015 260)" }}
+              >
+                Global Partner Network
+              </h2>
+              <p
+                className="text-xs mt-0.5"
+                style={{ color: "oklch(0.55 0.03 260)" }}
+              >
+                {PARTNER_PROFILES.length} organisations across{" "}
+                {new Set(PARTNER_PROFILES.map((p) => p.region)).size} regions —
+                click any dot to view profile
+              </p>
+            </div>
+            <div className="hidden sm:flex items-center gap-2">
+              <Globe2
+                className="h-4 w-4"
+                style={{ color: "oklch(0.68 0.22 250)" }}
+              />
+              <span
+                className="text-xs font-medium"
+                style={{ color: "oklch(0.65 0.03 260)" }}
+              >
+                {PARTNER_PROFILES.filter((p) => p.country).length} nations
+              </span>
+            </div>
+          </div>
+          <WorldMap
+            activePartnerId={selectedPartnerId}
+            onDotClick={setSelectedPartnerId}
+          />
+        </motion.div>
+      </section>
 
       {/* ── Partner Grid ──────────────────────────────────────── */}
       <section
